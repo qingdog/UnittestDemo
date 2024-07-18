@@ -1,0 +1,3 @@
+[2024-07-18_09:30:46] - [html_report_main.py:48] INFO -----开始执行所有测试,总用例数：5
+[2024-07-18_09:30:46] - [html_report_main.py:49] INFO <unittest.suite.TestSuite tests=[<unittest.suite.TestSuite tests=[<unittest.suite.TestSuite tests=[<test_dvd.TestDvd testMethod=test_login_1>, <test_dvd.TestDvd testMethod=test_login_2>, <test_dvd.TestDvd testMethod=test_login_3>]>]>, <unittest.suite.TestSuite tests=[<unittest.suite.TestSuite tests=[<test_excel_api.TestAPI testMethod=test_api_1>, <test_excel_api.TestAPI testMethod=test_api_2>]>]>]>
+[2024-07-18_09:30:47] - [html_report_main.py:69] INFO ------所有测试用例执行完毕-------

@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>测试报告</title>
+    <meta name="generator" content="HTMLTestRunner 1.7.0"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-2.0.0.min.js"></script>
+    <script src="https://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <script src="https://cdn.staticfile.org/echarts/4.3.0/echarts.min.js"></script>
+    
+<style type="text/css" media="screen">
+body        { font-family: Microsoft YaHei,Tahoma,arial,helvetica,sans-serif;padding: 20px; font-size: 12px; }
+table       { font-size: 100%; }
+
+/* -- heading ---------------------------------------------------------------------- */
+.heading {
+    margin-top: 0ex;
+    margin-bottom: 1ex;
+    position: relative;
+}
+
+.heading .description {
+    //margin-top: 4ex;
+    //margin-bottom: 6ex;
+}
+
+/* -- report ------------------------------------------------------------------------ */
+#total_row  { font-weight: bold; }
+.passClass  { background-color: #6c6; }
+.failClass  { background-color: #c60; }
+.errorClass { background-color: #c00; }
+.skipClass { background-color: #B0C4DE; }
+.passCase   { color: #5cb85c; }
+.failCase   { color: #d9534f; font-weight: bold; }
+.errorCase  { color: #f0ad4e; font-weight: bold; }
+.skipCase  { color: #6A614B; font-weight: bold; }
+.skip_btn { color: #fff;background-color: #6A614B}
+.hiddenRow  { display: none; }
+.testcase   { margin-left: 2em; }
+</style>
+
+</head>
+<body >
+<script language="javascript" type="text/javascript">
+output_list = Array();
+
+/* level 调整增加只显示通过用例的分类 --Adil
+0:Summary //all hiddenRow
+1:Failed  //pt hiddenRow, ft none
+0:Pass    //pt none, ft hiddenRow
+2:Error   // pt hiddenRow, ft none
+3:Skip
+4:All     //pt none, ft none
+下面设置 按钮展开逻辑
+*/
+
+window.onload = function(){
+    var myChart = echarts.init(document.getElementById('case_statistics'));
+    var option_case_res = {
+        series: [{
+            name: '测试结果',
+            type: 'pie',    // 设置图表类型为饼图
+            radius: ['30%', '80%'],
+            center: ['50%', '50%'],
+            data:[          // 数据数组，name 为数据项名称，value 为数据项值
+                {value:2, name:'通过', itemStyle:{color:'#4cae4c'}},
+                {value:1, name:'失败', itemStyle:{color:'#d9534f'}},
+                {value:0, name:'错误', itemStyle:{color:'#f0ad4e'}},
+                {value:0, name:'跳过', itemStyle:{color:'#6A614B'}}
+            ],
+            label:{            // 饼图图形上的文本标签
+                normal:{
+                    // show:true,
+                    // position:'inner', //标签的位置
+                    textStyle : {
+                        fontWeight : 'normal' ,
+                        fontSize : 12    //文字的字体大小
+                    },
+            　　　　formatter: '{b}:{c}({d}%)',
+                }
+            },
+            labelLine:{
+                normal: {
+                  length: 5   // show设置线是否显示，默认为true，可选值：true ¦ false
+                }
+            }   
+        }]
+    };
+    myChart.setOption(option_case_res);
+
+    // 通过的用例，默认不展开日志 -by Javen
+    $("div[id^='div_p']").attr('class', 'collapse');
+}
+
+
+function showCase(level) {
+    trs = document.getElementsByTagName("tr");
+    for (var i = 0; i < trs.length; i++) {
+        tr = trs[i];
+        id = tr.id;
+        if (level == 4){
+            tr.className = '';
+        }else {       
+            if (id.substr(0,2) == 'ft') {
+                if (level != 1) {
+                    tr.className = 'hiddenRow';
+                }
+                else {
+                    tr.className = '';
+                }
+            } else if (id.substr(0,2) == 'et') {
+                if (level != 2) {
+                    tr.className = 'hiddenRow';
+                }
+                else {
+                    tr.className = '';
+                }
+            } else if (id.substr(0,2) == 'st') {
+                if (level != 3) {
+                    tr.className = 'hiddenRow';
+                }
+                else {
+                    tr.className = '';
+                }
+            } else if (id.substr(0,2) == 'pt'){
+                if (level != 0) {
+                    tr.className = 'hiddenRow';
+                }
+                else {
+                    tr.className = '';
+                }
+            }
+        }
+    }
+
+    // 加入【详细】切换文字变化
+    // detail_class=document.getElementsByClassName('detail');
+    // console.log(detail_class.length)
+    /*
+    if (level == 3) {
+        for (var i = 0; i < detail_class.length; i++){
+            detail_class[i].innerHTML="收起"
+        }
+    }else{
+        for (var i = 0; i < detail_class.length; i++){
+            detail_class[i].innerHTML="详细"
+        }
+    }
+    */
+}
+
+function showClassDetail(cid, count) {
+    var id_list = Array(count);
+    var toHide = 0; 
+    var count2 = 0;
+    for (var i = 0; i < count; i++) {
+        //ID修改 点 为 下划线
+        tid0 = 't' + cid.substr(1) + '_' + (i+1);
+        tid = 'f' + tid0;
+        tr = document.getElementById(tid);
+        if (!tr) {
+            tid = 'p' + tid0;
+            tr = document.getElementById(tid);
+        }
+        if (!tr) {
+            tid = 'e' + tid0;
+            tr = document.getElementById(tid);
+        }
+        if (!tr) {
+            tid = 's' + tid0;
+            tr = document.getElementById(tid);
+        }
+
+        id_list[i] = tid;
+        if(!count2){
+            if (!tr.className) {
+                toHide = 1;
+                count2++;
+            }
+        }
+    }
+
+    for (var i = 0; i < count; i++) {
+        tid = id_list[i];
+        //修改点击无法收起的BUG，加入【详细】切换文字变化
+        if (toHide) {
+            document.getElementById(tid).className = 'hiddenRow';
+            //document.getElementById(cid).innerText = "详细"
+        }
+        else {
+            document.getElementById(tid).className = '';
+            //document.getElementById(cid).innerText = "收起"
+        }
+    }
+}
+
+function html_escape(s) {
+    s = s.replace(/&/g,'&amp;');
+    s = s.replace(/</g,'&lt;');
+    s = s.replace(/>/g,'&gt;');
+    return s;
+}
+</script>
+<div class='heading'>
+    <div style="display:inline-block;">
+<h1 style="margin-bottom:20px; font-size: 24px; font-family: Microsoft YaHei">测试报告</h1>
+<p class='attribute'><strong>测试人员 : </strong> 测试组</p>
+<p class='attribute'><strong>开始时间 : </strong> 2024-07-15 18:25:41</p>
+<p class='attribute'><strong>合计耗时 : </strong> 0:00:00.089813</p>
+<p class='attribute'><strong>测试结果 : </strong> 总共 3，通过 2，失败 1，通过率 66.67%</p>
+
+<p class='description'><strong>测试用例详情</strong></p>
+</div>
+<div id="case_statistics" style="display:inline-block;width: 400px;height:250px;position: absolute;right: 120px;"></div>
+</div>
+
+
+
+    <p id='show_detail_line'>
+    <a class="btn btn-info" href='javascript:showCase(4)'>所有[ 3 ]</a>   
+    <a class="btn btn-success" href='javascript:showCase(0)'>通过[ 2 ]</a>
+    <a class="btn btn-warning" href='javascript:showCase(2)'>错误[ 0 ]</a>
+    <a class="btn btn-danger" href='javascript:showCase(1)'>失败[ 1 ]</a>
+    <a class="btn btn-other" style="color: #fff;background-color: #6A614B;border-color: #6A614B"
+     href='javascript:showCase(3)'>跳过[ 0 ]</a>
+    <a class="btn btn-primary" href='javascript:void(0)'>通过率[ 66.67% ]</a>
+    </p>
+    <table id='result_table' class="table table-condensed table-bordered table-hover">
+        <colgroup>
+            <col align='left' />
+            <col align='right' />
+            <col align='right' />
+            <col align='right' />
+            <col align='right' />
+            <col align='right' />
+        </colgroup>
+        <tr id='header_row' class="text-center success" style="font-weight: bold;font-size: 14px;">
+            <td>用例集/测试用例</td>
+            <td>总计</td>
+            <td>通过</td>
+            <td>错误</td>
+            <td>失败</td>
+            <td>跳过</td>
+            <td style="width: 130px">详细</td>
+        </tr>
+        
+<tr class='failClass warning'>
+    <td>test_dvd.TestDvd</td>
+    <td class="text-center">3</td>
+    <td class="text-center">2</td>
+    <td class="text-center">0</td>
+    <td class="text-center">1</td>
+    <td class="text-center">0</td>
+    <td class="text-center"><a href="javascript:showClassDetail('c1',3)" class="detail"
+        id='c1'>展开/收起</a></td>
+</tr>
+
+<tr id='ft1_1' class=''>
+    <td class='failCase'><div class='testcase'>test_login_1: test_login_1</div></td>
+    <td colspan='6' align='center'>
+    <!--默认收起错误信息
+    <button id='btn_ft1_1' type="button"  class="btn btn-danger btn-xs collapsed" data-toggle="collapse"
+        data-target='#div_ft1_1'>失败</button>
+    <div id='div_ft1_1' class="collapse">  -->
+
+    <!-- 默认展开错误信息 -->
+    <button id='btn_ft1_1' type="button"  class="btn btn-danger btn-xs" data-toggle="collapse" 
+        data-target='#div_ft1_1'>失败 - 展开/收起日志</button>
+    <div id='div_ft1_1' class="collapse in" style='text-align: left; color:red;cursor:pointer'>
+    <pre>
+    
+ft1_1: 
+Traceback (most recent call last):
+  File "D:\Users\Administrator\AppData\Local\Programs\Python\Python38\lib\site-packages\ddt.py", line 221, in wrapper
+    return func(self, *args, **kwargs)
+  File "D:\mytest\test\UnittestDemo\script\test_dvd.py", line 58, in test_login
+    self.assertIn(str(body), res.text)
+AssertionError: '2001' not found in '{"code":200,"response":"kr9at%2bpDrRHEoabF%2bGeoIP5pbI55%2f9ASDBsxc9iN3Wo%2f5HQ0mguq5zDFOvD%2br7edy%2fpJshSdnJ3WLZKxEL2AAmxIO258LljcS%2fGIeWBx%2bzvY%2bMnFcOxkF1MJBgUieROdPN8iFG107CKoNhwVxDz%2fela9ubal74%2f7FZSLNgdUAHlw9D4Rd4%2fkySb2025olETj","current_time":"2024-07-15 18:25:41"}'
+
+
+    </pre>
+    </div>
+    </td>
+</tr>
+
+<tr id='pt1_2' class='hiddenRow'>
+    <td class='passCase'><div class='testcase'>test_login_2: test_login_2</div></td>
+    <td colspan='6' align='center'>
+    <!--默认收起错误信息
+    <button id='btn_pt1_2' type="button"  class="btn btn-danger btn-xs collapsed" data-toggle="collapse"
+        data-target='#div_pt1_2'>通过</button>
+    <div id='div_pt1_2' class="collapse">  -->
+
+    <!-- 默认展开错误信息 -->
+    <button id='btn_pt1_2' type="button"  class="btn btn-success btn-xs" data-toggle="collapse" 
+        data-target='#div_pt1_2'>通过 - 展开/收起日志</button>
+    <div id='div_pt1_2' class="collapse in" style='text-align: left; color:red;cursor:pointer'>
+    <pre>
+    
+pt1_2: 
+
+
+    </pre>
+    </div>
+    </td>
+</tr>
+
+<tr id='pt1_3' class='hiddenRow'>
+    <td class='passCase'><div class='testcase'>test_login_3: test_login_3</div></td>
+    <td colspan='6' align='center'>
+    <!--默认收起错误信息
+    <button id='btn_pt1_3' type="button"  class="btn btn-danger btn-xs collapsed" data-toggle="collapse"
+        data-target='#div_pt1_3'>通过</button>
+    <div id='div_pt1_3' class="collapse">  -->
+
+    <!-- 默认展开错误信息 -->
+    <button id='btn_pt1_3' type="button"  class="btn btn-success btn-xs" data-toggle="collapse" 
+        data-target='#div_pt1_3'>通过 - 展开/收起日志</button>
+    <div id='div_pt1_3' class="collapse in" style='text-align: left; color:red;cursor:pointer'>
+    <pre>
+    
+pt1_3: 
+
+
+    </pre>
+    </div>
+    </td>
+</tr>
+
+        <tr id='total_row' class="text-center active">
+            <td>总计</td>
+            <td>3</td>
+            <td>2</td>
+            <td>0</td>
+            <td>1</td>
+            <td>0</td>
+            <td>通过率：66.67%</td>
+        </tr>
+    </table>
+
+<div id='ending'>&nbsp;</div>
+    <div style=" position:fixed;right:50px; bottom:30px; width:20px; height:20px;cursor:pointer">
+    <a href="#top"><span class="glyphicon glyphicon-eject" style = "font-size:30px;" aria-hidden="true">
+    </span></a></div>
+    
+
+</body>
+</html>

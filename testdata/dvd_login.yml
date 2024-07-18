@@ -1,0 +1,21 @@
+-
+  title : "正确用户名，密码"
+  level: "H"
+  user : "18813537806"
+  password : "18813537806"
+  code: 200
+  body: 2001
+-
+  title : "错误的用户名"
+  level: "M"
+  user : "5614643"
+  password : "18813537806"
+  code: 201
+  body: "帐号不存在"
+-
+  title : "错误的密码"
+  level: "M"
+  user : "18813537806"
+  password : "8A0576EF5CE5FF8C380CD910944B8"
+  code: 201
+  body: "密码错误"

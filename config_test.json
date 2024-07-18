@@ -1,0 +1,9 @@
+{
+    "database": {
+        "host": "192.168.50.205",
+        "port": 3306,
+        "user": "liqi_qiye_test",
+        "password": "cABbY6rmS2LDtKPN",
+        "db": "liqi_qiye_test"
+    }
+}

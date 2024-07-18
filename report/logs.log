@@ -1,0 +1,104 @@
+[2024-07-18 09:29:57,220] [test_runner.py(164)]: 预计并发线程数：1
+[2024-07-18 09:29:57,221] [result.py(73)]: 开始测试： test_login_1 (test_dvd.TestDvd.test_login_1)
+[2024-07-18 09:29:57,242] [test_dvd.py(44)]: 开始执行用例：正确用户名，密码
+[2024-07-18 09:29:57,620] [result.py(206)]: 测试未通过： test_login_1 (test_dvd.TestDvd.test_login_1)
+Traceback (most recent call last):
+  File "D:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\ddt.py", line 221, in wrapper
+    return func(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\mytest\UnittestDemo\testcase\test_dvd.py", line 58, in test_login
+    self.assertIn(str(body), res.text)
+AssertionError: '2001' not found in '{"code":200,"response":"kr9at%2bpDrRHEoabF%2bGeoIP5pbI55%2f9ASDBsxc9iN3Wo%2f5HQ0mguq5zDFOvD%2br7edy%2fpJshSdnJ3WLZKxEL2AAmxIO258LljcS%2fGIeWBx%2bzvY%2bMnFcOxkF1MJBgUieROdPN8iFG107CKoNhwVxDz%2fela9ubal74%2f7FZSLNgdUAHlw9D4Rd4%2fkySb2025olETj","current_time":"2024-07-18 09:29:58"}'
+
+[2024-07-18 09:29:57,684] [result.py(96)]: 测试结束： test_login_1 (test_dvd.TestDvd.test_login_1)
+[2024-07-18 09:29:57,748] [result.py(97)]: 耗时： 0.44152402877807617
+[2024-07-18 09:29:57,796] [result.py(73)]: 开始测试： test_login_2 (test_dvd.TestDvd.test_login_2)
+[2024-07-18 09:29:57,859] [test_dvd.py(60)]: File "D:\mytest\UnittestDemo\testcase\test_dvd.py", line 1 不执行：错误的用户名
+[2024-07-18 09:29:57,923] [result.py(172)]: 测试执行通过： test_login_2 (test_dvd.TestDvd.test_login_2)
+[2024-07-18 09:29:57,987] [result.py(96)]: 测试结束： test_login_2 (test_dvd.TestDvd.test_login_2)
+[2024-07-18 09:29:58,050] [result.py(97)]: 耗时： 0.12757325172424316
+[2024-07-18 09:29:58,113] [result.py(73)]: 开始测试： test_login_3 (test_dvd.TestDvd.test_login_3)
+[2024-07-18 09:29:58,177] [test_dvd.py(60)]: File "D:\mytest\UnittestDemo\testcase\test_dvd.py", line 1 不执行：错误的密码
+[2024-07-18 09:29:58,225] [result.py(172)]: 测试执行通过： test_login_3 (test_dvd.TestDvd.test_login_3)
+[2024-07-18 09:29:58,288] [result.py(96)]: 测试结束： test_login_3 (test_dvd.TestDvd.test_login_3)
+[2024-07-18 09:29:58,320] [result.py(97)]: 耗时： 0.11063027381896973
+[2024-07-18 09:29:58,368] [result.py(73)]: 开始测试： test_api_1 (test_excel_api.TestAPI.test_api_1)
+[2024-07-18 09:29:58,384] [test_excel_api.py(99)]: 响应数据：{"msg":"操作成功","img":"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","code":200,"captchaEnabled":true,"uuid":"b5b16f0aee154333b8c4f7856895688f"}
+[2024-07-18 09:29:58,414] [result.py(172)]: 测试执行通过： test_api_1 (test_excel_api.TestAPI.test_api_1)
+[2024-07-18 09:29:58,414] [result.py(96)]: 测试结束： test_api_1 (test_excel_api.TestAPI.test_api_1)
+[2024-07-18 09:29:58,414] [result.py(97)]: 耗时： 0.04689455032348633
+[2024-07-18 09:29:58,414] [result.py(73)]: 开始测试： test_api_2 (test_excel_api.TestAPI.test_api_2)
+[2024-07-18 09:29:58,559] [test_excel_api.py(99)]: 响应数据：{"code":200,"msg":"Success","data":[]}
+[2024-07-18 09:29:58,588] [result.py(172)]: 测试执行通过： test_api_2 (test_excel_api.TestAPI.test_api_2)
+[2024-07-18 09:29:58,588] [result.py(96)]: 测试结束： test_api_2 (test_excel_api.TestAPI.test_api_2)
+[2024-07-18 09:29:58,588] [result.py(97)]: 耗时： 0.17244315147399902
+[2024-07-18 09:29:58,588] [test_runner.py(213)]: 
+Pass	test_login_2 (test_dvd.TestDvd.test_login_2)	test_login_2
+Pass	test_login_3 (test_dvd.TestDvd.test_login_3)	test_login_3
+Pass	test_api_1 (test_excel_api.TestAPI.test_api_1)	excel接口测试
+Pass	test_api_2 (test_excel_api.TestAPI.test_api_2)	excel接口测试
+
+[2024-07-18 09:29:58,589] [test_runner.py(215)]: 
+FAIL	test_login_1 (test_dvd.TestDvd.test_login_1)	test_login_1
+
+[2024-07-18 09:29:58,589] [test_runner.py(233)]: 
+测试结束！
+运行时间: 0:00:01.537930
+共计执行用例数量：5
+执行成功用例数量：4
+执行失败用例数量：1
+跳过执行用例数量：0
+产生异常用例数量：0
+
+[2024-07-18 09:30:46,417] [test_runner.py(164)]: 预计并发线程数：1
+[2024-07-18 09:30:46,417] [result.py(73)]: 开始测试： test_login_1 (test_dvd.TestDvd.test_login_1)
+[2024-07-18 09:30:46,442] [test_dvd.py(44)]: 开始执行用例：正确用户名，密码
+[2024-07-18 09:30:47,028] [result.py(206)]: 测试未通过： test_login_1 (test_dvd.TestDvd.test_login_1)
+Traceback (most recent call last):
+  File "D:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\ddt.py", line 221, in wrapper
+    return func(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\mytest\UnittestDemo\testcase\test_dvd.py", line 58, in test_login
+    self.assertIn(str(body), res.text)
+AssertionError: '2001' not found in '{"code":200,"response":"kr9at%2bpDrRHEoabF%2bGeoIP5pbI55%2f9ASDBsxc9iN3Wo%2f5HQ0mguq5zDFOvD%2br7edy%2fpJshSdnJ3WLZKxEL2AAmxIO258LljcS%2fGIeWBx%2bzvY%2bMnFcOxkF1MJBgUieROdPN8iFG107CKoNhwVxDz%2fela9ubal74%2f7FZSLNgdUAHlw9D4Rd4%2fkySb2025olETj","current_time":"2024-07-18 09:30:48"}'
+
+[2024-07-18 09:30:47,091] [result.py(96)]: 测试结束： test_login_1 (test_dvd.TestDvd.test_login_1)
+[2024-07-18 09:30:47,154] [result.py(97)]: 耗时： 0.6488306522369385
+[2024-07-18 09:30:47,217] [result.py(73)]: 开始测试： test_login_2 (test_dvd.TestDvd.test_login_2)
+[2024-07-18 09:30:47,280] [test_dvd.py(60)]: File "D:\mytest\UnittestDemo\testcase\test_dvd.py", line 1 不执行：错误的用户名
+[2024-07-18 09:30:47,328] [result.py(172)]: 测试执行通过： test_login_2 (test_dvd.TestDvd.test_login_2)
+[2024-07-18 09:30:47,390] [result.py(96)]: 测试结束： test_login_2 (test_dvd.TestDvd.test_login_2)
+[2024-07-18 09:30:47,437] [result.py(97)]: 耗时： 0.1096334457397461
+[2024-07-18 09:30:47,437] [result.py(73)]: 开始测试： test_login_3 (test_dvd.TestDvd.test_login_3)
+[2024-07-18 09:30:47,437] [test_dvd.py(60)]: File "D:\mytest\UnittestDemo\testcase\test_dvd.py", line 1 不执行：错误的密码
+[2024-07-18 09:30:47,437] [result.py(172)]: 测试执行通过： test_login_3 (test_dvd.TestDvd.test_login_3)
+[2024-07-18 09:30:47,453] [result.py(96)]: 测试结束： test_login_3 (test_dvd.TestDvd.test_login_3)
+[2024-07-18 09:30:47,453] [result.py(97)]: 耗时： 0.015946626663208008
+[2024-07-18 09:30:47,500] [result.py(73)]: 开始测试： test_api_1 (test_excel_api.TestAPI.test_api_1)
+[2024-07-18 09:30:47,515] [test_excel_api.py(99)]: 响应数据：{"msg":"操作成功","img":"/9j/4AAQSkZJRgABAgAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCAA8AKADASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwDtrW1ga1hZoIySikkoOeKsCztv+feL/vgU2z/484P+ua/yqyKiMY8q0IjGPKtCIWdr/wA+0P8A3wKeLK1/59of+/YqUU4U+WPYfLHsRCytP+fWH/v2KcLG0/59YP8Av2Kratq1roumz392xWGFdxx1PoB7npWV4Q8Z2/iyC4eK1ltmgcKwdgwOc4wR9Oa3jg6kqLrqHuJ2b8xWhex0IsLP/n1g/wC/YpwsLP8A59IP+/YqZaeKw5Y9h8sexCNPsv8An0t/+/Y/wpw06y/587f/AL9L/hSy3dvAQss0aE9AzAZrndb+IWg6DdRW01z50zkblhw3lj1b0+lbUcLOvLkpQu/JCaitzpBp1j/z52//AH6X/CnDTbH/AJ8rf/v0v+FPgnjuIkliYMjgMrDoQanFZci7D5Y9iuNMsP8Anytv+/S/4U8aZYf8+Nt/36X/AAqwKVnWNSzEADqTS5I9g5Y9iAaXp/8Az423/flf8KeNK0//AJ8LX/vyv+FcRqXxY0jT9Wa1S1urq0hbZcXsC5jib09/84zXc2N/bahax3NrMk0MihldDkEV01sDVoRUqsLJ7aCSg9gGlad/z4Wv/flf8KcNJ07/AKB9r/35X/CrQp4rm5Y9h8sexVGk6b/0D7T/AL8r/hVbU9L0+PSL10sbVXWByrCFQQdp5HFawqrq3/IFv/8Ar3k/9BNKUY8r0FKMeV6HJWf/AB5wf9c1/lVkVXs/+POD/rmv8qsinH4UOPwocKZPPHbwtJIwVVGSSaf2riviJJdP4emW0kKuhDMB1ZR1FdGHpqrVjTbsm0r9ht2VzkPHmv8A/CQ3ElhaSE2lohmkI6O46CpPhNeiN721zgllfHqORXF2F9BZ2E7ud80rY2dz9af4Z1k6B4ghu3VlhJ2yrj+A/wCHB/CvuKmAqSwdfA04vljblf8AM1rLzd9l0OZTXMpM+mYjlAaWV/LQmuCvfE+oavp6T+EL20le3mK3EcyY3jAIAz29+M9jxVKb4pW7ae1tNpt0msg+WbMLwX9j6fhn618hDLcTUXuRu+q6rzaey89u50OaRxXxEv577xs8LyusSBFQA8DI7fnU2o6HYQ+H5ktod04XzDMxyzEDNYPiNNXubw3mpRRrIR/yy6IPTj/6/wBa7fw5cwa1oCvlftEY2Sp7jvj0NfSY2vWw+Bw1XDyTjDSXK9Lra9u5jFJyafU6X4U+If7Q8OpZyyAzWh8vBPJX+E/0/CvSVYEV82aXfTeCfGKyDd9jkO1gO6E/zB/l712FxpmpQ6pNrWk+JZ31R2aVIZmBjkjzwhGemMD06dOo83MsDReI9tGajCouaLadrvdO21nv2LhJ2tbVHs2RXLeOhcXXhXUbW0LefJCdgQ4JI5wPrjFcJc6z4p8WRG01EroOmxj/AEmSNvnl9gSeF/T69K6jwrYTW2m/YDfG/slO62uGYFgp6ofXB6EeuOMCvOlh1hbVHNOaadlqvvWnyT2KvzaWMPQbSXTPDVvYT28a/uyJ0HIYnrn1rkvDGo3uhfEODS7O6lawNyB5RfK7Tyfy/pXpXiy2ls/D909qP3yoWH0715J4EDXvi/7TIcuilufU8f1r2MslKphsXiarumndf3ns/wATOejjFH05bSiWMMKsis7SgfsyZ9K0hXy5uOFVdW/5Al//ANe0n/oJq2Kq6v8A8gS//wCvaT/0E1MvhZMvhZyVn/x5Qf8AXNf5VZFV7L/jyg/65r/KrIoj8KCPwoXHFc/r9g1xC20V0QpHiWRcEVRR4mvhBIr55khO7OQD0U+wqnq/h2VoGBXDjlDjv6V7eNMhLZ2iqGp6JHPGQFFdUcbiFVjW525R2bd9v0J5Vax5d8O7mYpc6cbZkKNu80JjJ7qx9R2ruG0l5JvNMSmXG0SbRux6Zq7pGhi0lOEABOTgV1UVsgAytVjsUsViJV1Hl5ul/v8AvCMeVWPNNS8MyMC5XOeoIrlo/DGoadetd6PdiCTvFIPlPt9K92ltI5EwVFYt5oSkllXmlhcbWwt/ZvSW6eqfqmEoqW54j4ivIL6xZLqP7PqUDDdCfX1U9wa6tNHm1LwzY/vWgv4I1eKboUbb0Psehra1DwpBd3kcs9qkjxn5WI/zmuosdF/0cBhXZWzKPsadOgnHlbeuqV+i/u+TvvZ3JUNW2eVrout6zII9euAtrGf9VAQPMPqcdv8APFatlpPiHw7KT4Vuo2t5T89pdnIRv7yk/wD6/r29Hj8PLuyRVhNDCOCorL+1K/w2XJ/Lb3fu7+e/nYfIitqUM95paeaqCYoN4jJKhsc4JwSM15RcWcXg/VE1C102e5u7iTy4o0J2ZPUYHc9hz09q92isx5O0isu40geeHVRwcjiubDYl0ZO+sXurtJrs7dBtXNfSJRNYwybHj3oG2OMMvsR61piqFhE0cYBrQFcxQ4VV1f8A5Al//wBe0n/oJq2Kq6v/AMgS/wD+vaT/ANBNTL4WTL4WclZf8eVv/wBc1/lVkVzMWtXMUSRqkRCKFGQe341J/b91/wA84f8Avk/41lGtGyM41Y2R0opwrmf+Ehu/+ecH/fJ/xpf+Eiu/+ecH/fJ/xqvbRH7aJ1Ap20GuW/4SS8/55Qf98n/Gl/4SW8/55Qf98n/Gj20Q9tE6lYlB4FSgVyX/AAk97/zyt/8Avlv8aX/hKL3/AJ5W/wD3y3+NHtoh7aJ14p2wMK4//hKr7/nlb/8AfLf40v8Awld9/wA8rb/vlv8AGj20Q9tE6s2kZbO0VPHEqjAFcd/wlt//AM8bb/vlv8aX/hL9Q/5423/fLf8AxVHtoh7aJ2wUelOCiuI/4TDUP+eNr/3y3/xVL/wmWo/88bX/AL5b/wCKo9tEPbRO6Ao8sHtXDf8ACZ6j/wA8bX/vhv8A4ql/4TXUv+eFp/3w3/xVHtoh7aJ3iqBUgrgP+E21L/nhaf8AfDf/ABVL/wAJxqf/ADwtP++G/wDiqPbRD20T0EVV1f8A5Aeof9e0n/oJriv+E51P/nhaf98N/wDFVHc+M9RurWa3eG1CSoyMVVsgEY4+aplWjZilVjZn/9k=","code":200,"captchaEnabled":true,"uuid":"d3636532ddaf41cba976dac7b351497e"}
+[2024-07-18 09:30:47,538] [result.py(172)]: 测试执行通过： test_api_1 (test_excel_api.TestAPI.test_api_1)
+[2024-07-18 09:30:47,538] [result.py(96)]: 测试结束： test_api_1 (test_excel_api.TestAPI.test_api_1)
+[2024-07-18 09:30:47,538] [result.py(97)]: 耗时： 0.03789377212524414
+[2024-07-18 09:30:47,538] [result.py(73)]: 开始测试： test_api_2 (test_excel_api.TestAPI.test_api_2)
+[2024-07-18 09:30:47,685] [test_excel_api.py(99)]: 响应数据：{"code":200,"msg":"Success","data":[]}
+[2024-07-18 09:30:47,712] [result.py(172)]: 测试执行通过： test_api_2 (test_excel_api.TestAPI.test_api_2)
+[2024-07-18 09:30:47,712] [result.py(96)]: 测试结束： test_api_2 (test_excel_api.TestAPI.test_api_2)
+[2024-07-18 09:30:47,713] [result.py(97)]: 耗时： 0.17351007461547852
+[2024-07-18 09:30:47,713] [test_runner.py(213)]: 
+Pass	test_login_2 (test_dvd.TestDvd.test_login_2)	test_login_2
+Pass	test_login_3 (test_dvd.TestDvd.test_login_3)	test_login_3
+Pass	test_api_1 (test_excel_api.TestAPI.test_api_1)	excel接口测试
+Pass	test_api_2 (test_excel_api.TestAPI.test_api_2)	excel接口测试
+
+[2024-07-18 09:30:47,713] [test_runner.py(215)]: 
+FAIL	test_login_1 (test_dvd.TestDvd.test_login_1)	test_login_1
+
+[2024-07-18 09:30:47,714] [test_runner.py(233)]: 
+测试结束！
+运行时间: 0:00:01.466209
+共计执行用例数量：5
+执行成功用例数量：4
+执行失败用例数量：1
+跳过执行用例数量：0
+产生异常用例数量：0
+
