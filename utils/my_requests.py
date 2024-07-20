@@ -39,7 +39,9 @@ class MyRequests:
 
         body = ast.literal_eval(json.dumps(excel_data["body"])) if excel_data["body"] else eval(json.dumps(self.body))
 
-        response = session.request(method=method, url=url, headers=headers, data=body, verify=False)
+        # 不忽略SSL证书验证
+        # requests.packages.urllib3.disable_warnings(category=InsecureRequestWarning)
+        response = session.request(method=method, url=url, headers=headers, data=body, verify=True)
         return response
 
 

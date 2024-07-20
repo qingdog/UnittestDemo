@@ -10,6 +10,7 @@ import os
 import certifi
 import urllib3
 
+from utils.xlrd_excel import XlrdExcel
 from x_test_runner_send_main import MyConfig
 import unittest, requests, ddt
 from utils.my_requests import MyRequests
@@ -19,21 +20,19 @@ from utils.excel_testcase_processor import ExcelTestCaseProcessor
 @ddt.ddt
 class TestAPI(unittest.TestCase):
     """
-    自动化测试API接口的测试类。
-
+    自动化测试excel中api
+    """
+    """
     该类用于读取指定的Excel测试用例文件，并对每个测试用例执行API请求，然后验证响应。
     测试用例文件路径定义在配置文件中，默认为 `testdata/auto_test_case.xlsx`。
-
     测试流程包括：
     - 从Excel文件中读取测试用例。
     - 发送HTTP请求。
     - 验证响应状态码。
     - 验证响应内容中的特定字段。
-
     类属性:
     - configParser: ConfigParser实例，用于读取配置文件。
     - config_status_codes: 期望的HTTP状态码列表。
-
     注意:
     - 请确保配置文件 `config.ini` 存在并且格式正确。
     - Excel文件中的测试用例应遵循特定的格式定义。
@@ -51,19 +50,19 @@ class TestAPI(unittest.TestCase):
     config_status_codes = [int(code) for code in status_codes_str.split(',')]
 
     def setUp(self):
-        # self.session = requests.session()
-        # self.http = self.session
-        self.http = urllib3.PoolManager(
-            cert_reqs="CERT_REQUIRED",
-            ca_certs=certifi.where()
-        )
+        self.session = requests.session()
+        self.http = self.session
+        # self.http = urllib3.PoolManager(
+        #     cert_reqs="CERT_REQUIRED",
+        #     ca_certs=certifi.where()
+        # )
 
     def tearDown(self):
         pass
 
     logger = logging.getLogger()
 
-    # testData = XlrdExcel(MyConfig.TESTDATA_FILE).read_data()
+    testData: list[dict[str, int]] = XlrdExcel(MyConfig.TESTDATA_FILE).read_data()
     # excel_data为sheet页中的一行数据，key为每一列的首行数据，value为这一行中的值
     @ddt.data(*ExcelTestCaseProcessor(MyConfig.TESTDATA_FILE).read_data())
     def test_api(self, excel_data: dict):

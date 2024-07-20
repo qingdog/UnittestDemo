@@ -39,26 +39,17 @@ class TestDvd(unittest.TestCase):
     def test_login(self, title, level, user, password, code, body):  # 引用yaml用例里各标题，数量需要对得上
         # try:
         if level == "H":
-            # print("开始执行用例：", title)
-            # self.log.info(f"开始执行用例：{title}")
             self.logger.info(f"开始执行用例：{title}")
-            # logging.getLogger("123").warning(f"开始执行用例：{title}")
-
-            # self.log.info("start test...22222222222222222.")
-            # self.log.info("start test...111111111.")
 
             res = self.login(user, password)
 
             self.assertEqual(code, res.status_code)
             self.assertEqual(code, dict(res.json())["code"])
 
-            # mylog(os.path.basename(__file__)).info("error...")
-
             # 进行断言
             self.assertIn(str(body), res.text)
         else:
             self.logger.warning(f"File \"{__file__}\", line 1 不执行：{title}")
-            # self.logger.warning(f"{__file__}:65 {title} 不执行！")
 
     # except Exception as e:
     #     # self.log.error(e)

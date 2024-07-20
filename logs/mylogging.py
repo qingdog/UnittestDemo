@@ -33,6 +33,48 @@ class MyLogging:
     _logging_filename = time.strftime("%Y%m%d")
     logger: logging.Logger = None
 
+    # 移除所有 root logger 的处理器
+    # for handler in logging.getLogger().handlers:
+    #     handler: logging
+    #     if not handler.get_name():
+    #         logging.getLogger().removeHandler(handler)
+    @classmethod
+    def set_root_logger_format(cls, filename=""):
+        """设置 root logger"""
+        _logging_filename = f"{cls._logging_filename}{filename}.log"
+        _logging_filepath = os.path.join(os.path.dirname(__file__), _logging_filename)
+        logging.basicConfig(level=logging.DEBUG,  # 默认logging的日志级别为warning，这里设置为debug
+                            format='[%(asctime)s] - [%(filename)s:%(lineno)d] %(levelname)s %(message)s',
+                            datefmt='%Y-%m-%d_%H:%M:%S',
+                            # stream=sys.stdout,
+                            # filename='my.log',
+                            # filemode='a',
+                            handlers=[
+                                logging.FileHandler(f"{_logging_filepath}", encoding="UTF-8", mode='a'),  # 文件日志处理器
+                                logging.StreamHandler(sys.stdout)  # 控制台日志处理器
+                            ]
+                            )
+        logger = logging.getLogger()
+        # 获取控制台日志处理器
+        console_handler = logger.handlers[-1]
+        # 创建控制台日志格式化器（包含颜色代码）
+        console_handler.setFormatter(ColoredFormatter(
+            fmt="{prefix}[{asctime}] - [{filename}:{lineno}] {levelname} {user}{message}",
+            datefmt="%Y-%m-%d_%H:%M:%S", style="{", defaults={'user': '', 'prefix': ''})
+        )
+        """
+        # 换个新的日志文件名进行写入
+        if filename != "":
+            file_handler = logging.FileHandler(f"{cls._logging_filename}", encoding="UTF-8", mode='a')
+            file_handler.setFormatter(logging.Formatter(
+                fmt='[%(asctime)s] - [%(filename)s:%(lineno)d] %(levelname)s %(message)s',
+                datefmt='%Y-%m-%d_%H:%M:%S'
+            ))
+            cls.logger.handlers[0] = file_handler
+        """
+        # cls.getLogger(logger_name="root")
+        # cls(logger_name="root")
+
     @classmethod
     def getLogger(cls, logger_name="", logger_level=logging.DEBUG, filename=""):
         """eg: getLogger(10, "name", os.path.basename(__file__)).info(msg)"""
@@ -66,19 +108,7 @@ class MyLogging:
                 logging.StreamHandler(sys.stdout)  # 控制台日志处理器
             ]
         )
-        # 换个新的日志文件名进行写入
-        if filename != "":
-            file_handler = logging.FileHandler(f"{self._logging_filename}", encoding="UTF-8", mode='a')
-            file_handler.setFormatter(logging.Formatter(
-                fmt='[%(asctime)s] - [%(filename)s:%(lineno)d] %(levelname)s %(message)s',
-                datefmt='%Y-%m-%d_%H:%M:%S'
-            ))
-            self._logger.handlers[0] = file_handler
-        # 为控制台日志处理器设置彩色格式化器
-        console_handler = self._logger.handlers[1]  # 获取控制台日志处理器
-        console_handler.setFormatter(
-            ColoredFormatter(fmt="[{asctime}] - [{filename}:{lineno}] {levelname} {message} {user}",
-                             datefmt="%Y-%m-%d_%H:%M:%S", style="{", defaults={'user': 'anonymous'}))
+        
         """
 
         self.logger = logging.getLogger(logger_name)
@@ -117,6 +147,6 @@ if __name__ == '__main__':
     # mylogger2.error("mylogger2", exc_info=True)
     # mylogger2.critical("mylogger2")
 
-    MyLogging.getLogger(10, "my", filename="mylogging.py").warning("this is warning mylogging.py")
+    MyLogging.getLogger("my", 10, filename="mylogging.py").warning("this is warning mylogging.py")
     logging.getLogger("mylogging.py2").warning("this is warning...")
     logging.getLogger().warning("\n132")

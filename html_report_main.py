@@ -4,10 +4,11 @@ import os
 import sys
 import time
 import unittest
-
 import HTMLReport
-from BeautifulReport import BeautifulReport
 from logs.mylogging import MyLogging
+
+
+from BeautifulReport import BeautifulReport
 
 test_path = "testcase"
 str_time = time.strftime("%Y-%m-%d")
@@ -48,6 +49,7 @@ if __name__ == '__main__':
     logger.info(f'-----开始执行所有测试,总用例数：{myTestSuit.countTestCases()}')
     logger.info(myTestSuit)
     try:
+        # HTMLReport移除了已有的根处理器
         test_runner = HTMLReport.TestRunner(
             report_file_name=report_name,
             log_file_name="./logs",

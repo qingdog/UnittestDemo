@@ -17,10 +17,18 @@ pip install -i https://pypi.tuna.tsinghua.edu.cn/simple openpyxl
 # 带截图，饼图，折线图，历史结果查看的测试报告
 https://github.com/githublitao/HTMLTestRunner_Chart
 
+# 集成邮件/钉钉/企微/飞书 发送消息。
+pip install XTestRunner
+* https://github.com/SeldomQA/XTestRunner
+
+
+
 ```
 
 ### 安装旧版本
 ```shell
+pip install seldom==3.7.0
+
 #卸载已安装的
 pip uninstall xlrd 
 #下载对应的版本
