@@ -7,10 +7,7 @@ import configparser
 import logging
 import os
 
-import certifi
-import urllib3
-
-from utils.xlrd_excel import XlrdExcel
+# from utils.xlrd_excel import XlrdExcel
 from x_test_runner_send_main import MyConfig
 import unittest, requests, ddt
 from utils.my_requests import MyRequests
@@ -62,7 +59,7 @@ class TestAPI(unittest.TestCase):
 
     logger = logging.getLogger()
 
-    testData: list[dict[str, int]] = XlrdExcel(MyConfig.TESTDATA_FILE).read_data()
+    # testData: list[dict[str, int]] = XlrdExcel(MyConfig.TESTDATA_FILE).read_data()
     # excel_data为sheet页中的一行数据，key为每一列的首行数据，value为这一行中的值
     @ddt.data(*ExcelTestCaseProcessor(MyConfig.TESTDATA_FILE).read_data())
     def test_api(self, excel_data: dict):

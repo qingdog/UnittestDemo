@@ -18,9 +18,11 @@ class TestAPI(unittest.TestCase):
 
     # https://seldomqa.github.io/getting-started/data_driver.html#data-方法
     # @ddt.data(*ExcelTestCaseProcessor(MyConfig.TESTDATA_FILE).read_data())
+    # @data(list(zip(names, excel_data)))
     @data(list(zip(names, excel_data)))
     def test_api(self, name, excel_data: dict):
-        """excel接口测试"""
+        """描述："""
+        # html报告日志
         print(excel_data)
 
 
