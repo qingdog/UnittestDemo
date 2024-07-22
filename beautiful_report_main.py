@@ -10,7 +10,7 @@ from my_test_loader import MyTestLoader
 
 test_path = "testcase"
 str_time = time.strftime("%Y-%m-%d_%H")
-report_path = "./report"
+report_path = "reports"
 report_name = f"test-report_{str_time}"
 report_title = "测试报告"
 report_description = "测试用例详情"

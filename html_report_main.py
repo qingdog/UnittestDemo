@@ -12,7 +12,7 @@ from BeautifulReport import BeautifulReport
 
 test_path = "testcase"
 str_time = time.strftime("%Y-%m-%d")
-report_path = "./report"
+report_path = "reports"
 report_name = f"{str_time}"
 report_title = "测试报告"
 report_description = "测试用例详情"

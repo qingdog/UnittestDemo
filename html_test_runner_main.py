@@ -12,7 +12,7 @@ from jd_HTMLTestRunner.HTMLTestRunner import _TestResult
 # from unittest import TextTestResult
 
 test_path = "testcase"
-report_path = "./report/test-report" + time.strftime("%Y-%m-%d") + '.html'
+report_path = "./reports/test-reports" + time.strftime("%Y-%m-%d") + '.html'
 report_title = "测试报告"
 report_description = "测试用例详情"
 

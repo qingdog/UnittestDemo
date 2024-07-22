@@ -16,7 +16,7 @@ import XTestRunner
 from XTestRunner.htmlrunner.result import _TestResult
 
 from logs.mylogging import MyLogging, ColoredFormatter
-from utils.get_new_report import get_latest_file_path
+from utils.myutil import get_latest_file_path
 from utils.mail_util import send_mail
 
 
@@ -31,7 +31,7 @@ class MyConfig:
     # 测试用例模板文件
     TESTDATA_FILE = os.path.join(TESTDATA_DIR, "excel_test_case.xlsx")
     # 测试用例报告
-    TESTREPORT_DIR = os.path.join(BASE_DIR, "report")
+    TESTREPORT_DIR = os.path.join(BASE_DIR, "reports")
     # 测试用例程序文件
     TEST_CASE = os.path.join(BASE_DIR, "testcase")
 

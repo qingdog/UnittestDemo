@@ -1,8 +1,3 @@
-#!/usr/bin/env python
-# _*_ coding:utf-8 _*_
-__author__ = 'YinJia'
-
-import logging
 import os
 
 
@@ -20,3 +15,18 @@ def get_latest_file_path(dir_path):
     # 因为文件已经根据修改时间排序了，最新的文件会在列表的最后
     file_new = os.path.join(dir_path, lists[-1]) if len(lists) > 0 else None
     return file_new
+
+
+def get_project_path():
+    """获取项目路径"""
+    project_path = os.path.join(
+        os.path.dirname(__file__),
+        "..",
+    )
+    return project_path
+
+
+if __name__ == '__main__':
+    sample_list = ["企业无严重违法", "企业教育经费用支出（万元）", "场地面积（m2）", ]
+    reversed_list = sample_list[::-1]
+    print(reversed_list)
