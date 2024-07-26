@@ -54,6 +54,22 @@ git config http.sslVerify false
 # git执行命令时不认证
 git -c http.sslVerify=false push
 ```
+```shell
+wget https://github.com/mashirozx/Pixiv-Nginx --no-check-certificate
+--2024-07-24 10:30:46--  https://github.com/mashirozx/Pixiv-Nginx
+正在解析主机 github.com (github.com)... 127.0.0.1
+正在连接 github.com (github.com)|127.0.0.1|:443... 已连接。
+警告: “github.com” 的证书不可信。
+警告: “github.com” 的证书颁发者未知。
+证书所有者与主机名 “github.com” 不符
+已发出 HTTP 请求，正在等待回应... 200 OK
+长度：未指定 [text/html]
+正在保存至: “Pixiv-Nginx”
+
+Pixiv-Nginx                                              [ <=>                                                                                                                 ] 344.11K  1.96MB/s  用时 0.2s
+
+2024-07-24 10:30:48 (1.96 MB/s) - “Pixiv-Nginx” 已保存 [352364]
+```
 
 ### 运行loguru_demo
 
