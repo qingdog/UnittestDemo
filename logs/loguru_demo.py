@@ -44,13 +44,14 @@ def main():
     raise RuntimeError("error...")
 
 
+# logger.remove()  # 删去import logger之后自动产生的handler，不删除的话会出现重复输出的现象
+# handler_id = logger.add(sys.stderr, level="INFO") # 设置日志等级为DEBUG
 if __name__ == '__main__':
-    logger.level("DEBUG")
-    # # 移除默认的日志处理器
+    # 移除默认的日志处理器
     logger.remove()
     logger.add(sys.stdout, colorize=True,
                format="<green>{time:YYYY-MM-dd HH:mm:ss}</green> - <cyan>{file}:{line} {function}</cyan> "
-                      "<level>{level} {message} </level>")
+                      "<level>{level} {message} </level>", level="DEBUG")
 
     # 在记录每条消息之前都会进行检查rotation。如果已经存在与要创建的文件同名的文件，则通过将日期附加到其基本名称来重命名现有文件，以防止文件覆盖。
     logger.add(os.path.join(utils.myutil.get_project_path(), "logs", "info_{time:YYYYMM}.log"),
