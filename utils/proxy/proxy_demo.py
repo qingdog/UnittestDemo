@@ -20,11 +20,10 @@ def open_proxy(txt):
     """依次读取下一行放入列表中"""
     with open(txt, 'r') as file:
         ip_list = [line.strip() for line in file]
-        logger.info(f"{txt} {ip_list}")
     return ip_list
 
 
-def test_proxy(ip_port,username=None,password=None, timeout=5):
+def test_proxy(ip_port, username=None, password=None, timeout=5):
     # 要请求的URL
     url = 'https://fanyi.baidu.com/'
 
@@ -38,15 +37,23 @@ def test_proxy(ip_port,username=None,password=None, timeout=5):
 
     # 发送请求，设置5秒超时
     start_time = time.time()
+    response = None
     try:
         response = requests.get(url, proxies=proxies, timeout=timeout)
         response.encoding = response.apparent_encoding  # 解决乱码问题
         # 打印响应内容
         logger.debug(response.text)
         # 计算响应时间
+    except Timeout as e:
+        start_time -= timeout
+        logger.warning(f"{ip_port} {e}")
+    except requests.exceptions.RequestException as e:
+        start_time -= timeout
+        logger.error(f"{ip_port} {e}")
+
         response_time = time.time() - start_time
         title = None
-        if response.status_code == 200:
+        if response is not None and response.status_code == 200:
             page = response.text
             soup = BeautifulSoup(page, 'lxml')
             # if (soup.find('h1'))
@@ -54,14 +61,6 @@ def test_proxy(ip_port,username=None,password=None, timeout=5):
 
         logger.info(f"代理：{ip_port} 耗时：{response_time}{title}")
         return response_time
-    except Timeout as t:
-        # 捕获超时异常
-        logger.warning(f"{ip_port} {t}")
-        logger.debug(f"代理访问接口耗时：{time.time() - start_time}")
-    except requests.exceptions.RequestException as e:
-        # 打印其他请求异常信息
-        logger.error(f"{ip_port} {e}")
-        logger.debug(f"代理访问接口耗时：{time.time() - start_time}")
     return 0
 
 
@@ -76,6 +75,7 @@ def check_proxy(ip_list):
     """
     if not ip_list:
         return
+    logger.info(f"check_proxy: {ip_list}")
 
     for ip in ip_list:
         consumes = []
@@ -87,27 +87,9 @@ def check_proxy(ip_list):
         if consumes[0] == 0:
             continue
         avg = sum(consumes) / len(consumes)
+        logger.success(f"{ip} 平均耗时：{avg}")
         if avg > 5:
             break
-        logger.warning(f"{ip} 平均耗时：{avg}")
-        write_proxy(ip)
-
-    ip_list = open_proxy("./proxies.txt")
-    for ip in ip_list:
-        consumes = []
-        for i in range(3):
-            consume = test_proxy(ip)
-            consumes.append(consume)
-            if consume < 1:
-                if consume == 0:
-                    consumes.clear()
-                break
-        if not consumes:
-            continue
-        avg = sum(consumes) / len(consumes)
-        if avg > 5:
-            break
-        logger.warning(f"{ip} 平均耗时：{avg}")
         write_proxy(ip)
 
 
@@ -118,3 +100,5 @@ if __name__ == '__main__':
     logger.info(youdao_translate.YoudaoTranslate2024().translate("i have to go"))
 
     check_proxy(open_proxy('./proxies_test.txt'))
+    ip_list = open_proxy("./proxies.txt")
+    logger.success(ip_list)
