@@ -14,6 +14,7 @@ import unittest
 from XTestRunner import HTMLTestRunner
 
 from logs.mylogging import MyLogging
+from utils import myutil
 from utils.myutil import get_latest_file_path
 
 
@@ -80,5 +81,9 @@ if __name__ == '__main__':
         handler: logging
         if not handler.get_name():
             logging.getLogger().removeHandler(handler)
+
+    logger.add(os.path.join(myutil.get_project_path(), "logs", "info_{time:YYYYMM}.log"),
+               level="INFO", rotation="100 MB", retention="1 month")
+
     cases = unittest.defaultTestLoader.discover(MyConfig.TEST_CASE, pattern='test*.py')
     run_case(cases)

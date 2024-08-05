@@ -85,7 +85,7 @@ class TestDvd(unittest.TestCase):
     # 进行断言
     @file_data(dvd_login_yml)  # 指定具体路径的用例，读之前需先装好 pyyarm 第三方模块
     @unpack  # 数据解包
-    # @logger.catch
+    @logger.catch
     def test_login(self, title, level, user, password, code, body):  # 引用yaml用例里各标题，数量需要对得上
         """
         TestDvd.test_login
