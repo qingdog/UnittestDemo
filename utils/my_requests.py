@@ -22,7 +22,8 @@ class MyRequests:
     headers = configParser.get("request", "headers")
     body = configParser.get("request", "body")
 
-    def send_request(self, session: PoolManager, excel_data):
+    # def send_request(self, session: PoolManager, excel_data):
+    def send_request(self, session: requests.sessions.Session, excel_data):
         # 从读取的表格中获取响应的参数作为传递
         url = excel_data["url"]
         method = excel_data["method"]

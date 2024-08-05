@@ -61,9 +61,10 @@ class TestAPI(unittest.TestCase):
 
     # testData: list[dict[str, int]] = XlrdExcel(MyConfig.TESTDATA_FILE).read_data()
     # excel_data为sheet页中的一行数据，key为每一列的首行数据，value为这一行中的值
+    # @ddt.data(*testData)
     @ddt.data(*ExcelTestCaseProcessor(MyConfig.TESTDATA_FILE).read_data())
     def test_api(self, excel_data: dict):
-        """excel接口测试"""
+        """TestAPI.test_api"""
         # 发送请求
         if "url" not in excel_data:
             return
@@ -95,6 +96,7 @@ class TestAPI(unittest.TestCase):
         title = ""
         if "title" in excel_data:
             title = excel_data["title"]
+            self._testMethodDoc = title
 
         # 检查响应的Content-Type是否为JSON
         content_type = response.headers.get('Content-Type', '')
@@ -123,14 +125,14 @@ class TestAPI(unittest.TestCase):
                 ExcelTestCaseProcessor(MyConfig.TESTDATA_FILE).write_data(excel_data, value=result)
 
     def next_key(self, my_dict, current_key):
+        """从指定的key中找到下一个key"""
         keys = list(my_dict.keys())
         if current_key not in keys:
             return None  # 如果当前键不在字典中，返回None
         current_index = keys.index(current_key)
-        if current_index + 1 < len(keys):
-            return keys[current_index + 1]  # 返回下一个键
-        else:
+        if current_index + 1 >= len(keys):
             return None  # 如果当前键是最后一个，返回None
+        return keys[current_index + 1]  # 返回下一个键
 
 
 if __name__ == '__main__':

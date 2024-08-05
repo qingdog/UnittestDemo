@@ -1,9 +1,7 @@
 #!/usr/bin/env python
 # _*_ coding:utf-8 _*_
-__author__ = 'YinJia'
 
 import logging
-
 import openpyxl
 from openpyxl.styles import Font, Alignment
 
@@ -23,11 +21,11 @@ class ExcelTestCaseProcessor:
         # self.workbook = self.workbook.get_sheet_by_name(sheet_name)
         # self.workbook = self.wb.active()
 
-    def read_data(self):
+    def read_data(self) -> list[dict[str, int | str]]:
         all_data = []
         for sheet in self.workbook.sheetnames:
             work_sheet = self.workbook[sheet]
-            data = []
+            list_data = []
             row_no = 1
             row0 = None
             for row in work_sheet.iter_rows(values_only=True):
@@ -41,9 +39,9 @@ class ExcelTestCaseProcessor:
                     row_dict[self.row_number] = row_no
                     row_dict[self.sheet_name] = sheet
                     logging.debug(row_dict)
-                    data.append(row_dict)
+                    list_data.append(row_dict)
                 row_no += 1
-            all_data.extend(data)
+            all_data.extend(list_data)
 
         return all_data
 

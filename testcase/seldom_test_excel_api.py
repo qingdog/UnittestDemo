@@ -8,7 +8,7 @@ from x_test_runner_send_main import MyConfig
 
 
 @ddt.ddt
-class TestAPI(unittest.TestCase):
+class SeldomTestAPI(unittest.TestCase):
     # testData: list[dict[str, int]] = XlrdExcel(MyConfig.TESTDATA_FILE).read_data()
 
     excel_data: list[dict[str, int | str]] = ExcelTestCaseProcessor(MyConfig.TESTDATA_FILE).read_data()

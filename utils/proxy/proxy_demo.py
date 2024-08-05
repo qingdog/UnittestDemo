@@ -23,9 +23,16 @@ def open_proxy(txt):
     return ip_list
 
 
-def test_proxy(ip_port, username=None, password=None, timeout=5):
-    # 要请求的URL
-    url = 'https://fanyi.baidu.com/'
+def test_proxy(ip_port, username=None, password=None, url='https://fanyi.baidu.com/', timeout=5):
+    """
+    测试单个代理
+    :param ip_port: 127.0.0.1:80
+    :param username: 代理用户名
+    :param password: 代理密码
+    :param url: 要请求的URL
+    :param timeout: 请求超时秒数
+    :return: 请求响应耗时
+    """
 
     login = ""
     if username and password:
@@ -51,17 +58,16 @@ def test_proxy(ip_port, username=None, password=None, timeout=5):
         start_time -= timeout
         logger.error(f"{ip_port} {e}")
 
-        response_time = time.time() - start_time
-        title = None
-        if response is not None and response.status_code == 200:
-            page = response.text
-            soup = BeautifulSoup(page, 'lxml')
-            # if (soup.find('h1'))
-            title = " 标题：" + soup.find('h1').text if soup.find('h1') else ""
+    response_time = time.time() - start_time
+    title = None
+    if response is not None and response.status_code == 200:
+        page = response.text
+        soup = BeautifulSoup(page, 'lxml')
+        # if (soup.find('h1'))
+        title = " 标题：" + soup.find('h1').text if soup.find('h1') else ""
 
-        logger.info(f"代理：{ip_port} 耗时：{response_time}{title}")
-        return response_time
-    return 0
+    logger.info(f"代理：{ip_port} 耗时：{response_time}{title}")
+    return response_time
 
 
 def write_proxy(proxy):

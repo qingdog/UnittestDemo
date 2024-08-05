@@ -7,6 +7,7 @@ import datetime
 import functools
 import logging
 import os
+import re
 import sys
 import time
 import unittest
@@ -21,19 +22,28 @@ from utils.mail_util import send_mail
 
 
 class MyConfig:
-    BASE_DIR = os.path.dirname(__file__)
-    sys.path.append(BASE_DIR)
+    FILE_DIR = os.path.dirname(__file__)
+    sys.path.append(FILE_DIR)
 
     # 配置文件
-    CONFIG_INI = os.path.join(BASE_DIR, "config.ini")
+    CONFIG_INI = os.path.join(FILE_DIR, "config.ini")
     # 测试数据
-    TESTDATA_DIR = os.path.join(BASE_DIR, "testdata")
-    # 测试用例模板文件
-    TESTDATA_FILE = os.path.join(TESTDATA_DIR, "excel_test_case.xlsx")
+    TESTDATA_DIR = os.path.join(FILE_DIR, "testdata")
+
     # 测试用例报告
-    TESTREPORT_DIR = os.path.join(BASE_DIR, "reports")
+    TESTREPORT_DIR = os.path.join(FILE_DIR, "reports")
     # 测试用例程序文件
-    TEST_CASE = os.path.join(BASE_DIR, "testcase")
+    TEST_CASE = os.path.join(FILE_DIR, "testcase")
+
+    # 测试用例模板文件
+    # 首先尝试在TESTDATA_DIR中查找.xlsx文件
+    xlsx_files = [file for file in os.listdir(TESTDATA_DIR) if re.search("\\.xlsx?$", file)]
+    # 如果在TESTDATA_DIR中没有找到，则在FILE_DIR中查找
+    if not xlsx_files:
+        xlsx_files = [file for file in os.listdir(FILE_DIR) if file.endswith('.xlsx')]
+    # 如果找到了.xlsx文件，则设置TESTDATA_FILE
+    # if xlsx_files:
+    TESTDATA_FILE = os.path.join(TESTDATA_DIR if xlsx_files else FILE_DIR, xlsx_files[0])
 
 
 class MyTestResult(_TestResult):
@@ -138,5 +148,6 @@ if __name__ == "__main__":
     logging.getLogger().setLevel(logging.INFO)
 
     """加载testcase目录下所有test开头的py文件"""
-    cases = unittest.defaultTestLoader.discover(MyConfig.TEST_CASE, pattern='seldom_test*.py')
+    # cases = unittest.defaultTestLoader.discover(MyConfig.TEST_CASE, pattern='seldom_test*.py')
+    cases = unittest.defaultTestLoader.discover(MyConfig.TEST_CASE, pattern='test*.py')
     run_case(cases)
