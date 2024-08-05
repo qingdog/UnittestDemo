@@ -49,9 +49,11 @@ def main():
 if __name__ == '__main__':
     # 移除默认的日志处理器
     logger.remove()
+    # backtrace 确定异常跟踪是否应该延伸到捕获错误的点之外，以便于调试。
+    # diagnose 确定变量值是否应在异常跟踪中显示。在生产环境中应将其设置为 False，以避免泄露敏感信息。
     logger.add(sys.stdout, colorize=True,
                format="<green>{time:YYYY-MM-dd HH:mm:ss}</green> - <cyan>{file}:{line} {function}</cyan> "
-                      "<level>{level} {message} </level>", level="DEBUG")
+                      "<level>{level} {message} </level>", level="DEBUG", backtrace=False, diagnose=True)
 
     # 在记录每条消息之前都会进行检查rotation。如果已经存在与要创建的文件同名的文件，则通过将日期附加到其基本名称来重命名现有文件，以防止文件覆盖。
     logger.add(os.path.join(utils.myutil.get_project_path(), "logs", "info_{time:YYYYMM}.log"),

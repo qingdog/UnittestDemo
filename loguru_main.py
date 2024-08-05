@@ -82,8 +82,13 @@ if __name__ == '__main__':
         if not handler.get_name():
             logging.getLogger().removeHandler(handler)
 
+    # 移除默认的日志处理器
+    logger.remove()
+    logger.add(sys.stdout, colorize=True, level="DEBUG", backtrace=False, diagnose=True,
+               format="<green>{time:YYYY-MM-dd HH:mm:ss}</green> - <cyan>{file}:{line} {function}</cyan> "
+                      "<level>{level} {message} </level>")
     logger.add(os.path.join(myutil.get_project_path(), "logs", "info_{time:YYYYMM}.log"),
-               level="INFO", rotation="100 MB", retention="1 month")
-
+               level="INFO", rotation="100 MB", retention="1 month", backtrace=False, diagnose=True)
+    # 需要在test开头的py文件的test方法中加上装饰器配合使用
     cases = unittest.defaultTestLoader.discover(MyConfig.TEST_CASE, pattern='test*.py')
     run_case(cases)

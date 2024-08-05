@@ -1,0 +1,68 @@
+2024-08-05 17:26:39.019 | ERROR    | ddt:wrapper:221 - An error has been caught in function 'wrapper', process 'MainProcess' (276), thread 'MainThread' (10364):
+Traceback (most recent call last):
+
+  File "D:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\ddt.py", line 221, in wrapper
+    return func(self, *args, **kwargs)
+           │    │      │       └ {'title': '正确用户名，密码', 'level': 'H', 'user': '18813537806', 'password': '18813537806', 'code': 200, 'body': 2001}
+           │    │      └ ()
+           │    └ <test_dvd.TestDvd testMethod=test_login_1>
+           └ <function TestDvd.test_login at 0x0000023279D6AC00>
+
+  File "D:\mytest\UnittestDemo\testcase\test_dvd.py", line 104, in test_login
+    self.assertIn(str(body), res.text)
+    │    │            │      │   └ <property object at 0x0000023278E35210>
+    │    │            │      └ <Response [200]>
+    │    │            └ 2001
+    │    └ <function TestCase.assertIn at 0x0000023276AE9F80>
+    └ <test_dvd.TestDvd testMethod=test_login_1>
+
+  File "D:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\unittest\case.py", line 1152, in assertIn
+    self.fail(self._formatMessage(msg, standardMsg))
+    │    │    │    │              │    └ '\'2001\' not found in \'{"code":200,"response":"kr9at%2bpDrRHEoabF%2bGeoIP5pbI55%2f9ASDBsxc9iN3Wo%2f5HQ0mguq5zDFOvD%2br7edy%...
+    │    │    │    │              └ None
+    │    │    │    └ <function TestCase._formatMessage at 0x0000023276AE9580>
+    │    │    └ <test_dvd.TestDvd testMethod=test_login_1>
+    │    └ <function TestCase.fail at 0x0000023276AE93A0>
+    └ <test_dvd.TestDvd testMethod=test_login_1>
+  File "D:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\unittest\case.py", line 715, in fail
+    raise self.failureException(msg)
+          │    │                └ '\'2001\' not found in \'{"code":200,"response":"kr9at%2bpDrRHEoabF%2bGeoIP5pbI55%2f9ASDBsxc9iN3Wo%2f5HQ0mguq5zDFOvD%2br7edy%...
+          │    └ <class 'AssertionError'>
+          └ <test_dvd.TestDvd testMethod=test_login_1>
+
+AssertionError: '2001' not found in '{"code":200,"response":"kr9at%2bpDrRHEoabF%2bGeoIP5pbI55%2f9ASDBsxc9iN3Wo%2f5HQ0mguq5zDFOvD%2br7edy%2fpJshSdnJ3WLZKxEL2AAmxIO258LljcS%2fGIeWBx%2bzvY%2bMnFcOxkF1MJBgUieROdPN8iFG107CKoNhwVxDz%2fela9ubal74%2f7FZSLNgdUAHlw9D4Rd4%2fkySb2025olETj","current_time":"2024-08-05 17:26:39"}'
+2024-08-05 17:26:39.139 | INFO     | __main__:run_case:68 - 报告路径：D:\mytest\UnittestDemo\reports\result-20240805.html
+2024-08-05 17:31:06.519 | ERROR    | ddt:wrapper:221 - An error has been caught in function 'wrapper', process 'MainProcess' (676), thread 'MainThread' (5296):
+Traceback (most recent call last):
+
+  File "D:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\ddt.py", line 221, in wrapper
+    return func(self, *args, **kwargs)
+           │    │      │       └ {'title': '正确用户名，密码', 'level': 'H', 'user': '18813537806', 'password': '18813537806', 'code': 200, 'body': 2001}
+           │    │      └ ()
+           │    └ <test_dvd.TestDvd testMethod=test_login_1>
+           └ <function TestDvd.test_login at 0x0000020431E071A0>
+
+  File "D:\mytest\UnittestDemo\testcase\test_dvd.py", line 104, in test_login
+    self.assertIn(str(body), res.text)
+    │    │            │      │   └ <property object at 0x0000020430ED5300>
+    │    │            │      └ <Response [200]>
+    │    │            └ 2001
+    │    └ <function TestCase.assertIn at 0x000002042EB8E020>
+    └ <test_dvd.TestDvd testMethod=test_login_1>
+
+  File "D:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\unittest\case.py", line 1152, in assertIn
+    self.fail(self._formatMessage(msg, standardMsg))
+    │    │    │    │              │    └ '\'2001\' not found in \'{"code":200,"response":"kr9at%2bpDrRHEoabF%2bGeoIP5pbI55%2f9ASDBsxc9iN3Wo%2f5HQ0mguq5zDFOvD%2br7edy%...
+    │    │    │    │              └ None
+    │    │    │    └ <function TestCase._formatMessage at 0x000002042EB8D620>
+    │    │    └ <test_dvd.TestDvd testMethod=test_login_1>
+    │    └ <function TestCase.fail at 0x000002042EB8D440>
+    └ <test_dvd.TestDvd testMethod=test_login_1>
+  File "D:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\unittest\case.py", line 715, in fail
+    raise self.failureException(msg)
+          │    │                └ '\'2001\' not found in \'{"code":200,"response":"kr9at%2bpDrRHEoabF%2bGeoIP5pbI55%2f9ASDBsxc9iN3Wo%2f5HQ0mguq5zDFOvD%2br7edy%...
+          │    └ <class 'AssertionError'>
+          └ <test_dvd.TestDvd testMethod=test_login_1>
+
+AssertionError: '2001' not found in '{"code":200,"response":"kr9at%2bpDrRHEoabF%2bGeoIP5pbI55%2f9ASDBsxc9iN3Wo%2f5HQ0mguq5zDFOvD%2br7edy%2fpJshSdnJ3WLZKxEL2AAmxIO258LljcS%2fGIeWBx%2bzvY%2bMnFcOxkF1MJBgUieROdPN8iFG107CKoNhwVxDz%2fela9ubal74%2f7FZSLNgdUAHlw9D4Rd4%2fkySb2025olETj","current_time":"2024-08-05 17:31:07"}'
+2024-08-05 17:31:06.611 | INFO     | __main__:run_case:68 - 报告路径：D:\mytest\UnittestDemo\reports\result-20240805.html
