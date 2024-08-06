@@ -129,17 +129,17 @@ def run_case(all_case, report_path=MyConfig.TESTREPORT_DIR):
     config_smtp = config_p.items("smtp")
     # 创建一个字典来存储SMTP配置
     smtp_config = {key: value for key, value in config_smtp}
-    if "password" in smtp_config and smtp_config["password"] != "":
-        # send_mail(latest_file_path, smtp_config)
-        # 使用XTestRunner发送邮件
-        runner.send_email(
-            user=smtp_config["user"],
-            password=smtp_config["password"],
-            host=smtp_config["smtp_host"],
-            to="1759765836@qq.com",
-            attachments=latest_file_path,
-            ssl=True
-        )
+    # if "password" in smtp_config and smtp_config["password"] != "":
+    #     # send_mail(latest_file_path, smtp_config)
+    #     # 使用XTestRunner发送邮件
+    #     runner.send_email(
+    #         user=smtp_config["user"],
+    #         password=smtp_config["password"],
+    #         host=smtp_config["smtp_host"],
+    #         to="1759765836@qq.com",
+    #         attachments=latest_file_path,
+    #         ssl=True
+    #     )
 
 
 if __name__ == "__main__":
@@ -148,6 +148,6 @@ if __name__ == "__main__":
     logging.getLogger().setLevel(logging.INFO)
 
     """加载testcase目录下所有test开头的py文件"""
-    # cases = unittest.defaultTestLoader.discover(MyConfig.TEST_CASE, pattern='seldom_test*.py')
-    cases = unittest.defaultTestLoader.discover(MyConfig.TEST_CASE, pattern='test*.py')
+    cases = unittest.defaultTestLoader.discover(MyConfig.TEST_CASE, pattern='loguru_test*.py')
+    # cases = unittest.defaultTestLoader.discover(MyConfig.TEST_CASE, pattern='test*.py')
     run_case(cases)

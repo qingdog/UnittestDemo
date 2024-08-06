@@ -1,5 +1,6 @@
 import asyncio
 import json
+import os
 import platform
 from collections import namedtuple
 from typing import Callable, Coroutine, Any, Awaitable
@@ -8,57 +9,65 @@ import aiomysql
 
 from databases.qiye_base_business import QiyeBaseBusiness
 from logs.mylogging import MyLogging
+from utils import myutil
 
 
 class AioMySQLClient:
     _instance = None
     pool: aiomysql.Pool = None
+    _lock = asyncio.Lock()
 
     @classmethod
     async def get_instance(cls):
         if cls._instance is None:
-            cls._instance = cls()
-            await cls._instance.connect()
+            async with cls._lock:
+                if cls._instance is None:
+                    cls._instance = cls()
+                    await cls._instance.connect()
         return cls._instance
 
     # 读取主配置文件
-    with open('../config.json', 'r') as file:
-        conf = json.load(file)
-        config = conf["database"]
-        if conf["env"] == "test":
-            # 读取测试配置文件
-            with open('../config_test.json', 'r') as f:
-                config_test = json.load(f)["database"]
-            # 使用测试配置文件中的值覆盖主配置文件中的空字段
-            for key, value in config_test.items():
-                if key not in config or not config[key]:
-                    config[key] = value
+    @staticmethod
+    def load_config():
+        with open(os.path.join(myutil.get_project_path(), './config.json'), 'r') as file:
+            conf = json.load(file)
+            config = conf["database"]
+            if conf["env"] == "test":
+                # 读取测试配置文件
+                with open(os.path.join(myutil.get_project_path(), './config_test.json'), 'r') as f:
+                    config_test = json.load(f)["database"]
+                # 使用测试配置文件中的值覆盖主配置文件中的空字段
+                for key, value in config_test.items():
+                    if key not in config or not config[key]:
+                        config[key] = value
+        return config
 
-    def __init__(self, host=config['host'], port=config['port'], user=config['user'], password=config['password'],
-                 db=config['db']):
-        self.host = host
-        self.port = port
-        self.user = user
-        self.password = password
-        self.db = db
+    config = load_config()
 
-    async def connect(self):
-        MyLogging.getLogger("database").info("database connecting...")
+    # def __init__(self):
+    #     self.config = self.load_config()
+
+    async def connect(self, host=config['host'], port=config['port'], user=config['user'], password=config['password'],
+                      db=config['db'], loop=None):
+        # MyLogging.getLogger("database").info("database connecting...")
         self.pool = await aiomysql.create_pool(
-            host=self.host,
-            port=self.port,
-            user=self.user,
-            password=self.password,
-            db=self.db,
+            host=host,
+            port=port,
+            user=user,
+            password=password,
+            db=db,
+            loop=loop
         )
+        return self
 
     def close(self):
         if self.pool:
             self.pool.close()
+            self.pool = None
 
     async def execute_query(self, sql, args=None):
-        # if self.pool is None:
-        #     await self.connect()
+        if self.pool is None:
+            await self.connect()
         async with self.pool.acquire() as conn:
             # cursor: aiomysql.cursors.Cursor = await self.connection.cursor()
             # 异步的上下文管理 游标对象
@@ -120,33 +129,57 @@ class AioMySQLClient:
                         break
                     yield results
 
+    new_event_loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(new_event_loop)
+
     @classmethod
-    def run(cls, main: Callable[[], Awaitable[None]]):
+    def run(cls, main: Callable[[], Coroutine[Any, Any, tuple]]):
         """执行异步函数"""
         # 处理win平台 asyncio.run() 执行完所产生的异常
         if platform.system() == 'Windows':
             async def win_shutdown_default_executor():
                 await asyncio.BaseEventLoop.shutdown_default_executor()
                 await asyncio.sleep(0.25)
+                # await asyncio.sleep(3)
 
             asyncio.BaseEventLoop.originalShutdownFunc = win_shutdown_default_executor
-            # asyncio.BaseEventLoop.set_exception_handler(win_shutdown_default_executor)
+            # asyncio.BaseEventLoop.set_exception_handler(self=cls.new_event_loop, handler=win_shutdown_default_executor)
 
         _is_use_old_api = False
         if _is_use_old_api:
-            _loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(_loop)
-            _loop.run_until_complete(main())
+            cls.new_event_loop.run_until_complete(main())
         else:
             # 运行主函数
             asyncio.run(main())
 
 
+async def main():
+    aiomysql_client = await AioMySQLClient.get_instance()
+    try:
+        result = await aiomysql_client.select('qiye_declareable_project',
+                                              where="entity_id = '191441300717867103C' and report_deadline_time is not null")
+        for r in result:
+            print(r)
+        return result
+    except Exception as e:
+        raise RuntimeError(e)
+        # self.fail(e)
+    finally:
+        aiomysql_client.close()
+
+
 # 使用示例
 if __name__ == '__main__':
+    asyncio.run(main())
+
+
     async def query():
+        aiomysql_client = await AioMySQLClient().connect()
+        # result: tuple = await aiomysql_client.select('qiye_declareable_project', where="entity_id =
+        # '91441300717867103C' and report_deadline_time is not null")
+
         # 创建MySQLClient实例
-        aiomysql_client = await AioMySQLClient.get_instance()
+        # aiomysql_client = await AioMySQLClient.get_instance()
         # await AioMySQLClient().connect()
 
         # 查询数据
@@ -162,8 +195,9 @@ if __name__ == '__main__':
         # 删除数据
         # await mysql_client.delete('table_name', where='column1 = "value1"')
 
-        mysql_client = await AioMySQLClient.get_instance()
-        print(id(mysql_client))
+        mysql_client = aiomysql_client
+        """mysql_client = await AioMySQLClient.get_instance()
+        print(id(mysql_client))"""
 
         result_business = await mysql_client.execute_query("select * from qiye_base_business limit 10")
         print(result_business[0]["company"])

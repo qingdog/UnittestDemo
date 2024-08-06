@@ -90,5 +90,5 @@ if __name__ == '__main__':
     logger.add(os.path.join(myutil.get_project_path(), "logs", "info_{time:YYYYMM}.log"),
                level="INFO", rotation="100 MB", retention="1 month", backtrace=False, diagnose=True)
     # 需要在test开头的py文件的test方法中加上装饰器配合使用
-    cases = unittest.defaultTestLoader.discover(MyConfig.TEST_CASE, pattern='test*.py')
+    cases = unittest.defaultTestLoader.discover(MyConfig.TEST_CASE, pattern='loguru_test*.py')
     run_case(cases)
