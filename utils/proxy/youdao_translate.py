@@ -23,23 +23,29 @@ class YoudaoTranslate2024(object):
         }
 
     # 该函数用于封装data
-    def make_data(self):
-        e = str(int(time.time() * 1000))
-        t = 'fsdsogkndfokasodnaso'
-        u = "fanyideskweb"
-        d = "webfanyi"
-        string = 'client={u}&mysticTime={e}&product={d}&key={t}'.format(u=u, e=e, d=d, t=t)
+    def get_mysticTime_sign(self):
+        mysticTime = str(int(time.time() * 1000))
+        secretKey = 'fsdsogkndfokasodnaso'
+        client = "fanyideskweb"
+        product = "webfanyi"
+        # string = 'client={u}&mysticTime={e}&product={d}&key={t}'.format(u=u, e=e, d=d, t=t)
+        string = f'client={client}&mysticTime={mysticTime}&product={product}&key={secretKey}'
         sign = hashlib.md5(string.encode()).hexdigest()
-        return e, sign
+        return mysticTime, sign
 
     def md5_digest(self, e):
         return hashlib.md5(e.encode()).digest()  # .digest()返回二进制的值
 
     def encrypt_data(self, t):
-        o = 'ydsecret://query/key/B*RGygVywfNBwpmBaZg*WT7SIOUP2T0C9WHMZN39j^DAdaZhAnxvGcCY6VYFwnHl'
-        n = 'ydsecret://query/iv/C@lZe2YzHtZ2CYgaXKSVfsb7Y4QWHjITPPZ0nQp87fBeJ!Iv6v^6fvi2WN@bYpJ4'
-        a = self.md5_digest(o)[:16]  # 取前16位
-        i = self.md5_digest(n)[:16]  # 取前16位
+        """解码翻译后文本
+           https://dict.youdao.com/webtranslate/key?keyid=webfanyi-key-getter&sign=34766a2ab8e0da97617743bf24355370&client=fanyideskweb&
+           product=webfanyi&appVersion=1.0.0&vendor=web&pointParam=client,mysticTime,product&mysticTime=1722910162533&keyfrom=fanyi.web&
+           mid=1&screen=1&model=1&network=wifi&abtest=0&yduuid=abcdefg
+        """
+        aesKey = 'ydsecret://query/key/B*RGygVywfNBwpmBaZg*WT7SIOUP2T0C9WHMZN39j^DAdaZhAnxvGcCY6VYFwnHl'
+        aesIv = 'ydsecret://query/iv/C@lZe2YzHtZ2CYgaXKSVfsb7Y4QWHjITPPZ0nQp87fBeJ!Iv6v^6fvi2WN@bYpJ4'
+        a = self.md5_digest(aesKey)[:16]  # 取前16位
+        i = self.md5_digest(aesIv)[:16]  # 取前16位
         r = AES.new(a, AES.MODE_CBC, i)  # 创建一个AES对象（密钥，模式，偏移量）aes.MODE_CBC是加密模式,a表示密钥，i表示偏移量
         s = r.decrypt(base64.urlsafe_b64decode(t))  # 解码为原始的字节串
         return unpad(s, AES.block_size).decode('utf-8')  # AES.block_size = 16 ,解密后去掉填充的字符 返回解密后的字符串
@@ -48,14 +54,13 @@ class YoudaoTranslate2024(object):
         """
         有道翻译逆向
         https://blog.csdn.net/qq_44990881/article/details/136142933
-        https://blog.csdn.net/ck784101777/article/details/104340693
         :param input_text: 请输入待翻译文本
         :param proxies: proxies={"https": f"http://127.0.0.1:80"}
         :return: 翻译的结果
         """
         if proxies is str:
             proxies = {"https": f"http://{proxies}"}
-        e, sign = self.make_data()
+        mysticTime, sign = self.get_mysticTime_sign()
         # 定义data
         data = {
             'i': input_text,
@@ -69,7 +74,7 @@ class YoudaoTranslate2024(object):
             'appVersion': '1.0.0',
             'vendor': 'web',
             'pointParam': 'client,mysticTime,product',
-            'mysticTime': e,
+            'mysticTime': mysticTime,
             'keyfrom': 'fanyi.web',
             'mid': '1',
             'screen': '1',
@@ -83,8 +88,12 @@ class YoudaoTranslate2024(object):
         # "tran":"苹果"}],"wfs":[{"wf":{"name":"复数","value":"apples"}}],"return-phrase":"apple",
         # "usspeech":"apple&type=2"}}},"translateResult":[[{"tgt":"苹果","src":"apple","tgtPronounce":"pín guŏ"}]],
         # "type":"en2zh-CHS"}
-        response = requests.post(url=self.url, data=data, headers=self.headers, proxies=proxies).text
+        response_text = requests.post(url=self.url, data=data, headers=self.headers, proxies=proxies).text
 
-        result = self.encrypt_data(response)
+        result = self.encrypt_data(response_text)
         result = json.loads(result)['translateResult'][0][0]['tgt']
         return result
+
+
+if __name__ == '__main__':
+    print(YoudaoTranslate2024().translate())
