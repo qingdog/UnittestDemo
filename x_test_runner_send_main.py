@@ -148,6 +148,6 @@ if __name__ == "__main__":
     logging.getLogger().setLevel(logging.INFO)
 
     """加载testcase目录下所有test开头的py文件"""
-    cases = unittest.defaultTestLoader.discover(MyConfig.TEST_CASE, pattern='loguru_test*.py')
-    # cases = unittest.defaultTestLoader.discover(MyConfig.TEST_CASE, pattern='test*.py')
+    # cases = unittest.defaultTestLoader.discover(MyConfig.TEST_CASE, pattern='loguru_test*.py')
+    cases = unittest.defaultTestLoader.discover(MyConfig.TEST_CASE, pattern='test*.py')
     run_case(cases)

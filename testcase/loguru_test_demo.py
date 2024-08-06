@@ -59,10 +59,11 @@ class TestDemo(unittest.TestCase):
         else:
             AioMySQLClient.run(self.main)
 
+    @logger.catch(reraise=True)
     def test_catch_exception(self):
         """@logger.catch(reraise=True)捕获异常"""
 
-        return 1 / 1
+        return 1 / 0
 
     async def main(self):
         aiomysql_client = await AioMySQLClient.get_instance()
