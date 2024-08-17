@@ -60,10 +60,10 @@ class AioMySQLClient:
         )
         return self
 
-    def close(self):
+    async def close(self):
         if self.pool:
             self.pool.close()
-            self.pool = None
+            await self.pool.wait_closed()
 
     async def execute_query(self, sql, args=None):
         if self.pool is None:

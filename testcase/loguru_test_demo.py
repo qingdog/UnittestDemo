@@ -68,8 +68,8 @@ class TestDemo(unittest.TestCase):
     async def main(self):
         aiomysql_client = await AioMySQLClient.get_instance()
         try:
-            result = await aiomysql_client.select('qiye_declareable_project',
-                                                  where="entity_id = '191441300717867103C' and report_deadline_time is not null")
+            result = await self.aiomysql_client.select('qiye_declareable_project',
+                                                       where="entity_id = '191441300717867103C' and report_deadline_time is not null")
             for r in result:
                 print(r)
             return result
@@ -77,13 +77,13 @@ class TestDemo(unittest.TestCase):
             self.fail(e)
         finally:
             i = 1
-            aiomysql_client.close()
+            # aiomysql_client.close()
 
     # @logger.catch(reraise=True)
     async def query2(self):
-        aiomysql_client = await AioMySQLClient().connect()
+        aiomysql_client = await AioMySQLClient.get_instance()
         result: tuple = await aiomysql_client.select('qiye_declareable_project',
-                                                     where="entity_id = '11441300717867103C' and report_deadline_time is not null")
+                                                          where="entity_id = '11441300717867103C' and report_deadline_time is not null")
         if len(result) == 0:
             self.fail("没有查到可申报项目！")
         return result
@@ -94,3 +94,17 @@ class TestDemo(unittest.TestCase):
         result: tuple = await aiomysql_client.select('qiye_declareable_project',
                                                      where="entity_id = '91441300717867103C' and report_deadline_time is not null")
         return result
+
+    aiomysql_client: AioMySQLClient = AioMySQLClient()
+
+    # def tearDown(self):
+    #     self.aiomysql_client.close()
+
+    @classmethod
+    def setUpClass(cls):
+        AioMySQLClient().connect()
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.aiomysql_client.close()
+        pass
