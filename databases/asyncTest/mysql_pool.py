@@ -43,17 +43,19 @@ class MySQLPool:
 
 
 # 使用示例
-async def main():
-    mysql_pool = MySQLPool(host='192.168.50.205', port=3306, user='liqi_qiye_test', password='cABbY6rmS2LDtKPN', db='liqi_qiye_test')
-    await mysql_pool.init_pool()
+if __name__ == '__main__':
+    async def main():
+        mysql_pool = MySQLPool(host='192.168.50.205', port=3306, user='liqi_qiye_test', password='cABbY6rmS2LDtKPN',
+                               db='liqi_qiye_test')
+        await mysql_pool.init_pool()
 
-    # 执行查询
-    result = await mysql_pool.execute("SELECT 10")
-    print(result)
+        # 执行查询
+        result = await mysql_pool.execute("SELECT 10")
+        print(result)
 
-    # 关闭连接池
-    await mysql_pool.close()
+        # 关闭连接池
+        await mysql_pool.close()
 
 
-loop = asyncio.get_event_loop()
-loop.run_until_complete(main())
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())

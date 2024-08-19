@@ -133,24 +133,22 @@ class AioMySQLClient:
     asyncio.set_event_loop(new_event_loop)
 
     @classmethod
-    def run(cls, main: Callable[[], Coroutine[Any, Any, tuple]]):
+    def run(cls, run_main: Callable[[], Coroutine[Any, Any, Any]], is_old_run=True):
         """执行异步函数"""
-        # 处理win平台 asyncio.run() 执行完所产生的异常
-        if platform.system() == 'Windows':
-            async def win_shutdown_default_executor():
-                await asyncio.BaseEventLoop.shutdown_default_executor()
-                await asyncio.sleep(0.25)
-                # await asyncio.sleep(3)
-
-            asyncio.BaseEventLoop.originalShutdownFunc = win_shutdown_default_executor
-            # asyncio.BaseEventLoop.set_exception_handler(self=cls.new_event_loop, handler=win_shutdown_default_executor)
-
-        _is_use_old_api = False
-        if _is_use_old_api:
-            cls.new_event_loop.run_until_complete(main())
+        if is_old_run:
+            cls.new_event_loop.run_until_complete(run_main())
         else:
+            # 处理win平台 asyncio.run() 执行完所产生的异常
+            if platform.system() == 'Windows':
+                async def win_shutdown_default_executor():
+                    await asyncio.BaseEventLoop.shutdown_default_executor()
+                    await asyncio.sleep(0.25)
+                    # await asyncio.sleep(3)
+
+                asyncio.BaseEventLoop.originalShutdownFunc = win_shutdown_default_executor
+                # asyncio.BaseEventLoop.set_exception_handler(self=cls.new_event_loop, handler=win_shutdown_default_executor)
             # 运行主函数
-            asyncio.run(main())
+            asyncio.run(run_main())
 
 
 async def main():
@@ -160,12 +158,13 @@ async def main():
                                               where="entity_id = '191441300717867103C' and report_deadline_time is not null")
         for r in result:
             print(r)
-        return result
+
     except Exception as e:
         raise RuntimeError(e)
         # self.fail(e)
     finally:
-        aiomysql_client.close()
+        await aiomysql_client.close()
+    return result
 
 
 # 使用示例
@@ -209,6 +208,8 @@ if __name__ == '__main__':
         async for row in mysql_client.async_for_cursor(sql="select * from qiye_declareable_project limit 2"):
             print(row)
 
+        return result
+
         # query = "select * from qiye_base_business limit 200"
         # #async for row in mysql_client.fetchmany_until_over(query, 'zhang', '23'):
         # async for rows in mysql_client.fetchmany_until_over(query):
@@ -225,4 +226,4 @@ if __name__ == '__main__':
     #         print(i)
     # AioMySQLClient.run(main=querys)
 
-    AioMySQLClient.run(main=query)
+    AioMySQLClient.run(run_main=query)

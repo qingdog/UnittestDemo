@@ -92,4 +92,4 @@ if __name__ == '__main__':
             no += 1
 
 
-    AioMySQLClient.run(main=query)
+    AioMySQLClient.run(run_main=query)
