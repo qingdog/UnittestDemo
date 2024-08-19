@@ -81,18 +81,20 @@ class MyLogging:
         # 根据name单独设置一个logger
         if logger_name != "":
             return cls(logger_name, logger_level, filename).logger
-        # 使用当前文件名获取一个logger
         if cls.logger is None:
+            # 使用当前文件名获取一个logger
             logger_name = os.path.basename(__file__)
             cls.logger = cls(logger_name, logger_level, filename).logger
-            # 不继承root logger，无需保持一致，使用独立的自定义格式输出日志
+            # 不继承root logger，不保持不同库的logging之间的日志格式一致，这里的logger使用独立的自定义格式输出日志
             cls.logger.parent = None
         return cls.logger
 
     def __init__(self, logger_name="", logger_level=logging.DEBUG, filename=""):
         """在控制台打印日志和记录日志到文件"""
-        # 文件的命名,去掉.py
-        filename = filename if re.search(".py$", filename) is None else f"_{filename[0:-3]}"
+        logger_name = logger_name if re.search(".py$", logger_name) is None else f"{logger_name[0:-3]}"
+
+        # 文件的命名,去掉.log
+        filename = filename if re.search(".log$", filename) is None else f"_{filename[0:-4]}"
         self._logging_filename = f"{self._logging_filename}{filename}.log"
         self._logging_filepath = os.path.join(os.path.dirname(__file__), self._logging_filename)
 
@@ -148,5 +150,5 @@ if __name__ == '__main__':
     # mylogger2.critical("mylogger2")
 
     MyLogging.getLogger("my", 10, filename="mylogging.py").warning("this is warning mylogging.py")
-    logging.getLogger("mylogging.py2").warning("this is warning...")
+    logging.getLogger("mylogging").warning("this is warning...")
     logging.getLogger().warning("\n132")

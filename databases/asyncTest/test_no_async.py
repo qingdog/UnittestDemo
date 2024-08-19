@@ -37,9 +37,10 @@ class TestNoAsync(unittest.TestCase):
     def test_dd(self, title, level, user):
         async def query():
             self.aiomysql_client = await AioMySQLClient().get_instance()
-            result: tuple = await self.aiomysql_client.execute_query("SELECT * FROM qiye_declareable_project WHERE "
-                                                                     "project_name=%s limit 2", user)
+            query_result: tuple = await self.aiomysql_client.execute_query(
+                "SELECT * FROM qiye_declareable_project WHERE project_name=%s limit 2", user)
+            self.assertIsNot(len(query_result), 0)
 
-            print(result)
+            logging.info(query_result)
 
         AioMySQLClient.run(run_main=query)

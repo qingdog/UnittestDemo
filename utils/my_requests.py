@@ -10,7 +10,9 @@ import os, sys, json
 import requests
 import configparser as configparser
 
+import urllib3
 from urllib3 import PoolManager
+from urllib3.exceptions import SSLError
 
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
@@ -40,9 +42,16 @@ class MyRequests:
 
         body = ast.literal_eval(json.dumps(excel_data["body"])) if excel_data["body"] else eval(json.dumps(self.body))
 
-        # 不忽略SSL证书验证
-        # requests.packages.urllib3.disable_warnings(category=InsecureRequestWarning)
-        response = session.request(method=method, url=url, headers=headers, data=body, verify=True)
+        try:
+            response = session.request(method=method, url=url, headers=headers, data=body, verify=True)
+        except requests.exceptions.SSLError as e:
+            # 忽略SSL证书验证
+            # requests.packages.urllib3.disable_warnings(category=InsecureRequestWarning)
+            response = session.request(method=method, url=url, headers=headers, data=body, verify=False)
+            logging.getLogger("mylogging").warning(f"警告 未经过证书验证请求：{url}")
+        except Exception as e:
+            raise e
+
         return response
 
 

@@ -1,5 +1,6 @@
 import asyncio
 import json
+import logging
 import os
 import platform
 from collections import namedtuple
@@ -65,7 +66,8 @@ class AioMySQLClient:
             self.pool.close()
             await self.pool.wait_closed()
 
-    async def execute_query(self, sql, args=None):
+    async def execute_query(self, sql, *args):
+
         if self.pool is None:
             await self.connect()
         async with self.pool.acquire() as conn:
@@ -73,10 +75,19 @@ class AioMySQLClient:
             # 异步的上下文管理 游标对象
             async with conn.cursor(aiomysql.DictCursor) as cursor:
                 cursor: aiomysql.Cursor
+                self.show_sql_log(sql, args)
                 await cursor.execute(sql, args)
                 result: tuple = await cursor.fetchall()
 
                 return result
+
+    def show_sql_log(self, sql, *args, level=logging.DEBUG):
+        formatted_sql = sql % args
+        # 将格式化后的SQL输出到日志
+        if level == logging.DEBUG:
+            logging.debug(f"【SQL】: {formatted_sql}")
+        else:
+            logging.info(f"【SQL】: {formatted_sql}")
 
     async def select(self, table, columns='*', where=None, order_by=None, limit=None):
         query = f"SELECT {columns} FROM {table}"
