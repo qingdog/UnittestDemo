@@ -75,14 +75,28 @@ class AioMySQLClient:
             # 异步的上下文管理 游标对象
             async with conn.cursor(aiomysql.DictCursor) as cursor:
                 cursor: aiomysql.Cursor
-                self.show_sql_log(sql, args)
+                self.show_sql_log(sql, *args)
                 await cursor.execute(sql, args)
                 result: tuple = await cursor.fetchall()
 
                 return result
 
     def show_sql_log(self, sql, *args, level=logging.DEBUG):
-        formatted_sql = sql % args
+        # 注意：这里仅适用于字符串参数，这仅用于日志记录，不应用于实际的数据库查询
+        if args is not None:
+            if isinstance(args, (list, tuple)):
+                # 对于列表或元组，我们假设SQL语句中的占位符与args的元素一一对应
+                # 注意：这仅用于日志记录，不应用于实际的数据库查询
+                formatted_sql = sql % tuple(repr(arg) for arg in args)
+            elif isinstance(args, dict):
+                # 对于字典，我们假设SQL语句中的占位符是字典的键
+                formatted_sql = sql.format(**{k: repr(v) for k, v in args.items()})
+            else:
+                # 对于单个参数，直接替换
+                formatted_sql = sql % repr(args)
+        else:
+            formatted_sql = sql
+
         # 将格式化后的SQL输出到日志
         if level == logging.DEBUG:
             logging.debug(f"【SQL】: {formatted_sql}")
@@ -144,10 +158,10 @@ class AioMySQLClient:
     asyncio.set_event_loop(new_event_loop)
 
     @classmethod
-    def run(cls, run_main: Callable[[], Coroutine[Any, Any, Any]], is_old_run=True):
+    def run(cls, run_main: Callable[[Any], Coroutine[Any, Any, Any]], *args, is_old_run=True):
         """执行异步函数"""
         if is_old_run:
-            cls.new_event_loop.run_until_complete(run_main())
+            cls.new_event_loop.run_until_complete(run_main(*args))
         else:
             # 处理win平台 asyncio.run() 执行完所产生的异常
             if platform.system() == 'Windows':
@@ -159,7 +173,7 @@ class AioMySQLClient:
                 asyncio.BaseEventLoop.originalShutdownFunc = win_shutdown_default_executor
                 # asyncio.BaseEventLoop.set_exception_handler(self=cls.new_event_loop, handler=win_shutdown_default_executor)
             # 运行主函数
-            asyncio.run(run_main())
+            asyncio.run(run_main(*args))
 
 
 async def main():

@@ -12,6 +12,7 @@ if __name__ == '__main__':
     # unittest.TextTestRunner().run(cases)
 
     loader = unittest.TestLoader()
+    # suite = loader.loadTestsFromTestCase(TestDemo)
     suite = loader.loadTestsFromTestCase(TestNoAsync)
     runner = unittest.TextTestRunner()
     runner.run(suite)
