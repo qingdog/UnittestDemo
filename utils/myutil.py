@@ -33,8 +33,9 @@ def http_to_https(file_name: str, encoding="utf-8"):
         # 逐行读取并替换
         for line in read_file:
             # modified_line = line.replace('http://', 'https://')
-            new_content = re.sub(r'^ *(<script src="http|<link rel="stylesheet" href="http)://', r"\1s://", line)
-            write_file.write(new_content)
+            new_content = re.sub(r'http://img.itest.info/', r'https://seldom.pages.dev/', line)
+            new_content_2 = re.sub(r'^ *(<script src="http|<link rel="stylesheet" href="http)://', r"\1s://", new_content)
+            write_file.write(new_content_2)
     os.replace(f'{file_name}.tmp', file_name)
 
 
@@ -43,6 +44,6 @@ if __name__ == '__main__':
     reversed_list = sample_list[::-1]
     print(reversed_list)
 
-    # http_to_https("../reports/result-20240807.html")
+    http_to_https("../reports/result-20240807.html")
 
 
