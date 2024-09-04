@@ -24,11 +24,21 @@ class MyRequests:
     headers = configParser.get("request", "headers")
     body = configParser.get("request", "body")
 
+    method = configParser.get("request", "method")
+    base_url = configParser.get("request", "base_url")
+
     # def send_request(self, session: PoolManager, excel_data):
     def send_request(self, session: requests.sessions.Session, excel_data):
         # 从读取的表格中获取响应的参数作为传递
         url = excel_data["url"]
+        # 处理非完整url
+        if re.search("^http(s)?://", url) is None:
+            if not url.startswith("/"):
+                url = "/" + url
+            url = self.base_url + url
+
         method = excel_data["method"]
+        method = self.method if method is None else method
 
         if "params" in excel_data:
             params = ast.literal_eval(excel_data["params"]) if excel_data["params"] else None

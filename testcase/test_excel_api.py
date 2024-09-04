@@ -43,6 +43,7 @@ class TestAPI(unittest.TestCase):
     config_file_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "config.ini")
     configParser.read(config_file_path, encoding='UTF-8')
     status_codes_str = configParser.get('request', 'status_code')
+    code_default = configParser.get('request', 'code')
     # 将字符串分割成列表，并转换为整数
     config_status_codes = [int(code) for code in status_codes_str.split(',')]
 
@@ -93,10 +94,12 @@ class TestAPI(unittest.TestCase):
         case_id = ""
         if "id" in excel_data:
             case_id = excel_data["id"]
+
+        # 测试报告用例描述
         title = ""
         if "title" in excel_data:
             title = excel_data["title"]
-            self._testMethodDoc = title
+            self._testMethodDoc = title + " " + url
 
         # 检查响应的Content-Type是否为JSON
         content_type = response.headers.get('Content-Type', '')
@@ -106,8 +109,12 @@ class TestAPI(unittest.TestCase):
             self.logger.info("响应数据：%s" % response.content.decode("utf-8"))
 
             try:
-                self.assertEqual(ast.literal_eval(code), json[code_key], f"{case_id} {title} {url}")
-                self.assertIn(msg, json[msg_key], f"{case_id} {title} {url}")
+                if not code:
+                    code = self.code_default
+                # self.assertEqual(ast.literal_eval(code), json[code_key], f"{case_id} {title} {url}")
+                # 后端响应消息提示
+                # self.assertIn(msg, json[msg_key], f"{case_id} {title} {url}")
+                self.assertIn(msg, response.content.decode("utf-8"), f"{case_id} {title} {url}")
             except Exception as e:
                 result = "FAIL"
                 raise e

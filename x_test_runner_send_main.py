@@ -3,7 +3,7 @@
 __author__ = 'YinJia'
 
 import configparser
-import datetime
+from datetime import datetime, timedelta
 import functools
 import logging
 import os
@@ -14,9 +14,12 @@ import unittest
 
 # import loguru
 import XTestRunner
+import requests
+from XTestRunner import HTMLTestRunner, Weinxin
 from XTestRunner.htmlrunner.result import _TestResult
 
 from logs.mylogging import MyLogging, ColoredFormatter
+from utils import myutil
 from utils.myutil import get_latest_file_path
 from utils.mail_util import send_mail
 
@@ -91,7 +94,7 @@ class MyHTMLTestRunner(XTestRunner.HTMLTestRunner):
 
         result = MyTestResult(self.verbosity, rerun=self.rerun, logger=self.logger)
         testlist(result)
-        self.end_time = datetime.datetime.now()
+        self.end_time = datetime.now()
         self.run_times += 1
         self.generate_report(testlist, result)
 
@@ -109,9 +112,9 @@ def run_case(all_case, report_path=MyConfig.TESTREPORT_DIR):
         # runner = XTestRunner.HTMLTestRunner(stream=fp,
         runner = MyHTMLTestRunner(stream=file,
                                   verbosity=3,
-                                  title='接口自动化测试报告',
-                                  tester='Jason',
-                                  description='环境：windows 10 浏览器：chrome',
+                                  title='力企云接口自动化测试报告',
+                                  tester='huang',
+                                  description='测试用例：https://kdocs.cn/l/coyHI6Y1g5Xr',
                                   language='zh-CN',
                                   logger=None,
                                   rerun=0  # rerun: 重跑次数
@@ -122,6 +125,8 @@ def run_case(all_case, report_path=MyConfig.TESTREPORT_DIR):
     # 最新测试报告文件的路径
     latest_file_path = get_latest_file_path(MyConfig.TESTREPORT_DIR)
     logging.getLogger().info("报告路径：" + latest_file_path)
+    # 转换http协议的cdn
+    myutil.http_to_https(latest_file_path)
 
     # 调用发送邮件模块
     config_p = configparser.ConfigParser()
@@ -129,17 +134,110 @@ def run_case(all_case, report_path=MyConfig.TESTREPORT_DIR):
     config_smtp = config_p.items("smtp")
     # 创建一个字典来存储SMTP配置
     smtp_config = {key: value for key, value in config_smtp}
-    # if "password" in smtp_config and smtp_config["password"] != "":
-    #     # send_mail(latest_file_path, smtp_config)
-    #     # 使用XTestRunner发送邮件
-    #     runner.send_email(
-    #         user=smtp_config["user"],
-    #         password=smtp_config["password"],
-    #         host=smtp_config["smtp_host"],
-    #         to="1759765836@qq.com",
-    #         attachments=latest_file_path,
-    #         ssl=True
-    #     )
+    if "password" in smtp_config and smtp_config["password"] != "":
+        # send_mail(latest_file_path, smtp_config)
+        # 使用XTestRunner发送邮件
+
+        # 设定目标时间为16:19
+        target_time = datetime.strptime("16:21", "%H:%M")
+        # 获取当前时间
+        current_time = datetime.strptime(datetime.now().strftime("%H:%M"), "%H:%M")
+        # 计算时间差
+        time_difference = abs(current_time - target_time)
+        # 设置5分钟的容忍时间
+        tolerance = timedelta(minutes=5)
+        # 检查当前时间是否在目标时间的5分钟之内，不是则不发送邮箱
+        if time_difference > tolerance:
+            return
+        to = "1759765836@qq.com"
+        runner.send_email(
+            user=smtp_config["user"],
+            password=smtp_config["password"],
+            host=smtp_config["smtp_host"],
+            to=to,
+            attachments=latest_file_path,
+            ssl=True
+        )
+        logging.info(f"向 {to} 发送邮箱！")
+
+    # send = False
+    # if send:
+    #     report = "./reports/result-20240823.html"
+    #     with open(report, 'wb') as fp:
+    #         runner = HTMLTestRunner(
+    #             stream=fp,
+    #             title='测试发送到企业微信',
+    #             tester='huang',
+    #             description=['类型：发送测试消息'],
+    #             language="zh-CN"
+    #         )
+    #         # runner.run(suit)
+    #         # 方式一： send_weixin() 方法
+    #         runner.send_weixin(
+    #             access_token="a-b-c-d-e",
+    #             at_mobiles=[12345678901],
+    #             is_at_all=False,
+    #         )
+
+
+class EnterpriseWeiXin(Weinxin):
+    # https://developer.work.weixin.qq.com/document/path/91770#文件上传接口
+    def upload_file_to_wechat(self, key, file_path, file_type='file'):
+        """
+        上传文件到企业微信机器人，并获取media_id。(未测试)
+
+        :param key: 调用接口凭证，机器人webhookurl中的key参数
+        :param file_path: 要上传的文件的路径
+        :param file_type: 文件类型，默认为'file'，可选'voice'
+        :return: 响应内容，包含media_id
+        """
+        url = f"https://qyapi.weixin.qq.com/cgi-bin/webhook/upload_media?key={key}&type={file_type}"
+        # 读取文件内容
+        with open(file_path, 'rb') as f:
+            file_content = f.read()
+
+        # 获取文件名
+        file_name = file_path.split('/')[-1]
+
+        # 设置请求头
+        headers = {
+            'Content-Type': 'multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW'
+        }
+
+        # 构造请求体
+        payload = (
+            f'------WebKitFormBoundary7MA4YWxkTrZu0gW\r\n'
+            f'Content-Disposition: form-data; name="media"; filename="{file_name}"\r\n'
+            f'Content-Type: application/octet-stream\r\n\r\n'
+            f'{file_content}\r\n'
+            '------WebKitFormBoundary7MA4YWxkTrZu0gW--'
+        )
+
+        # 发送请求
+        response = requests.post(url, headers=headers, data=payload)
+        res = response.json()
+        if res.get('errcode') != 0:
+            return None
+        return res.get('media_id')
+
+    def send_upload_file(self, media_id: str = None):
+        """
+        发送 文件类型
+        :param media_id : 文件id，通过企业微信的文件上传接口获取
+        :return:
+        """
+
+        message = {
+            "msgtype": "file",
+            "file": {
+                "media_id": f"{media_id}"
+            }
+        }
+        resp = self._send_message(self.url, message)
+        if resp["errcode"] != 0:
+            logging.error("❌ weixin failed to send!!")
+            logging.error(resp)
+        return resp
 
 
 if __name__ == "__main__":
@@ -149,5 +247,5 @@ if __name__ == "__main__":
 
     """加载testcase目录下所有test开头的py文件"""
     # cases = unittest.defaultTestLoader.discover(MyConfig.TEST_CASE, pattern='loguru_test*.py')
-    cases = unittest.defaultTestLoader.discover(MyConfig.TEST_CASE, pattern='test*.py')
+    cases = unittest.defaultTestLoader.discover(MyConfig.TEST_CASE, pattern='test_excel*.py')
     run_case(cases)
