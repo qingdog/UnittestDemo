@@ -156,3 +156,7 @@ win32-setctime            1.1.0
 wsproto                   1.2.0
 XTestRunner               1.7.4
 ```
+* 更新包
+```shell
+pip install XTestRunner==1.7.5 --index-url https://pypi.org/simple
+```

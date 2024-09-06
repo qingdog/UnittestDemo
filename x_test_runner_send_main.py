@@ -126,7 +126,7 @@ def run_case(all_case, report_path=MyConfig.TESTREPORT_DIR):
     latest_file_path = get_latest_file_path(MyConfig.TESTREPORT_DIR)
     logging.getLogger().info("报告路径：" + latest_file_path)
     # 转换http协议的cdn
-    myutil.http_to_https(latest_file_path)
+    # myutil.http_to_https(latest_file_path)
 
     # 调用发送邮件模块
     config_p = configparser.ConfigParser()
