@@ -54,6 +54,17 @@ git config http.sslVerify false
 # git执行命令时不认证
 git -c http.sslVerify=false push
 ```
+> 控制面板\所有控制面板项\凭据管理器
+```shell
+cat .\.gitconfig
+[user]
+        email = qingdoor@gmail.com
+        name = qingdog
+[credential "https://github.com"]
+        provider = generic
+[http]
+	sslVerify = false
+```
 ```shell
 wget https://github.com/mashirozx/Pixiv-Nginx --no-check-certificate
 --2024-07-24 10:30:46--  https://github.com/mashirozx/Pixiv-Nginx
