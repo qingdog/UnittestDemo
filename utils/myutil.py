@@ -1,3 +1,6 @@
+import binascii
+import hashlib
+import io
 import os
 import re
 
@@ -27,23 +30,50 @@ def get_project_path():
     return project_path
 
 
-def http_to_https(file_name: str, encoding="utf-8"):
+def http_to_https(file_name: str, encoding="utf-8", re_remove_line=".+XTestRunner.+"):
     with (open(file_name, 'r', encoding=encoding) as read_file,
           open(f'{file_name}.tmp', 'w', encoding=encoding) as write_file):
         # 逐行读取并替换
         for line in read_file:
             # modified_line = line.replace('http://', 'https://')
-            new_content = re.sub(r'http://img.itest.info/', r'https://seldom.pages.dev/', line)
-            new_content_2 = re.sub(r'^ *(<script src="http|<link rel="stylesheet" href="http)://', r"\1s://", new_content)
-            write_file.write(new_content_2)
+            # 更换cdn
+            # new_content = re.sub(r'http://img.itest.info/', r'https://seldom.pages.dev/', line)
+            # new_content = re.sub(r'http(s)?://img.itest.info/', r'https://cdn.jsdelivr.net/gh/qingdog/cdn/seldom/', line)
+            new_line = re.sub(r'^ *(<script src="http|<link rel="stylesheet" href="http)://', r"\1s://", line)
+
+            new_content = re.sub(rf'{re_remove_line}', r"", new_line)
+            write_file.write(new_content)
+
     os.replace(f'{file_name}.tmp', file_name)
 
+
+# https://github.com/houtianze/bypy/pull/576/commits/dc23a7c68181e39cb890e0550ae390848c75c3e7
+def baidu_slice_encrypt(md5str):
+    if len(md5str) != 32:
+        return md5str
+    for i in range(0, 32):
+        v = int(md5str[i], 16)
+        if v < 0 or v > 16:
+            return md5str
+    md5str = md5str[8:16] + md5str[0:8] + md5str[24:32] + md5str[16:24]
+    encryptstr = ""
+    for e in range(0, len(md5str)):
+        encryptstr += hex(int(md5str[e], 16) ^ 15 & e)[2:3]
+    return encryptstr[0:9] + chr(ord("g") + int(encryptstr[9], 16)) + encryptstr[10:]
+
+
+print(baidu_slice_encrypt("697914dfbf71fcb1040647760a0fb722"))
+
+
+def str_to_lower(ss: str = "ABC"):
+    print(ss.lower())
+
+
+str_to_lower("2579B3865C0591EAD3A2B45AF3CABEEE")
 
 if __name__ == '__main__':
     sample_list = ["企业无严重违法", "企业教育经费用支出（万元）", "场地面积（m2）", ]
     reversed_list = sample_list[::-1]
     print(reversed_list)
 
-    http_to_https("../reports/result-20240807.html")
-
-
+    # http_to_https("../reports/result-20240807.html")
