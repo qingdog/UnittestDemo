@@ -91,6 +91,15 @@ exec(open("./logs/loguru_demo.py", encoding="utf-8").read())
 ```
 
 ```shell
+pip install python-dotenv
+```
+```python
+from dotenv import load_dotenv
+load_dotenv()
+
+TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
+```
+```shell
 pip list
 Package                   Version
 ------------------------- -----------
