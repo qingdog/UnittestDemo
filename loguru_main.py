@@ -54,7 +54,7 @@ def run_case(all_case, report_path=MyConfig.TESTREPORT_DIR):
         runner = HTMLTestRunner(stream=file,
                                 verbosity=3,
                                 title='接口自动化测试报告',
-                                tester='Jason',
+                                tester=' ',
                                 description='环境：windows 10 浏览器：chrome',
                                 language='zh-CN',
                                 logger=None,

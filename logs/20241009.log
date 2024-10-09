@@ -1,0 +1,77 @@
+[2024-10-09_08:52:59] - [run_x_test_runner_send_main.py:248] INFO main start...
+[2024-10-09_08:53:00] - [test_excel_api.py:135] INFO 响应数据：{"code":200,"msg":null,"data":null}
+[2024-10-09_08:53:00] - [test_excel_api.py:230] INFO 提取变量：1843816898957180929
+[2024-10-09_08:53:00] - [test_excel_api.py:135] INFO 响应数据：{"code":200,"msg":"Success","data":{"page":1,"size":10,"total":1,"list":[{"id":"1843816898957180929","crawlDataId":null,"name":"新增测试项目1009","title":null,"type":1,"typeName":"财务、税收优惠","rank":"3","rankName":"市级","province":{"id":"440000","name":"广东省"},"city":{"id":"440300","name":"深圳市"},"area":null,"deptName":"测试部门南山区","deptId":105613,"categoryVOList":null,"fundways":null,"fundamount":null,"taxDiscountWay":null,"taxDiscountWayName":null,"taxType":null,"taxTypeName":null,"taxPayer":null,"taxPayerName":null,"matchIndustry":null,"matchIndustryIds":null,"officialPublishTime":null,"publishTime":null,"publisStatus":"0","publisStatusName":"未发布","checkTime":null,"subsidyType":null,"phone":null,"address":null,"createBy":"1","createName":"启程智远","createTime":"2024-10-09 08:53:00","updateBy":null,"updateName":"启程智远","updateTime":"2024-10-09 08:53:00","projectReportVOList":null,"projectAssociationInfoVOList":null,"projectExtensionVO":null,"checkStatus":4,"checkContextNoFull":null,"checkNoPassReson":null,"checkRemark":null,"fromSource":2,"reportDeadLine":"-","reportDatePeriod":null,"collectedOrNot":0,"matchOrNot":0,"proMarkStatus":0,"assoFlag":null,"projectCategory":null,"projectCategoryName":null}]}}
+[2024-10-09_08:53:00] - [test_excel_api.py:210] INFO 变量替换：variable1 => 1843816898957180929
+[2024-10-09_08:53:00] - [test_excel_api.py:135] INFO 响应数据：{"code":200,"msg":null,"data":null}
+[2024-10-09_08:53:00] - [run_x_test_runner_send_main.py:127] INFO 报告路径：D:\mytest\UnittestDemo\reports\result-20241009.html
+[2024-10-09_08:53:30] - [run_x_test_runner_send_main.py:248] INFO main start...
+[2024-10-09_08:53:30] - [test_excel_api.py:135] INFO 响应数据：{"code":200,"msg":null,"data":null}
+[2024-10-09_08:53:30] - [test_excel_api.py:230] INFO 提取变量：1843817027818782722
+[2024-10-09_08:53:30] - [test_excel_api.py:135] INFO 响应数据：{"code":200,"msg":"Success","data":{"page":1,"size":10,"total":1,"list":[{"id":"1843817027818782722","crawlDataId":null,"name":"新增测试项目1009","title":null,"type":1,"typeName":"财务、税收优惠","rank":"3","rankName":"市级","province":{"id":"440000","name":"广东省"},"city":{"id":"440300","name":"深圳市"},"area":null,"deptName":"测试部门南山区","deptId":105613,"categoryVOList":null,"fundways":null,"fundamount":null,"taxDiscountWay":null,"taxDiscountWayName":null,"taxType":null,"taxTypeName":null,"taxPayer":null,"taxPayerName":null,"matchIndustry":null,"matchIndustryIds":null,"officialPublishTime":null,"publishTime":null,"publisStatus":"0","publisStatusName":"未发布","checkTime":null,"subsidyType":null,"phone":null,"address":null,"createBy":"1","createName":"启程智远","createTime":"2024-10-09 08:53:31","updateBy":null,"updateName":"启程智远","updateTime":"2024-10-09 08:53:31","projectReportVOList":null,"projectAssociationInfoVOList":null,"projectExtensionVO":null,"checkStatus":4,"checkContextNoFull":null,"checkNoPassReson":null,"checkRemark":null,"fromSource":2,"reportDeadLine":"-","reportDatePeriod":null,"collectedOrNot":0,"matchOrNot":0,"proMarkStatus":0,"assoFlag":null,"projectCategory":null,"projectCategoryName":null}]}}
+[2024-10-09_08:53:30] - [test_excel_api.py:210] INFO 变量替换：variable1 => 1843817027818782722
+[2024-10-09_08:53:31] - [test_excel_api.py:135] INFO 响应数据：{"code":200,"msg":null,"data":null}
+[2024-10-09_08:53:31] - [run_x_test_runner_send_main.py:127] INFO 报告路径：D:\mytest\UnittestDemo\reports\result-20241009.html
+[2024-10-09_08:53:38] - [run_x_test_runner_send_main.py:248] INFO main start...
+[2024-10-09_08:53:38] - [test_excel_api.py:135] INFO 响应数据：{"code":200,"msg":null,"data":null}
+[2024-10-09_08:53:39] - [test_excel_api.py:230] INFO 提取变量：1843817062027526146
+[2024-10-09_08:53:39] - [test_excel_api.py:135] INFO 响应数据：{"code":200,"msg":"Success","data":{"page":1,"size":10,"total":1,"list":[{"id":"1843817062027526146","crawlDataId":null,"name":"新增测试项目1009","title":null,"type":1,"typeName":"财务、税收优惠","rank":"3","rankName":"市级","province":{"id":"440000","name":"广东省"},"city":{"id":"440300","name":"深圳市"},"area":null,"deptName":"测试部门南山区","deptId":105613,"categoryVOList":null,"fundways":null,"fundamount":null,"taxDiscountWay":null,"taxDiscountWayName":null,"taxType":null,"taxTypeName":null,"taxPayer":null,"taxPayerName":null,"matchIndustry":null,"matchIndustryIds":null,"officialPublishTime":null,"publishTime":null,"publisStatus":"0","publisStatusName":"未发布","checkTime":null,"subsidyType":null,"phone":null,"address":null,"createBy":"1","createName":"启程智远","createTime":"2024-10-09 08:53:39","updateBy":null,"updateName":"启程智远","updateTime":"2024-10-09 08:53:39","projectReportVOList":null,"projectAssociationInfoVOList":null,"projectExtensionVO":null,"checkStatus":4,"checkContextNoFull":null,"checkNoPassReson":null,"checkRemark":null,"fromSource":2,"reportDeadLine":"-","reportDatePeriod":null,"collectedOrNot":0,"matchOrNot":0,"proMarkStatus":0,"assoFlag":null,"projectCategory":null,"projectCategoryName":null}]}}
+[2024-10-09_08:53:39] - [test_excel_api.py:135] INFO 响应数据：{"code":500,"msg":"系统异常，请稍后重试","data":null}
+[2024-10-09_08:53:39] - [test_excel_api.py:146] WARNING 请求参数：["${variable1}"]
+[2024-10-09_08:53:39] - [run_x_test_runner_send_main.py:56] ERROR test_api_3 (test_excel_api.TestAPI.test_api_3)
+Traceback (most recent call last):
+  File "D:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\unittest\case.py", line 58, in testPartExecutor
+    yield
+  File "D:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\unittest\case.py", line 634, in run
+    self._callTestMethod(testMethod)
+  File "D:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\unittest\case.py", line 589, in _callTestMethod
+    if method() is not None:
+       ^^^^^^^^
+  File "D:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\ddt.py", line 221, in wrapper
+    return func(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\mytest\UnittestDemo\testcase\test_excel_api.py", line 147, in test_api
+    raise e
+  File "D:\mytest\UnittestDemo\testcase\test_excel_api.py", line 143, in test_api
+    self.assertIn(msg, response.content.decode("utf-8"), f"{case_id} {title} {url}")
+AssertionError: '"code":200' not found in '{"code":500,"msg":"系统异常，请稍后重试","data":null}' : lqc_2 删除项目 /test-api/policylibrary/policy/project/delete
+[2024-10-09_08:53:39] - [run_x_test_runner_send_main.py:127] INFO 报告路径：D:\mytest\UnittestDemo\reports\result-20241009.html
+[2024-10-09_08:53:45] - [run_x_test_runner_send_main.py:248] INFO main start...
+[2024-10-09_08:53:45] - [test_excel_api.py:135] INFO 响应数据：{"code":500,"msg":"项目已存在，不能重复添加","data":null}
+[2024-10-09_08:53:45] - [test_excel_api.py:146] WARNING 请求参数：{"name":"新增测试项目1009","establishedTime":0,"salesIncome":0,"equipmentCost":0,"infomationCost":0,"staffNum":0,"developmentCost":0,"projectSumCost":0,"entryExitCost":0,"subsidyType":"[]","type":1,"phone":"","address":"123","matchIndustryIds":"[5098]","review":"1","matchIndustry":[{"name":"婴儿含乳面粉","level":4,"id":5098,"parentid":159}],"area":null,"city":{"id":"440300","name":"深圳市"},"province":{"id":"440000","name":"广东省"},"deptName":"测试部门南山区","deptId":105613,"rank":"3","rankName":"市级","reportInfoDTOS":[],"associationInfoDTOS":[],"extensionDTO":{"originText":"<p>1</p>","preferentialPolicy":"","reportCondition":"","reportMaterial":"","fileVoList":[]},"fromSource":2}
+[2024-10-09_08:53:45] - [run_x_test_runner_send_main.py:56] ERROR test_api_1 (test_excel_api.TestAPI.test_api_1)
+Traceback (most recent call last):
+  File "D:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\unittest\case.py", line 58, in testPartExecutor
+    yield
+  File "D:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\unittest\case.py", line 634, in run
+    self._callTestMethod(testMethod)
+  File "D:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\unittest\case.py", line 589, in _callTestMethod
+    if method() is not None:
+       ^^^^^^^^
+  File "D:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\ddt.py", line 221, in wrapper
+    return func(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\mytest\UnittestDemo\testcase\test_excel_api.py", line 147, in test_api
+    raise e
+  File "D:\mytest\UnittestDemo\testcase\test_excel_api.py", line 143, in test_api
+    self.assertIn(msg, response.content.decode("utf-8"), f"{case_id} {title} {url}")
+AssertionError: '"code":200' not found in '{"code":500,"msg":"项目已存在，不能重复添加","data":null}' : lqc_1 新增项目 /test-api/policylibrary/policy/project/add
+[2024-10-09_08:53:45] - [test_excel_api.py:230] INFO 提取变量：1843817062027526146
+[2024-10-09_08:53:45] - [test_excel_api.py:135] INFO 响应数据：{"code":200,"msg":"Success","data":{"page":1,"size":10,"total":1,"list":[{"id":"1843817062027526146","crawlDataId":null,"name":"新增测试项目1009","title":null,"type":1,"typeName":"财务、税收优惠","rank":"3","rankName":"市级","province":{"id":"440000","name":"广东省"},"city":{"id":"440300","name":"深圳市"},"area":null,"deptName":"测试部门南山区","deptId":105613,"categoryVOList":null,"fundways":null,"fundamount":null,"taxDiscountWay":null,"taxDiscountWayName":null,"taxType":null,"taxTypeName":null,"taxPayer":null,"taxPayerName":null,"matchIndustry":null,"matchIndustryIds":null,"officialPublishTime":null,"publishTime":null,"publisStatus":"0","publisStatusName":"未发布","checkTime":null,"subsidyType":null,"phone":null,"address":null,"createBy":"1","createName":"启程智远","createTime":"2024-10-09 08:53:39","updateBy":null,"updateName":"启程智远","updateTime":"2024-10-09 08:53:39","projectReportVOList":null,"projectAssociationInfoVOList":null,"projectExtensionVO":null,"checkStatus":4,"checkContextNoFull":null,"checkNoPassReson":null,"checkRemark":null,"fromSource":2,"reportDeadLine":"-","reportDatePeriod":null,"collectedOrNot":0,"matchOrNot":0,"proMarkStatus":0,"assoFlag":null,"projectCategory":null,"projectCategoryName":null}]}}
+[2024-10-09_08:53:45] - [test_excel_api.py:210] INFO 变量替换：variable1 => 1843817062027526146
+[2024-10-09_08:53:45] - [test_excel_api.py:135] INFO 响应数据：{"code":200,"msg":null,"data":null}
+[2024-10-09_08:53:45] - [run_x_test_runner_send_main.py:127] INFO 报告路径：D:\mytest\UnittestDemo\reports\result-20241009.html
+[2024-10-09_08:53:48] - [run_x_test_runner_send_main.py:248] INFO main start...
+[2024-10-09_08:53:49] - [test_excel_api.py:135] INFO 响应数据：{"code":200,"msg":null,"data":null}
+[2024-10-09_08:53:49] - [test_excel_api.py:230] INFO 提取变量：1843817105014947841
+[2024-10-09_08:53:49] - [test_excel_api.py:135] INFO 响应数据：{"code":200,"msg":"Success","data":{"page":1,"size":10,"total":1,"list":[{"id":"1843817105014947841","crawlDataId":null,"name":"新增测试项目1009","title":null,"type":1,"typeName":"财务、税收优惠","rank":"3","rankName":"市级","province":{"id":"440000","name":"广东省"},"city":{"id":"440300","name":"深圳市"},"area":null,"deptName":"测试部门南山区","deptId":105613,"categoryVOList":null,"fundways":null,"fundamount":null,"taxDiscountWay":null,"taxDiscountWayName":null,"taxType":null,"taxTypeName":null,"taxPayer":null,"taxPayerName":null,"matchIndustry":null,"matchIndustryIds":null,"officialPublishTime":null,"publishTime":null,"publisStatus":"0","publisStatusName":"未发布","checkTime":null,"subsidyType":null,"phone":null,"address":null,"createBy":"1","createName":"启程智远","createTime":"2024-10-09 08:53:49","updateBy":null,"updateName":"启程智远","updateTime":"2024-10-09 08:53:49","projectReportVOList":null,"projectAssociationInfoVOList":null,"projectExtensionVO":null,"checkStatus":4,"checkContextNoFull":null,"checkNoPassReson":null,"checkRemark":null,"fromSource":2,"reportDeadLine":"-","reportDatePeriod":null,"collectedOrNot":0,"matchOrNot":0,"proMarkStatus":0,"assoFlag":null,"projectCategory":null,"projectCategoryName":null}]}}
+[2024-10-09_08:53:49] - [test_excel_api.py:210] INFO 变量替换：variable1 => 1843817105014947841
+[2024-10-09_08:53:49] - [test_excel_api.py:135] INFO 响应数据：{"code":200,"msg":null,"data":null}
+[2024-10-09_08:53:49] - [run_x_test_runner_send_main.py:127] INFO 报告路径：D:\mytest\UnittestDemo\reports\result-20241009.html
+[2024-10-09_09:23:16] - [run_x_test_runner_send_main.py:248] INFO main start...
+[2024-10-09_09:23:16] - [test_excel_api.py:135] INFO 响应数据：{"code":200,"msg":null,"data":null}
+[2024-10-09_09:23:17] - [test_excel_api.py:230] INFO 提取变量：1843824519432929281
+[2024-10-09_09:23:17] - [test_excel_api.py:135] INFO 响应数据：{"code":200,"msg":"Success","data":{"page":1,"size":10,"total":1,"list":[{"id":"1843824519432929281","crawlDataId":null,"name":"新增测试项目1009","title":null,"type":1,"typeName":"财务、税收优惠","rank":"3","rankName":"市级","province":{"id":"440000","name":"广东省"},"city":{"id":"440300","name":"深圳市"},"area":null,"deptName":"测试部门南山区","deptId":105613,"categoryVOList":null,"fundways":null,"fundamount":null,"taxDiscountWay":null,"taxDiscountWayName":null,"taxType":null,"taxTypeName":null,"taxPayer":null,"taxPayerName":null,"matchIndustry":null,"matchIndustryIds":null,"officialPublishTime":null,"publishTime":null,"publisStatus":"0","publisStatusName":"未发布","checkTime":null,"subsidyType":null,"phone":null,"address":null,"createBy":"1","createName":"启程智远","createTime":"2024-10-09 09:23:17","updateBy":null,"updateName":"启程智远","updateTime":"2024-10-09 09:23:17","projectReportVOList":null,"projectAssociationInfoVOList":null,"projectExtensionVO":null,"checkStatus":4,"checkContextNoFull":null,"checkNoPassReson":null,"checkRemark":null,"fromSource":2,"reportDeadLine":"-","reportDatePeriod":null,"collectedOrNot":0,"matchOrNot":0,"proMarkStatus":0,"assoFlag":null,"projectCategory":null,"projectCategoryName":null}]}}
+[2024-10-09_09:23:17] - [test_excel_api.py:210] INFO 变量替换：variable1 => 1843824519432929281
+[2024-10-09_09:23:17] - [test_excel_api.py:135] INFO 响应数据：{"code":200,"msg":null,"data":null}
+[2024-10-09_09:23:17] - [run_x_test_runner_send_main.py:127] INFO 报告路径：D:\mytest\UnittestDemo\reports\result-20241009.html

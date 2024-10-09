@@ -112,7 +112,7 @@ def run_case(all_case, report_path=MyConfig.TESTREPORT_DIR):
         # runner = XTestRunner.HTMLTestRunner(stream=fp,
         runner = MyHTMLTestRunner(stream=file,
                                   verbosity=3,
-                                  title='力企云接口自动化测试报告',
+                                  title='接口测试报告',
                                   tester='huang',
                                   description='测试用例：https://kdocs.cn/l/coyHI6Y1g5Xr',
                                   language='zh-CN',
@@ -125,8 +125,11 @@ def run_case(all_case, report_path=MyConfig.TESTREPORT_DIR):
     # 最新测试报告文件的路径
     latest_file_path = get_latest_file_path(MyConfig.TESTREPORT_DIR)
     logging.getLogger().info("报告路径：" + latest_file_path)
-    # 转换http协议的cdn
-    # myutil.http_to_https(latest_file_path)
+
+    # 修改html文件用于展开所有用例
+    re_line = "(.*<script language=\"javascript\".*)"
+    re_new_line = "\\1 ;;showCase(5, 1);"
+    myutil.html_line_to_new_line(latest_file_path, "utf-8", re_line, re_new_line)
 
     # 调用发送邮件模块
     config_p = configparser.ConfigParser()
@@ -139,7 +142,7 @@ def run_case(all_case, report_path=MyConfig.TESTREPORT_DIR):
         # 使用XTestRunner发送邮件
 
         # 设定目标时间为16:19
-        target_time = datetime.strptime("16:21", "%H:%M")
+        target_time = datetime.strptime("16:00", "%H:%M")
         # 获取当前时间
         current_time = datetime.strptime(datetime.now().strftime("%H:%M"), "%H:%M")
         # 计算时间差

@@ -175,6 +175,7 @@ websocket-client          1.7.0
 win32-setctime            1.1.0
 wsproto                   1.2.0
 XTestRunner               1.7.4
+jsonpath-ng               1.6.1
 ```
 * 更新包
 ```shell

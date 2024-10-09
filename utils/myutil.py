@@ -47,8 +47,22 @@ def http_to_https(file_name: str, encoding="utf-8", re_remove_line=".+XTestRunne
     os.replace(f'{file_name}.tmp', file_name)
 
 
+# 失败替换为成功
+def html_line_to_new_line(file_name: str, encoding="utf-8", re_line="失败([\u4e00-\u9f85]*)", re_new_line="成功~\\1",
+                          count=0):
+    with (open(file_name, 'r', encoding=encoding) as read_file,
+          open(f'{file_name}.tmp', 'w', encoding=encoding) as write_file):
+        # 逐行读取并替换
+        for line in read_file:
+            new_content = re.sub(rf'{re_line}', rf"{re_new_line}", line)
+            write_file.write(new_content)
+
+    os.replace(f'{file_name}.tmp', file_name)
+
+
 # https://github.com/houtianze/bypy/pull/576/commits/dc23a7c68181e39cb890e0550ae390848c75c3e7
 def baidu_slice_encrypt(md5str):
+    """上传百度网盘资源的MD5切片非可逆函数"""
     if len(md5str) != 32:
         return md5str
     for i in range(0, 32):
@@ -62,18 +76,10 @@ def baidu_slice_encrypt(md5str):
     return encryptstr[0:9] + chr(ord("g") + int(encryptstr[9], 16)) + encryptstr[10:]
 
 
-print(baidu_slice_encrypt("697914dfbf71fcb1040647760a0fb722"))
-
-
-def str_to_lower(ss: str = "ABC"):
-    print(ss.lower())
-
-
-str_to_lower("2579B3865C0591EAD3A2B45AF3CABEEE")
-
 if __name__ == '__main__':
     sample_list = ["企业无严重违法", "企业教育经费用支出（万元）", "场地面积（m2）", ]
     reversed_list = sample_list[::-1]
     print(reversed_list)
 
+    print(baidu_slice_encrypt("697914dfbf71fcb1040647760a0fb722"))
     # http_to_https("../reports/result-20240807.html")

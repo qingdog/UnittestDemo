@@ -81,10 +81,10 @@ class ExcelTestCaseProcessor:
         worksheet.cell(row=row, column=column).alignment = self.alignment_center
 
         # 写入作者
-        worksheet.cell(row=row, column=column + 1, value="Jason")
-        # 设置字体和对其方式
-        worksheet.cell(row=row, column=column + 1).font = self.font_yellow
-        worksheet.cell(row=row, column=column + 1).alignment = self.alignment_center
+        # worksheet.cell(row=row, column=column + 1, value="Jason")
+        # # 设置字体和对其方式
+        # worksheet.cell(row=row, column=column + 1).font = self.font_yellow
+        # worksheet.cell(row=row, column=column + 1).alignment = self.alignment_center
 
         # 保存工作簿
         self.workbook.save(filename=self.filepath)

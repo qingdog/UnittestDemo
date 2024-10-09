@@ -8,7 +8,7 @@ from ddt import ddt, file_data, unpack, data  # 1、安装好ddt后导入
 
 from api.apiList import ApiList
 from utils.excel_testcase_processor import ExcelTestCaseProcessor
-from x_test_runner_send_main import MyConfig
+from run_x_test_runner_send_main import MyConfig
 from loguru import logger
 
 

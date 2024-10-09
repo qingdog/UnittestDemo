@@ -5,13 +5,15 @@ __author__ = 'YinJia'
 import ast
 import configparser
 import logging
-import os
+import os, json
+import re
 
 # from utils.xlrd_excel import XlrdExcel
-from x_test_runner_send_main import MyConfig
+from run_x_test_runner_send_main import MyConfig
 import unittest, requests, ddt
 from utils.my_requests import MyRequests
 from utils.excel_testcase_processor import ExcelTestCaseProcessor
+import jsonpath_ng
 
 
 @ddt.ddt
@@ -44,6 +46,7 @@ class TestAPI(unittest.TestCase):
     configParser.read(config_file_path, encoding='UTF-8')
     status_codes_str = configParser.get('request', 'status_code')
     code_default = configParser.get('request', 'code')
+    body_default = configParser.get("request", "body")
     # 将字符串分割成列表，并转换为整数
     config_status_codes = [int(code) for code in status_codes_str.split(',')]
 
@@ -66,10 +69,16 @@ class TestAPI(unittest.TestCase):
     @ddt.data(*ExcelTestCaseProcessor(MyConfig.TESTDATA_FILE).read_data())
     def test_api(self, excel_data: dict):
         """TestAPI.test_api"""
-        # 发送请求
         if "url" not in excel_data:
             return
-        response = MyRequests().send_request(self.http, excel_data=excel_data)
+
+        body: str = ast.literal_eval(json.dumps(excel_data["body"])) if excel_data["body"] else eval(
+            json.dumps(self.body_default))
+        # 使用全局变量进行替换
+        body = self.replace_variables_in_string(body)
+
+        # 发起请求
+        response = MyRequests().send_request(self.http, excel_data=excel_data, body=body)
         # 校验http响应的状态码
         url = excel_data["url"]
         if response.status_code not in self.config_status_codes:
@@ -101,10 +110,27 @@ class TestAPI(unittest.TestCase):
             title = excel_data["title"]
             self._testMethodDoc = title + " " + url
 
+        variable_key = "variable"
+        if variable_key in excel_data:
+            variable = excel_data["variable"]
+        else:
+            variable_key = self.next_key(excel_data, "result")
+            variable = excel_data[variable_key]
+
         # 检查响应的Content-Type是否为JSON
         content_type = response.headers.get('Content-Type', '')
         if 'application/json' in content_type:
-            json = response.json()
+            res_json = response.json()
+
+            # 提取响应结果到全局变量
+            if variable:
+                # json_dict2 = json.loads(res_json)
+                extract_variable = self.extract_variable_using_jsonpath(res_json, jsonpath_expression=variable)
+                self.variables[f"{variable_key}{len(self.variables) + 1}"] = extract_variable
+
+                # if isinstance(res_json, dict):
+                #     self.get_veal_variable(res_json, variable)
+
             self.logger.debug(f"用例数据：{excel_data}")
             self.logger.info("响应数据：%s" % response.content.decode("utf-8"))
 
@@ -117,6 +143,7 @@ class TestAPI(unittest.TestCase):
                 self.assertIn(msg, response.content.decode("utf-8"), f"{case_id} {title} {url}")
             except Exception as e:
                 result = "FAIL"
+                logging.warning(f"请求参数：{body}")
                 raise e
             finally:
                 ExcelTestCaseProcessor(MyConfig.TESTDATA_FILE).write_data(excel_data, value=result)
@@ -140,6 +167,71 @@ class TestAPI(unittest.TestCase):
         if current_index + 1 >= len(keys):
             return None  # 如果当前键是最后一个，返回None
         return keys[current_index + 1]  # 返回下一个键
+
+    def get_value_from_dict(self, data_dict, key):
+        """【废弃】将 key 按 '.' 分割"""
+        keys = key.split('.')
+
+        # 逐级提取字典或列表中的值
+        value = data_dict
+        for k in keys:
+            # 如果是数字，说明我们要访问列表中的元素
+            if isinstance(value, list):
+                try:
+                    value = value[int(k)]
+                except (ValueError, IndexError):
+                    return None  # 如果无法转换成索引或索引超出范围
+            elif isinstance(value, dict):
+                value = value.get(k, None)
+            else:
+                return None  # 如果遇到非字典、非列表的值，直接返回 None
+            if value is None:
+                return None
+        return value
+
+    def get_veal_variable(self, json_dict, variable):
+        """【废弃】提取响应数据并存储到全局变量中"""
+        try:
+            result = self.get_value_from_dict(json_dict, key=variable)
+            self.variables[f"variable{len(self.variables) + 1}"] = result
+        except Exception as e:
+            raise e
+        finally:
+            pass
+
+    def replace_variables_in_string(self, input_string):
+        """正则匹配类似 {variable1} 的占位符（可替换多个）"""
+        pattern = r"\${([a-zA-Z_][\w]+)}"
+
+        # 替换占位符为 variables 中的实际值
+        def replacer(match):
+            var_name = match.group(1)  # 获取变量名
+            result = self.variables.get(var_name, match.group(0))  # 没有替换则返回全部原始字符
+            logging.info(f"变量替换：{var_name} => {result}")
+            return result
+
+        return re.sub(pattern, replacer, input_string)
+
+    def replace_variables_in_string2(self, input_string):
+        """替换字符串中的占位符"""
+        for var_name in self.variables.keys():
+            # ${{表示${
+            placeholder = f"${{{var_name}}}"
+            if placeholder in input_string:
+                input_string = input_string.replace(placeholder, str(self.variables[var_name]))
+                logging.info(f"变量替换：{placeholder} => {self.variables[var_name]}")
+        return input_string
+
+    def extract_variable_using_jsonpath(self, res_json, jsonpath_expression):
+        jsonpath_expr = jsonpath_ng.parse(jsonpath_expression)
+        matches = jsonpath_expr.find(res_json)
+        if matches:
+            extract_variable = matches[0].value
+            logging.info("提取变量：" + extract_variable)
+            return extract_variable
+        return None
+
+    variables = {}
 
 
 if __name__ == '__main__':

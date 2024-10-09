@@ -4,7 +4,7 @@ from seldom import data
 
 from utils.excel_testcase_processor import ExcelTestCaseProcessor
 # from utils.xlrd_excel import XlrdExcel
-from x_test_runner_send_main import MyConfig
+from run_x_test_runner_send_main import MyConfig
 
 
 @ddt.ddt

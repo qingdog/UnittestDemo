@@ -6,7 +6,7 @@ from loguru import logger
 
 from databases.aiomysql_client import AioMySQLClient
 from utils.excel_testcase_processor import ExcelTestCaseProcessor
-from x_test_runner_send_main import MyConfig
+from run_x_test_runner_send_main import MyConfig
 
 
 @ddt
