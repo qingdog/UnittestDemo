@@ -75,7 +75,7 @@ class TestAPI(unittest.TestCase):
         body: str = ast.literal_eval(json.dumps(excel_data["body"])) if excel_data["body"] else eval(
             json.dumps(self.body_default))
         # 使用全局变量进行替换
-        body = self.replace_variables_in_string(body)
+        body = self.replace_body_variables(body)
 
         # 发起请求
         response = MyRequests().send_request(self.http, excel_data=excel_data, body=body)
@@ -199,9 +199,9 @@ class TestAPI(unittest.TestCase):
         finally:
             pass
 
-    def replace_variables_in_string(self, input_string):
+    def replace_body_variables(self, input_string):
         """正则匹配类似 {variable1} 的占位符（可替换多个）"""
-        pattern = r"\${([a-zA-Z_][\w]+)}"
+        pattern = r"\${([a-zA-Z_][\w]*)}"
 
         # 替换占位符为 variables 中的实际值
         def replacer(match):
@@ -212,7 +212,7 @@ class TestAPI(unittest.TestCase):
 
         return re.sub(pattern, replacer, input_string)
 
-    def replace_variables_in_string2(self, input_string):
+    def replace_body_variables2(self, input_string):
         """替换字符串中的占位符"""
         for var_name in self.variables.keys():
             # ${{表示${

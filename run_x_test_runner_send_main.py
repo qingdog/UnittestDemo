@@ -105,16 +105,19 @@ class MyHTMLTestRunner(XTestRunner.HTMLTestRunner):
 def run_case(all_case, report_path=MyConfig.TESTREPORT_DIR):
     now = time.strftime("%Y%m%d")
     filename = report_path + '/' + f"result-{now}" + '.html'
+    log_latest_file_path = get_latest_file_path(os.path.join(MyConfig.FILE_DIR, "logs"))
+
     with open(filename, 'wb') as file:
         # loguru._level = "DEBUG"
         # loguru._console_format = "{time} {level} {message}"
         # loguru._console_format = "<green>{time}</green> <level>{message}</level>"
         # runner = XTestRunner.HTMLTestRunner(stream=fp,
+        testcase_url = '测试用例：<a href="https://kdocs.cn/l/coyHI6Y1g5Xr">https://kdocs.cn/l/coyHI6Y1g5Xr</a>'
         runner = MyHTMLTestRunner(stream=file,
                                   verbosity=3,
                                   title='接口测试报告',
-                                  tester='huang',
-                                  description='测试用例：https://kdocs.cn/l/coyHI6Y1g5Xr',
+                                  tester=testcase_url,
+                                  description=f'日志：<a href="/logs/{now}.log">/logs/{now}.log</a>',
                                   language='zh-CN',
                                   logger=None,
                                   rerun=0  # rerun: 重跑次数
