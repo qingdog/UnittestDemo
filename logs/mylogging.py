@@ -23,9 +23,11 @@ class ColoredFormatter(logging.Formatter):
         }
         # 添加颜色代码
         record.levelname = color_codes.get(record.levelno, '\033[0m') + record.levelname + '\033[0m'
-        if record.levelno == logging.ERROR:
+        if record.levelno == logging.CRITICAL:
             record.msg = f"{color_codes.get(logging.CRITICAL)}{record.msg}{color_codes.get("nocolor")}"
             record.exc_text = f"{color_codes.get(logging.CRITICAL)}{record.exc_text}{color_codes.get("nocolor")}"
+        elif record.levelno == logging.ERROR:
+            record.exc_text = f"{color_codes.get(logging.ERROR)}{record.exc_text}{color_codes.get("nocolor")}"
         return super().format(record)
 
 

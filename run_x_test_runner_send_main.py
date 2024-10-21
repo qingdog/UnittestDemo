@@ -53,12 +53,13 @@ class MyTestResult(_TestResult):
     def addFailure(self, test, err):
         super().addFailure(test, err)
         if self.verbosity >= 3:
-            MyLogging.getLogger().error(test, exc_info=True)
+            # 用例执行失败后，使用 `严重错误` 级别的日志输出
+            MyLogging.getLogger().critical(test, exc_info=True)
 
     def addError(self, test, err):
         super().addError(test, err)
         if self.verbosity >= 3:
-            MyLogging.getLogger().critical(test, exc_info=True)
+            MyLogging.getLogger().error(test, exc_info=True)
 
 
 class MyHTMLTestRunner(XTestRunner.HTMLTestRunner):

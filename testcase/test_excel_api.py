@@ -119,10 +119,10 @@ class TestAPI(unittest.TestCase):
         response = MyRequests().send_request(self.http, excel_data=excel_data, url=url, body=body, headers=headers)
         # 校验http响应的状态码
         url = excel_data["url"]
-        self.assertEqual(self.config_status_codes[0], response.status_code, f"{response.status_code} {url}")
-        # if response.status_code not in self.config_status_codes:
-        #     raise RuntimeError(
-        #         f"{url} {response.status_code}")
+
+        if response.status_code not in self.config_status_codes:
+            # self.assertEqual(self.config_status_codes[0], response.status_code, f"{response.status_code} {url}")
+            raise RuntimeError(f"状态码校验失败！{url} {response.status_code}")
 
         code_key = "code"
         if code_key in excel_data:

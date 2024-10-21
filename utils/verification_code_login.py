@@ -222,6 +222,7 @@ def auto_login(i=4 * 3):
             logging.info(f"{i} {login_json}")
             return auto_login(i)  # 递归调用时传递返回值
         else:
+            # 登录成功则删除保存的验证码图片
             if os.path.exists(filename):
                 os.remove(filename)
             return login_json["data"]["access_token"]  # 成功时返回 access_token
