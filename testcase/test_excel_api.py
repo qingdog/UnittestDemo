@@ -7,10 +7,13 @@ import configparser
 import logging
 import os, json
 import re
+import time
 
 # from utils.xlrd_excel import XlrdExcel
 from run_x_test_runner_send_main import MyConfig
 import unittest, requests, ddt
+
+from utils import verification_code_login
 from utils.my_requests import MyRequests
 from utils.excel_testcase_processor import ExcelTestCaseProcessor
 import jsonpath_ng
@@ -47,8 +50,20 @@ class TestAPI(unittest.TestCase):
     status_codes_str = configParser.get('request', 'status_code')
     code_default = configParser.get('request', 'code')
     body_default = configParser.get("request", "body")
+    headers = configParser.get("request", "headers")
+
     # 将字符串分割成列表，并转换为整数
     config_status_codes = [int(code) for code in status_codes_str.split(',')]
+
+    @classmethod
+    def setUpClass(cls):
+        """根据验证码进行登录"""
+        h = verification_code_login.main()
+        if h:
+            cls.headers = h
+            pass
+        else:
+            cls.headers = eval(cls.headers)
 
     def setUp(self):
         self.session = requests.session()
@@ -69,16 +84,39 @@ class TestAPI(unittest.TestCase):
     @ddt.data(*ExcelTestCaseProcessor(MyConfig.TESTDATA_FILE).read_data())
     def test_api(self, excel_data: dict):
         """TestAPI.test_api"""
-        if "url" not in excel_data:
+        # if "result" in excel_data and "PASS".__eq__(excel_data["result"]): return
+
+        if "url" not in excel_data or excel_data["url"] == " " or excel_data["url"] == "" or excel_data["url"] is None:
             return
+
+        headers = ast.literal_eval(excel_data["headers"]) if excel_data["headers"] else self.headers
+        if headers is dict:
+            headers: dict
+            content_type = headers.get("Content-Type")
+            # if re.search("application/json", content_type) is None:
+            #     headers = json.dumps(headers)
 
         body: str = ast.literal_eval(json.dumps(excel_data["body"])) if excel_data["body"] else eval(
             json.dumps(self.body_default))
         # 使用全局变量进行替换
         body = self.replace_body_variables(body)
 
+        url = excel_data["url"]
+        url = self.replace_body_variables(url)
+
+        # 检查是否存在 'delay' 键
+        if "delay" in excel_data:
+            delay = excel_data["delay"]  # 获取延迟时间
+            if delay:  # 确保延迟时间存在且不为空
+                try:
+                    # 转换字符串为浮点数，并进行延迟
+                    delay_seconds = float(delay)
+                    time.sleep(delay_seconds)  # 延迟操作
+                except ValueError as e:
+                    raise RuntimeError(e, f"延迟值无效，无法转换为数字！")
+
         # 发起请求
-        response = MyRequests().send_request(self.http, excel_data=excel_data, body=body)
+        response = MyRequests().send_request(self.http, excel_data=excel_data, url=url, body=body, headers=headers)
         # 校验http响应的状态码
         url = excel_data["url"]
         if response.status_code not in self.config_status_codes:
@@ -94,7 +132,7 @@ class TestAPI(unittest.TestCase):
 
         msg_key = "msg"
         if msg_key in excel_data:
-            msg = excel_data[msg_key]
+            msg: str = excel_data[msg_key]
         else:
             msg_key = self.next_key(excel_data, code_key)
             msg = excel_data[code_key]
@@ -112,7 +150,7 @@ class TestAPI(unittest.TestCase):
 
         variable_key = "variable"
         if variable_key in excel_data:
-            variable = excel_data["variable"]
+            variable: str = excel_data["variable"]
         else:
             variable_key = self.next_key(excel_data, "result")
             variable = excel_data[variable_key]
@@ -122,17 +160,19 @@ class TestAPI(unittest.TestCase):
         if 'application/json' in content_type:
             res_json = response.json()
 
-            # 提取响应结果到全局变量
+            # 使用逗号分割，提取响应结果到全局变量
             if variable:
                 # json_dict2 = json.loads(res_json)
-                extract_variable = self.extract_variable_using_jsonpath(res_json, jsonpath_expression=variable)
-                self.variables[f"{variable_key}{len(self.variables) + 1}"] = extract_variable
+                variable_arr = variable.split(",")
+                for vari in variable_arr:
+                    extract_variable = self.extract_variable_using_jsonpath(res_json, jsonpath_expression=vari)
+                    self.variables[f"{variable_key}{len(self.variables) + 1}"] = extract_variable
 
                 # if isinstance(res_json, dict):
                 #     self.get_veal_variable(res_json, variable)
 
             self.logger.debug(f"用例数据：{excel_data}")
-            self.logger.info("响应数据：%s" % response.content.decode("utf-8"))
+            self.logger.info(f"{url} 响应数据：%s" % response.content.decode("utf-8"))
 
             try:
                 if not code:
@@ -140,7 +180,12 @@ class TestAPI(unittest.TestCase):
                 # self.assertEqual(ast.literal_eval(code), json[code_key], f"{case_id} {title} {url}")
                 # 后端响应消息提示
                 # self.assertIn(msg, json[msg_key], f"{case_id} {title} {url}")
-                self.assertIn(msg, response.content.decode("utf-8"), f"{case_id} {title} {url}")
+                if msg.startswith("!"):
+                    msg = msg[1:]
+                    self.assertNotIn(msg, response.content.decode("utf-8"), f"{case_id} {title} {url}")
+                else:
+                    self.assertIn(msg, response.content.decode("utf-8"), f"{case_id} {title} {url}")
+
             except Exception as e:
                 result = "FAIL"
                 logging.warning(f"请求参数：{body}")
@@ -200,7 +245,7 @@ class TestAPI(unittest.TestCase):
             pass
 
     def replace_body_variables(self, input_string):
-        """正则匹配类似 {variable1} 的占位符（可替换多个）"""
+        """正则匹配类似 ${variable1} 的占位符（可替换多个）"""
         pattern = r"\${([a-zA-Z_][\w]*)}"
 
         # 替换占位符为 variables 中的实际值
@@ -226,8 +271,9 @@ class TestAPI(unittest.TestCase):
         jsonpath_expr = jsonpath_ng.parse(jsonpath_expression)
         matches = jsonpath_expr.find(res_json)
         if matches:
-            extract_variable = matches[0].value
-            logging.info("提取变量：" + extract_variable)
+            # 转成字符串类型用于正则替换
+            extract_variable = str(matches[0].value)
+            logging.info(f"提取变量：{len(self.variables)+1} => {extract_variable}")
             return extract_variable
         return None
 

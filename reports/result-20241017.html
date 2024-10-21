@@ -323,7 +323,7 @@
               <div class="flex-1">
                 <div class="d-flex align-items-center mb-1">🕒 开始时间</div>
                 <div class="d-flex align-items-center">
-                  <div class="text-sm text-muted line-clamp-1 me-auto">2024-10-09 15:21:50</div>
+                  <div class="text-sm text-muted line-clamp-1 me-auto">2024-10-17 17:31:05</div>
                 </div>
               </div>
             </div>
@@ -331,7 +331,7 @@
               <div class="flex-1">
                 <div class="d-flex align-items-center mb-1">🕘 结束时间</div>
                 <div class="d-flex align-items-center">
-                  <div class="text-sm text-muted line-clamp-1 me-auto">2024-10-09 15:21:50</div>
+                  <div class="text-sm text-muted line-clamp-1 me-auto">2024-10-17 17:31:16</div>
                 </div>
               </div>
             </div>
@@ -339,7 +339,7 @@
               <div class="flex-1">
                 <div class="d-flex align-items-center mb-1">⌛ 运行时长</div>
                 <div class="d-flex align-items-center">
-                  <div class="text-sm text-muted line-clamp-1 me-auto">0:00:00.234</div>
+                  <div class="text-sm text-muted line-clamp-1 me-auto">0:00:11.393</div>
                 </div>
               </div>
             </div>
@@ -347,7 +347,7 @@
               <div class="flex-1">
                 <div class="d-flex align-items-center mb-1">ℹ️ 描述</div>
                 <div class="d-flex align-items-center">
-                  <div class="text-sm text-muted me-auto">日志：<a href="/logs/20241009.log">/logs/20241009.log</a></div>
+                  <div class="text-sm text-muted me-auto">日志：<a href="/logs/20241017.log">/logs/20241017.log</a></div>
                 </div>
               </div>
             </div>
@@ -361,20 +361,20 @@
         <div class="card-body">
           <div class="row">
             <div class="col"><span class="h6 font-semibold text-muted text-sm d-block mb-2">通过</span>
-              <span class="h3 font-bold mb-0" id="p_number">3</span>
+              <span class="h3 font-bold mb-0" id="p_number">22</span>
             </div>
             <div class="col-auto">
               <div class="icon icon-shape bg-success text-white text-lg rounded-circle">P</div>
             </div>
           </div>
           <div class="mt-2 mb-0 text-sm">
-            <span class="badge badge-pill bg-soft-success text-success me-2">100.00%</span>
+            <span class="badge badge-pill bg-soft-success text-success me-2">88.00%</span>
             <span class="text-nowrap text-xs text-muted">通过率</span>
           </div>
           <div class="d-flex align-items-center">
             <div class="progress" style="width:70%; margin-top: 5px;">
               <div class="progress-bar bg-success" role="progressbar" aria-valuenow="83" aria-valuemin="0"
-                   aria-valuemax="100" style="width:100.00%"></div>
+                   aria-valuemax="100" style="width:88.00%"></div>
             </div>
           </div>
         </div>
@@ -383,20 +383,20 @@
         <div class="card-body">
           <div class="row">
             <div class="col"><span class="h6 font-semibold text-muted text-sm d-block mb-2">失败</span>
-              <span class="h3 font-bold mb-0" id="f_number">0</span>
+              <span class="h3 font-bold mb-0" id="f_number">3</span>
             </div>
             <div class="col-auto">
               <div class="icon icon-shape bg-warning text-white text-lg rounded-circle">F</div>
             </div>
           </div>
           <div class="mt-2 mb-0 text-sm">
-            <span class="badge badge-pill bg-soft-warning text-warning me-2">0.00%</span>
+            <span class="badge badge-pill bg-soft-warning text-warning me-2">12.00%</span>
             <span class="text-nowrap text-xs text-muted">失败率</span>
           </div>
           <div class="d-flex align-items-center">
             <div class="progress" style="width:70%; margin-top: 5px;">
               <div class="progress-bar bg-warning" role="progressbar" aria-valuenow="83" aria-valuemin="0"
-                   aria-valuemax="100" style="width:0.00%"></div>
+                   aria-valuemax="100" style="width:12.00%"></div>
             </div>
           </div>
         </div>
@@ -498,20 +498,20 @@
     自动化测试excel中api
     </td>
     <td></td>
-    <td>Passed:3,Failure:0,Errors:0,Skipped:0</td>
-    <td><a href="javascript:showClassDetail('c1.1',3)">Detail</a></td>
+    <td>Passed:22,Failure:3,Errors:0,Skipped:0</td>
+    <td><a href="javascript:showClassDetail('c1.1',25)">Detail</a></td>
     <td>&nbsp;</td>
 </tr>
 
 <tr id='pt1.1.1' class='hiddenRow'>
     <td class='passCase'>
-        <div class='testcase'>test_api_1</div>
+        <div class='testcase'>test_api_01</div>
     </td>
     <td style="color: #495057">
-        <div>新增项目 /test-api/policylibrary/policy/project/add</div>
+        <div>查询2024年1月深圳市项目 https://test-lqc-api.liqicloud.com/app/applet/project/list</div>
     </td>
     <td style="color: #495057">
-        <div>0.07 s</div>
+        <div>2.34 s</div>
     </td>
     <td>
          <div class="progress" style="width:50px;">
@@ -525,10 +525,30 @@
 
 <tr id='pt1.1.2' class='hiddenRow'>
     <td class='passCase'>
-        <div class='testcase'>test_api_2</div>
+        <div class='testcase'>test_api_02</div>
     </td>
     <td style="color: #495057">
-        <div>根据名称查询项目 /test-api/policylibrary/policy/project/select</div>
+        <div>查询2023年深圳市市级项目 https://test-lqc-api.liqicloud.com/app/applet/project/list</div>
+    </td>
+    <td style="color: #495057">
+        <div>0.13 s</div>
+    </td>
+    <td>
+         <div class="progress" style="width:50px;">
+          <div class='progress-bar bg-success' role="progressbar" aria-valuenow="83" aria-valuemin="0"
+            aria-valuemax="100" style='width:100%'></div>
+        </div>
+    </td>
+    <td></td>
+    <td></td>
+</tr>
+
+<tr id='pt1.1.3' class='hiddenRow'>
+    <td class='passCase'>
+        <div class='testcase'>test_api_03</div>
+    </td>
+    <td style="color: #495057">
+        <div>查询全部公示 https://test-lqc-api.liqicloud.com/app/applet/public/list</div>
     </td>
     <td style="color: #495057">
         <div>0.12 s</div>
@@ -543,15 +563,540 @@
     <td></td>
 </tr>
 
-<tr id='pt1.1.3' class='hiddenRow'>
+<tr id='pt1.1.4' class='hiddenRow'>
     <td class='passCase'>
-        <div class='testcase'>test_api_3</div>
+        <div class='testcase'>test_api_04</div>
     </td>
     <td style="color: #495057">
-        <div>删除项目 /test-api/policylibrary/policy/project/delete</div>
+        <div>查询2024年10月政策 https://test-lqc-api.liqicloud.com/app/applet/policy/list</div>
+    </td>
+    <td style="color: #495057">
+        <div>0.13 s</div>
+    </td>
+    <td>
+         <div class="progress" style="width:50px;">
+          <div class='progress-bar bg-success' role="progressbar" aria-valuenow="83" aria-valuemin="0"
+            aria-valuemax="100" style='width:100%'></div>
+        </div>
+    </td>
+    <td></td>
+    <td></td>
+</tr>
+
+<tr id='pt1.1.5' class='hiddenRow'>
+    <td class='passCase'>
+        <div class='testcase'>test_api_05</div>
+    </td>
+    <td style="color: #495057">
+        <div>过滤词“疫情”范围国家级录入 /test-api/policylibrary/policy/filtered/words/add</div>
+    </td>
+    <td style="color: #495057">
+        <div>0.07 s</div>
+    </td>
+    <td>
+         <div class="progress" style="width:50px;">
+          <div class='progress-bar bg-success' role="progressbar" aria-valuenow="83" aria-valuemin="0"
+            aria-valuemax="100" style='width:100%'></div>
+        </div>
+    </td>
+    <td></td>
+    <td></td>
+</tr>
+
+<tr id='pt1.1.6' class='hiddenRow'>
+    <td class='passCase'>
+        <div class='testcase'>test_api_06</div>
+    </td>
+    <td style="color: #495057">
+        <div>录入空的过滤词和空的过滤范围 /test-api/policylibrary/policy/filtered/words/add</div>
     </td>
     <td style="color: #495057">
         <div>0.05 s</div>
+    </td>
+    <td>
+         <div class="progress" style="width:50px;">
+          <div class='progress-bar bg-success' role="progressbar" aria-valuenow="83" aria-valuemin="0"
+            aria-valuemax="100" style='width:100%'></div>
+        </div>
+    </td>
+    <td></td>
+    <td></td>
+</tr>
+
+<tr id='pt1.1.7' class='hiddenRow'>
+    <td class='passCase'>
+        <div class='testcase'>test_api_07</div>
+    </td>
+    <td style="color: #495057">
+        <div>录入空的过滤词和范围国家级 /test-api/policylibrary/policy/filtered/words/add</div>
+    </td>
+    <td style="color: #495057">
+        <div>0.04 s</div>
+    </td>
+    <td>
+         <div class="progress" style="width:50px;">
+          <div class='progress-bar bg-success' role="progressbar" aria-valuenow="83" aria-valuemin="0"
+            aria-valuemax="100" style='width:100%'></div>
+        </div>
+    </td>
+    <td></td>
+    <td></td>
+</tr>
+
+<tr id='pt1.1.8' class='hiddenRow'>
+    <td class='passCase'>
+        <div class='testcase'>test_api_08</div>
+    </td>
+    <td style="color: #495057">
+        <div>录入“疫情1”过滤词和范围为空 /test-api/policylibrary/policy/filtered/words/add</div>
+    </td>
+    <td style="color: #495057">
+        <div>0.04 s</div>
+    </td>
+    <td>
+         <div class="progress" style="width:50px;">
+          <div class='progress-bar bg-success' role="progressbar" aria-valuenow="83" aria-valuemin="0"
+            aria-valuemax="100" style='width:100%'></div>
+        </div>
+    </td>
+    <td></td>
+    <td></td>
+</tr>
+
+<tr id='pt1.1.9' class='hiddenRow'>
+    <td class='passCase'>
+        <div class='testcase'>test_api_09</div>
+    </td>
+    <td style="color: #495057">
+        <div>问题反馈字段都为空 https://test-lqc-api.liqicloud.com/app/applet/action/feedback/submit</div>
+    </td>
+    <td style="color: #495057">
+        <div>0.23 s</div>
+    </td>
+    <td>
+         <div class="progress" style="width:50px;">
+          <div class='progress-bar bg-success' role="progressbar" aria-valuenow="83" aria-valuemin="0"
+            aria-valuemax="100" style='width:100%'></div>
+        </div>
+    </td>
+    <td></td>
+    <td></td>
+</tr>
+
+<tr id='pt1.1.10' class='hiddenRow'>
+    <td class='passCase'>
+        <div class='testcase'>test_api_10</div>
+    </td>
+    <td style="color: #495057">
+        <div>问题反馈图片为空 https://test-lqc-api.liqicloud.com/app/applet/action/feedback/submit</div>
+    </td>
+    <td style="color: #495057">
+        <div>7.11 s</div>
+    </td>
+    <td>
+         <div class="progress" style="width:50px;">
+          <div class='progress-bar bg-success' role="progressbar" aria-valuenow="83" aria-valuemin="0"
+            aria-valuemax="100" style='width:100%'></div>
+        </div>
+    </td>
+    <td></td>
+    <td></td>
+</tr>
+
+<tr id='ft1.1.11' class='none'>
+    <td class='failCase'>
+        <div class='testcase'>test_api_11</div>
+    </td>
+    <td style="color: #495057">
+        <div>问题反馈图片超过6张 https://test-lqc-api.liqicloud.com/app/applet/action/feedback/submit</div>
+    </td>
+    <td style="color: #495057">
+        <div>0.26 s</div>
+    </td>
+    <td>
+         <div class="progress" style="width:50px;">
+          <div class='progress-bar bg-warning' role="progressbar" aria-valuenow="83" aria-valuemin="0"
+            aria-valuemax="100" style='width:100%'></div>
+        </div>
+    </td>
+    <td>
+        <!--css div popup start-->
+        <a class="popup_link" href="javascript:void(0)" onclick="showLog('div_ft1.1.11')">log</a>
+        <div id='div_ft1.1.11' class="modal show case-log" style="display: none; background-color: #000000c7;">
+            <div class="modal-dialog modal-dialog-centered log_window">
+                <div class="modal-content shadow-3">
+                    <div class="modal-header">
+                        <div>
+                            <h5 class="mb-1">test_api_11</h5>
+                        </div>
+                        <div>
+                            <h5 class="mb-1">detailed log</h5>
+                        </div>
+                        <div>
+                            <button type="button" class="btn btn-sm btn-square bg-tertiary bg-opacity-20 bg-opacity-100-hover text-tertiary text-white-hover" data-bs-dismiss="modal" onclick="hideLog('div_ft1.1.11')">X</button>
+                        </div>
+                    </div>
+                    <div class="modal-body">
+                        <div>
+                            <pre>ft1.1.11: Traceback (most recent call last):
+  File "D:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\ddt.py", line 221, in wrapper
+    return func(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\mytest\UnittestDemo\testcase\test_excel_api.py", line 166, in test_api
+    raise e
+  File "D:\mytest\UnittestDemo\testcase\test_excel_api.py", line 161, in test_api
+    self.assertIn(msg, response.content.decode("utf-8"), f"{case_id} {title} {url}")
+AssertionError: '"code":400' not found in '{"code":200,"msg":null,"data":null}' : lqc_11 问题反馈图片超过6张 https://test-lqc-api.liqicloud.com/app/applet/action/feedback/submit
+</pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--css div popup end-->
+    </td>
+    <td></td>
+</tr>
+
+<tr id='pt1.1.12' class='hiddenRow'>
+    <td class='passCase'>
+        <div class='testcase'>test_api_12</div>
+    </td>
+    <td style="color: #495057">
+        <div>问题反馈内容为空 https://test-lqc-api.liqicloud.com/app/applet/action/feedback/submit</div>
+    </td>
+    <td style="color: #495057">
+        <div>0.08 s</div>
+    </td>
+    <td>
+         <div class="progress" style="width:50px;">
+          <div class='progress-bar bg-success' role="progressbar" aria-valuenow="83" aria-valuemin="0"
+            aria-valuemax="100" style='width:100%'></div>
+        </div>
+    </td>
+    <td></td>
+    <td></td>
+</tr>
+
+<tr id='pt1.1.13' class='hiddenRow'>
+    <td class='passCase'>
+        <div class='testcase'>test_api_13</div>
+    </td>
+    <td style="color: #495057">
+        <div>问题反馈内容为超过200字符 https://test-lqc-api.liqicloud.com/app/applet/action/feedback/submit</div>
+    </td>
+    <td style="color: #495057">
+        <div>0.07 s</div>
+    </td>
+    <td>
+         <div class="progress" style="width:50px;">
+          <div class='progress-bar bg-success' role="progressbar" aria-valuenow="83" aria-valuemin="0"
+            aria-valuemax="100" style='width:100%'></div>
+        </div>
+    </td>
+    <td></td>
+    <td></td>
+</tr>
+
+<tr id='pt1.1.14' class='hiddenRow'>
+    <td class='passCase'>
+        <div class='testcase'>test_api_14</div>
+    </td>
+    <td style="color: #495057">
+        <div>问题反馈姓名为空 https://test-lqc-api.liqicloud.com/app/applet/action/feedback/submit</div>
+    </td>
+    <td style="color: #495057">
+        <div>0.08 s</div>
+    </td>
+    <td>
+         <div class="progress" style="width:50px;">
+          <div class='progress-bar bg-success' role="progressbar" aria-valuenow="83" aria-valuemin="0"
+            aria-valuemax="100" style='width:100%'></div>
+        </div>
+    </td>
+    <td></td>
+    <td></td>
+</tr>
+
+<tr id='pt1.1.15' class='hiddenRow'>
+    <td class='passCase'>
+        <div class='testcase'>test_api_15</div>
+    </td>
+    <td style="color: #495057">
+        <div>问题反馈联系方式错误的手机格式 https://test-lqc-api.liqicloud.com/app/applet/action/feedback/submit</div>
+    </td>
+    <td style="color: #495057">
+        <div>0.07 s</div>
+    </td>
+    <td>
+         <div class="progress" style="width:50px;">
+          <div class='progress-bar bg-success' role="progressbar" aria-valuenow="83" aria-valuemin="0"
+            aria-valuemax="100" style='width:100%'></div>
+        </div>
+    </td>
+    <td></td>
+    <td></td>
+</tr>
+
+<tr id='pt1.1.16' class='hiddenRow'>
+    <td class='passCase'>
+        <div class='testcase'>test_api_16</div>
+    </td>
+    <td style="color: #495057">
+        <div>新增正确的问题反馈 https://test-lqc-api.liqicloud.com/app/applet/action/feedback/submit</div>
+    </td>
+    <td style="color: #495057">
+        <div>0.11 s</div>
+    </td>
+    <td>
+         <div class="progress" style="width:50px;">
+          <div class='progress-bar bg-success' role="progressbar" aria-valuenow="83" aria-valuemin="0"
+            aria-valuemax="100" style='width:100%'></div>
+        </div>
+    </td>
+    <td></td>
+    <td></td>
+</tr>
+
+<tr id='pt1.1.17' class='hiddenRow'>
+    <td class='passCase'>
+        <div class='testcase'>test_api_17</div>
+    </td>
+    <td style="color: #495057">
+        <div>查询反馈记录 https://test-lqc-api.liqicloud.com/app/applet/action/feedback/list/1840678944340381697/1/15</div>
+    </td>
+    <td style="color: #495057">
+        <div>0.26 s</div>
+    </td>
+    <td>
+         <div class="progress" style="width:50px;">
+          <div class='progress-bar bg-success' role="progressbar" aria-valuenow="83" aria-valuemin="0"
+            aria-valuemax="100" style='width:100%'></div>
+        </div>
+    </td>
+    <td></td>
+    <td></td>
+</tr>
+
+<tr id='pt1.1.18' class='hiddenRow'>
+    <td class='passCase'>
+        <div class='testcase'>test_api_18</div>
+    </td>
+    <td style="color: #495057">
+        <div>查询根据用户名查询没有回复的记录 /test-api/system/applet/feedback/backend/list</div>
+    </td>
+    <td style="color: #495057">
+        <div>0.06 s</div>
+    </td>
+    <td>
+         <div class="progress" style="width:50px;">
+          <div class='progress-bar bg-success' role="progressbar" aria-valuenow="83" aria-valuemin="0"
+            aria-valuemax="100" style='width:100%'></div>
+        </div>
+    </td>
+    <td></td>
+    <td></td>
+</tr>
+
+<tr id='ft1.1.19' class='none'>
+    <td class='failCase'>
+        <div class='testcase'>test_api_19</div>
+    </td>
+    <td style="color: #495057">
+        <div>回复问题反馈超过200字符 /test-api/system/applet/feedback/backend/reply</div>
+    </td>
+    <td style="color: #495057">
+        <div>0.06 s</div>
+    </td>
+    <td>
+         <div class="progress" style="width:50px;">
+          <div class='progress-bar bg-warning' role="progressbar" aria-valuenow="83" aria-valuemin="0"
+            aria-valuemax="100" style='width:100%'></div>
+        </div>
+    </td>
+    <td>
+        <!--css div popup start-->
+        <a class="popup_link" href="javascript:void(0)" onclick="showLog('div_ft1.1.19')">log</a>
+        <div id='div_ft1.1.19' class="modal show case-log" style="display: none; background-color: #000000c7;">
+            <div class="modal-dialog modal-dialog-centered log_window">
+                <div class="modal-content shadow-3">
+                    <div class="modal-header">
+                        <div>
+                            <h5 class="mb-1">test_api_19</h5>
+                        </div>
+                        <div>
+                            <h5 class="mb-1">detailed log</h5>
+                        </div>
+                        <div>
+                            <button type="button" class="btn btn-sm btn-square bg-tertiary bg-opacity-20 bg-opacity-100-hover text-tertiary text-white-hover" data-bs-dismiss="modal" onclick="hideLog('div_ft1.1.19')">X</button>
+                        </div>
+                    </div>
+                    <div class="modal-body">
+                        <div>
+                            <pre>ft1.1.19: Traceback (most recent call last):
+  File "D:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\ddt.py", line 221, in wrapper
+    return func(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\mytest\UnittestDemo\testcase\test_excel_api.py", line 166, in test_api
+    raise e
+  File "D:\mytest\UnittestDemo\testcase\test_excel_api.py", line 161, in test_api
+    self.assertIn(msg, response.content.decode("utf-8"), f"{case_id} {title} {url}")
+AssertionError: '"code":400' not found in '{"code":200,"msg":null,"data":null}' : lqc_19 回复问题反馈超过200字符 /test-api/system/applet/feedback/backend/reply
+</pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--css div popup end-->
+    </td>
+    <td></td>
+</tr>
+
+<tr id='pt1.1.20' class='hiddenRow'>
+    <td class='passCase'>
+        <div class='testcase'>test_api_20</div>
+    </td>
+    <td style="color: #495057">
+        <div>回复问题反馈 /test-api/system/applet/feedback/backend/reply</div>
+    </td>
+    <td style="color: #495057">
+        <div>0.04 s</div>
+    </td>
+    <td>
+         <div class="progress" style="width:50px;">
+          <div class='progress-bar bg-success' role="progressbar" aria-valuenow="83" aria-valuemin="0"
+            aria-valuemax="100" style='width:100%'></div>
+        </div>
+    </td>
+    <td></td>
+    <td></td>
+</tr>
+
+<tr id='ft1.1.21' class='none'>
+    <td class='failCase'>
+        <div class='testcase'>test_api_21</div>
+    </td>
+    <td style="color: #495057">
+        <div>第二次回复同一个问题反馈 /test-api/system/applet/feedback/backend/reply</div>
+    </td>
+    <td style="color: #495057">
+        <div>0.04 s</div>
+    </td>
+    <td>
+         <div class="progress" style="width:50px;">
+          <div class='progress-bar bg-warning' role="progressbar" aria-valuenow="83" aria-valuemin="0"
+            aria-valuemax="100" style='width:100%'></div>
+        </div>
+    </td>
+    <td>
+        <!--css div popup start-->
+        <a class="popup_link" href="javascript:void(0)" onclick="showLog('div_ft1.1.21')">log</a>
+        <div id='div_ft1.1.21' class="modal show case-log" style="display: none; background-color: #000000c7;">
+            <div class="modal-dialog modal-dialog-centered log_window">
+                <div class="modal-content shadow-3">
+                    <div class="modal-header">
+                        <div>
+                            <h5 class="mb-1">test_api_21</h5>
+                        </div>
+                        <div>
+                            <h5 class="mb-1">detailed log</h5>
+                        </div>
+                        <div>
+                            <button type="button" class="btn btn-sm btn-square bg-tertiary bg-opacity-20 bg-opacity-100-hover text-tertiary text-white-hover" data-bs-dismiss="modal" onclick="hideLog('div_ft1.1.21')">X</button>
+                        </div>
+                    </div>
+                    <div class="modal-body">
+                        <div>
+                            <pre>ft1.1.21: Traceback (most recent call last):
+  File "D:\Users\Administrator\AppData\Local\Programs\Python\Python312\Lib\site-packages\ddt.py", line 221, in wrapper
+    return func(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\mytest\UnittestDemo\testcase\test_excel_api.py", line 166, in test_api
+    raise e
+  File "D:\mytest\UnittestDemo\testcase\test_excel_api.py", line 161, in test_api
+    self.assertIn(msg, response.content.decode("utf-8"), f"{case_id} {title} {url}")
+AssertionError: '"code":400' not found in '{"code":200,"msg":null,"data":null}' : lqc_21 第二次回复同一个问题反馈 /test-api/system/applet/feedback/backend/reply
+</pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--css div popup end-->
+    </td>
+    <td></td>
+</tr>
+
+<tr id='pt1.1.22' class='hiddenRow'>
+    <td class='passCase'>
+        <div class='testcase'>test_api_22</div>
+    </td>
+    <td style="color: #495057">
+        <div>TestAPI.test_api</div>
+    </td>
+    <td style="color: #495057">
+        <div>0.00 s</div>
+    </td>
+    <td>
+         <div class="progress" style="width:50px;">
+          <div class='progress-bar bg-success' role="progressbar" aria-valuenow="83" aria-valuemin="0"
+            aria-valuemax="100" style='width:100%'></div>
+        </div>
+    </td>
+    <td></td>
+    <td></td>
+</tr>
+
+<tr id='pt1.1.23' class='hiddenRow'>
+    <td class='passCase'>
+        <div class='testcase'>test_api_23</div>
+    </td>
+    <td style="color: #495057">
+        <div>TestAPI.test_api</div>
+    </td>
+    <td style="color: #495057">
+        <div>0.00 s</div>
+    </td>
+    <td>
+         <div class="progress" style="width:50px;">
+          <div class='progress-bar bg-success' role="progressbar" aria-valuenow="83" aria-valuemin="0"
+            aria-valuemax="100" style='width:100%'></div>
+        </div>
+    </td>
+    <td></td>
+    <td></td>
+</tr>
+
+<tr id='pt1.1.24' class='hiddenRow'>
+    <td class='passCase'>
+        <div class='testcase'>test_api_24</div>
+    </td>
+    <td style="color: #495057">
+        <div>TestAPI.test_api</div>
+    </td>
+    <td style="color: #495057">
+        <div>0.00 s</div>
+    </td>
+    <td>
+         <div class="progress" style="width:50px;">
+          <div class='progress-bar bg-success' role="progressbar" aria-valuenow="83" aria-valuemin="0"
+            aria-valuemax="100" style='width:100%'></div>
+        </div>
+    </td>
+    <td></td>
+    <td></td>
+</tr>
+
+<tr id='pt1.1.25' class='hiddenRow'>
+    <td class='passCase'>
+        <div class='testcase'>test_api_25</div>
+    </td>
+    <td style="color: #495057">
+        <div>TestAPI.test_api</div>
+    </td>
+    <td style="color: #495057">
+        <div>0.00 s</div>
     </td>
     <td>
          <div class="progress" style="width:50px;">
@@ -571,17 +1116,17 @@
       总数:
       <button type="button"
               class="btn btn-sm bg-dark bg-opacity-20 bg-opacity-100-hover text-dark text-white-hover">
-        3
+        25
       </button>
       =
       <button type="button"
               class="btn btn-sm bg-success bg-opacity-20 bg-opacity-100-hover text-success text-white-hover">
-        3
+        22
       </button>
       +
       <button type="button"
               class="btn btn-sm bg-warning bg-opacity-20 bg-opacity-100-hover text-warning text-white-hover">
-        0
+        3
       </button>
       +
       <button type="button"

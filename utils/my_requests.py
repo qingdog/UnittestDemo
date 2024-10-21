@@ -21,17 +21,16 @@ class MyRequests:
     configParser = configparser.ConfigParser()
     configParser.read(os.path.join(os.path.dirname(os.path.dirname(__file__)), "config.ini"),
                       encoding='UTF-8')
-    headers = configParser.get("request", "headers")
 
     method = configParser.get("request", "method")
     base_url = configParser.get("request", "base_url")
 
     # def send_request(self, session: PoolManager, excel_data):
-    def send_request(self, session: requests.sessions.Session, excel_data, body):
+    def send_request(self, session: requests.sessions.Session, excel_data, url, body, headers):
         # 从读取的表格中获取响应的参数作为传递
-        url = excel_data["url"]
+
         # 处理非完整url
-        if re.search("^http(s)?://", url) is None:
+        if re.search(r"^http(s)?://", url) is None:
             if not url.startswith("/"):
                 url = "/" + url
             url = self.base_url + url
@@ -41,13 +40,6 @@ class MyRequests:
 
         if "params" in excel_data:
             params = ast.literal_eval(excel_data["params"]) if excel_data["params"] else None
-
-        headers = ast.literal_eval(excel_data["headers"]) if excel_data["headers"] else eval(self.headers)
-        if headers is dict:
-            headers: dict
-            content_type = headers.get("Content-Type")
-            # if re.search("application/json", content_type) is None:
-            #     headers = json.dumps(headers)
 
         try:
             response = session.request(method=method, url=url, headers=headers, data=body, verify=True)

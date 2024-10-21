@@ -46,7 +46,7 @@ class MyConfig:
         xlsx_files = [file for file in os.listdir(FILE_DIR) if file.endswith('.xlsx')]
     # 如果找到了.xlsx文件，则设置TESTDATA_FILE
     # if xlsx_files:
-    TESTDATA_FILE = os.path.join(TESTDATA_DIR if xlsx_files else FILE_DIR, xlsx_files[0])
+    TESTDATA_FILE = os.path.join(TESTDATA_DIR if xlsx_files else FILE_DIR, xlsx_files[-1])
 
 
 class MyTestResult(_TestResult):
