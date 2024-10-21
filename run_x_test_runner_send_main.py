@@ -140,21 +140,11 @@ def run_case(all_case, report_path=MyConfig.TESTREPORT_DIR):
     config_smtp = config_p.items("smtp")
     # 创建一个字典来存储SMTP配置
     smtp_config = {key: value for key, value in config_smtp}
+    # 不发送邮件
+    smtp_config["password"] = ""
     if "password" in smtp_config and smtp_config["password"] != "":
         # send_mail(latest_file_path, smtp_config)
         # 使用XTestRunner发送邮件
-
-        # 设定目标时间为16:19
-        target_time = datetime.strptime("16:00", "%H:%M")
-        # 获取当前时间
-        current_time = datetime.strptime(datetime.now().strftime("%H:%M"), "%H:%M")
-        # 计算时间差
-        time_difference = abs(current_time - target_time)
-        # 设置5分钟的容忍时间
-        tolerance = timedelta(minutes=5)
-        # 检查当前时间是否在目标时间的5分钟之内，不是则不发送邮箱
-        if time_difference > tolerance:
-            return
         to = "1759765836@qq.com"
         runner.send_email(
             user=smtp_config["user"],

@@ -2,6 +2,7 @@
 import base64
 import json
 import logging
+import os
 import re
 
 import cv2
@@ -221,6 +222,8 @@ def auto_login(i=4 * 3):
             logging.info(f"{i} {login_json}")
             return auto_login(i)  # 递归调用时传递返回值
         else:
+            if os.path.exists(filename):
+                os.remove(filename)
             return login_json["data"]["access_token"]  # 成功时返回 access_token
     return None  # 当 uuid 为 None 时返回 None
 
@@ -260,6 +263,7 @@ def main():
     # logging.getLogger().setLevel(logging.DEBUG)
     logging.getLogger().setLevel(logging.INFO)
     access_token = auto_login()
+
     if access_token:
         headers["authorization"] = f"Bearer {access_token}"
         logging.info(f"登录成功 {headers}")
