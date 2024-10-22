@@ -10,6 +10,7 @@ import numpy as np
 import requests
 from aip import AipOcr
 
+
 # import muggle_ocr
 
 
@@ -92,7 +93,7 @@ def image_noise_reduction(verification_code, fun=1):
     return verification_code
 
 
-def img_ocr(img_name, fun=1):
+def img_ocr(img_name, fun=2):
     # 验证码识别400MB依赖包 pip install tensorflow>=1.14 numpy opencv-python pillow pyyaml
     # https://github.com/litongjava/muggle_ocr
     text = ""
@@ -113,6 +114,9 @@ def img_ocr(img_name, fun=1):
         img = open(f'{img_name}', 'rb').read()
         # 标准版
         result = client.basicGeneral(img)
+        if result.get('words_result') is None:
+            logging.error(result)
+            return ""
         for i in result.get('words_result'):
             if text == "":
                 text += (i.get('words'))
@@ -134,23 +138,25 @@ def img_ocr(img_name, fun=1):
     return text
 
 
-def calculate(num1, num2, compute_sign=""):
+def calculate(num1, num2, operator=""):
     """正则判断符号后进行计算"""
     result = None
     try:
         num1 = int(num1)
         num2 = int(num2)
-        if re.search(r"[/(<{!|]", compute_sign):
-            result = num1 / num2
-        elif re.search(r'[*×xX八]', compute_sign):
-            result = num1 * num2
-        elif re.search(r"[-一—~]", compute_sign):
-            result = num1 - num2
-        else:
-            add = r"[+十]"
+        if re.search(r"[+十M]", operator):
             result = num1 + num2
+        elif re.search(r"[-一—~]", operator):
+            result = num1 - num2
+        elif re.search(r'[*×xX八]', operator):
+            result = num1 * num2
+        elif re.search(r"[/(\\、\[<{!|1]", operator):
+            result = int(num1 / num2)
+        else:
+            # *乘号 和 /除号 难以识别
+            result = num1 * num2
     except ValueError as e:
-        print(f"转换出现错误：{e}")
+        print(f"转换出现错误，跳过：{e}")
     return result
 
 
@@ -158,59 +164,53 @@ def calculate(num1, num2, compute_sign=""):
 # numbers = re.findall(ss, content)
 def calculate_strategy(content):
     """验证码计算策略"""
-    index = 0
     numbers = {}
     equal_sign_index = None
-    for cont in content:
-        m = re.search(r"\d", cont)
-        if m:
-            number = m.group()
-            numbers[index] = number
+    # 遍历content，提取数字和等号位置
+    for index, cont in enumerate(content):
+        if mun := re.search(r"\d", cont):
+            numbers[index] = mun.group()
         elif re.search(r"[=≈]", cont):
             equal_sign_index = index
-        index += 1
-    calculate_result = None
 
-    keys = []
-    for key in numbers.keys():
-        keys.append(key)
+    # 如果两个及以上的数字，无需计算
+    if len(numbers) < 2: return None
 
-    # 如果有等号（等号后退一位视为数字）
-    if equal_sign_index and len(numbers) >= 2:
+    keys = list(numbers.keys())
+
+    """if equal_sign_index:
         if keys[0] + 1 == keys[1]:
             calculate_result = calculate(numbers[keys[0]], numbers[equal_sign_index - 1])
         else:
             calculate_result = calculate(numbers[keys[0]], numbers[equal_sign_index - 1], content[equal_sign_index - 2])
     # 只有两位数字
-    elif len(numbers) >= 2:
+    else:
         # 如果数字相邻（没有符号）
         if keys[0] + 1 == keys[1]:
             calculate_result = calculate(numbers[keys[0]], numbers[keys[1]])
         else:
             # keys[0] + 2 == keys[1]
-            calculate_result = calculate(numbers[keys[0]], numbers[keys[1]], content[keys[1] - 1])
-    return calculate_result
+            calculate_result = calculate(numbers[keys[0]], numbers[keys[1]], content[keys[1] - 1])"""
+    if equal_sign_index and (equal_sign_index - 1) in numbers:
+        # 等号前后的计算（如果等号后退一位为数字）
+        first_num = numbers[keys[0]]
+        second_num = numbers[equal_sign_index - 1]
+        operator = content[equal_sign_index - 2] if keys[0] + 1 != equal_sign_index - 1 else ""
+    else:
+        # 只有两个数字时的计算
+        first_num = numbers[keys[0]]
+        second_num = numbers[keys[1]]
+        # 如果数字不相邻，后退一位视为操作符
+        operator = content[keys[1] - 1] if keys[0] + 1 != keys[1] else ""
+    return calculate(first_num, second_num, operator)
 
 
 def auto_login(i=4 * 3):
     i -= 1
     filename = "code.png"
-    uuid = fetch_and_save_image()
+    uuid = fetch_and_save_image(img_name=filename)
     if uuid:
-        verification_code = image_grayscale(filename=filename, fun=1)
-        # show_img(verification_code)
-        # 二值化分割像素点
-        # verification_code = image_binary(verification_code, thresh=60)
-        # show_img(verification_code)
-        # 补全像素点
-        # verification_code = image_noise_reduction(verification_code, fun=3)
-        # show_img(verification_code)
-        # 保存灰度化的图片
-        cv2.imwrite(filename=filename, img=verification_code)
-        text = img_ocr(img_name=filename, fun=2)
-        logging.debug(f"验证码文本：{text}")
-        result = calculate_strategy(text)
-        logging.debug(f"验证码结果：{result}")
+        result = text_recognition(filename)
 
         if result is None:
             if i < 0: return None  # 超过最大尝试次数时返回 None
@@ -227,6 +227,25 @@ def auto_login(i=4 * 3):
                 os.remove(filename)
             return login_json["data"]["access_token"]  # 成功时返回 access_token
     return None  # 当 uuid 为 None 时返回 None
+
+
+def text_recognition(filename):
+    """文本识别"""
+    verification_code = image_grayscale(filename=filename, fun=1)
+    # show_img(verification_code)
+    # 二值化分割像素点
+    # verification_code = image_binary(verification_code, thresh=60)
+    # show_img(verification_code)
+    # 补全像素点
+    # verification_code = image_noise_reduction(verification_code, fun=3)
+    # show_img(verification_code)
+    # 保存灰度化的图片
+    cv2.imwrite(filename=filename, img=verification_code)
+    text = img_ocr(img_name=filename, fun=2)
+    logging.debug(f"验证码文本：{text}")
+    result = calculate_strategy(text)
+    logging.debug(f"验证码结果：{result}")
+    return result
 
 
 def login(uuid, code):
@@ -261,8 +280,9 @@ def fetch_and_save_image(img_name="code.png"):
 
 def main():
     level = logging.getLogger().level
-    # logging.getLogger().setLevel(logging.DEBUG)
-    logging.getLogger().setLevel(logging.INFO)
+    if level > logging.INFO:
+        # logging.getLogger().setLevel(logging.DEBUG)
+        logging.getLogger().setLevel(logging.INFO)
     access_token = auto_login()
 
     if access_token:
@@ -276,4 +296,6 @@ def main():
 
 
 if __name__ == '__main__':
+    logging.getLogger().setLevel(logging.DEBUG)
     main()
+    # text_recognition("4.png")
