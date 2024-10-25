@@ -4,6 +4,8 @@ import logging
 import requests
 import base64
 
+from aip import AipOcr
+
 
 # https://ai.baidu.com/ai-doc/OCR/Ck3h7y2ia
 def get_access_token(client_id, client_secret):
@@ -15,7 +17,7 @@ def get_access_token(client_id, client_secret):
 
 
 # https://ai.baidu.com/ai-doc/OCR/zk3h7xz52
-def baidu_orc_general_basic(filename, access_token):
+def baidu_orc_general_basic2(filename, access_token):
     """
     通用文字识别
     filename: 本地文件
@@ -42,3 +44,28 @@ def baidu_orc_general_basic(filename, access_token):
             text += "\n" + i.get('words')
     return text
 
+
+def baidu_orc_general_basic(img_name):
+    """
+    通用文字识别
+    img_name: 本地图片
+    return: 识别结果
+    """
+    text = ""
+    APP_ID = '115896386'
+    API_KEY = 'BjvIG8O9uXLOXWGcpBB3CTZ6'
+    SECRET_KEY = 'q7NLp5cZ4DzHGt057Sc3gUJ8ClKZ5snK'
+
+    client = AipOcr(APP_ID, API_KEY, SECRET_KEY)
+    img = open(f'{img_name}', 'rb').read()
+    # 标准版
+    result = client.basicGeneral(img)
+    if result.get('words_result') is None:
+        logging.error(result)
+        return ""
+    for i in result.get('words_result'):
+        if text == "":
+            text += (i.get('words'))
+        else:
+            text += "\n" + i.get('words')
+    return text

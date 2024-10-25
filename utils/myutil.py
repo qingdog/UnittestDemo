@@ -1,6 +1,3 @@
-import binascii
-import hashlib
-import io
 import os
 import re
 

@@ -8,8 +8,8 @@ import time
 import cv2
 import numpy as np
 import requests
-from aip import AipOcr
 
+import utils.api.ocr_baidu_api
 from utils.api import openai_api
 
 
@@ -108,22 +108,7 @@ def img_ocr(img_name, fun=2):
         # pip install baidu-aip chardet
         # https://ai.baidu.com/tech/ocr#百度ocr识别文字
         # https://console.bce.baidu.com/ai-engine/ocr/resource?apiId=27#每月1000次
-        APP_ID = '115896386'
-        API_KEY = 'BjvIG8O9uXLOXWGcpBB3CTZ6'
-        SECRET_KEY = 'q7NLp5cZ4DzHGt057Sc3gUJ8ClKZ5snK'
-
-        client = AipOcr(APP_ID, API_KEY, SECRET_KEY)
-        img = open(f'{img_name}', 'rb').read()
-        # 标准版
-        result = client.basicGeneral(img)
-        if result.get('words_result') is None:
-            logging.error(result)
-            return ""
-        for i in result.get('words_result'):
-            if text == "":
-                text += (i.get('words'))
-            else:
-                print(f"识别的其他内容：{i.get('words')}")
+        text = utils.api.ocr_baidu_api.baidu_orc_general_basic(img_name)
         """
         # 高精度版
         msg = client.basicAccurate(image)
