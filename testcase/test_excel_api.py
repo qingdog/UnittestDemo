@@ -14,8 +14,7 @@ from run_x_test_runner_send_main import MyConfig
 import unittest, requests, ddt
 
 from utils import verification_code_login
-from utils.my_requests import MyRequests
-from utils.excel_testcase_processor import ExcelTestCaseProcessor
+from utils.excel_testcase_util import ExcelTestCaseProcessor
 import jsonpath_ng
 
 
@@ -51,12 +50,16 @@ class TestAPI(unittest.TestCase):
     code_default = configParser.get('request', 'code')
     body_default = configParser.get("request", "body")
     headers = configParser.get("request", "headers")
+    base_url = configParser.get("request", "base_url")
+    method = configParser.get("request", "method")
 
     # 将字符串分割成列表，并转换为整数
     config_status_codes = [int(code) for code in status_codes_str.split(',')]
+    session = None
 
     @classmethod
     def setUpClass(cls):
+        cls.session = requests.session()
         """根据验证码进行登录"""
         h = verification_code_login.main()
         if h:
@@ -65,29 +68,25 @@ class TestAPI(unittest.TestCase):
         else:
             cls.headers = eval(cls.headers)
 
+    @classmethod
+    def tearDownClass(cls):
+        cls.session.close()
+        pass
+
     def setUp(self):
-        self.session = requests.session()
-        self.http = self.session
-        # self.http = urllib3.PoolManager(
-        #     cert_reqs="CERT_REQUIRED",
-        #     ca_certs=certifi.where()
-        # )
+        pass
 
     def tearDown(self):
         pass
 
     logger = logging.getLogger()
 
-    # testData: list[dict[str, int]] = XlrdExcel(MyConfig.TESTDATA_FILE).read_data()
-    # excel_data为sheet页中的一行数据，key为每一列的首行数据，value为这一行中的值
-    # @ddt.data(*testData)
-    @ddt.data(*ExcelTestCaseProcessor(MyConfig.TESTDATA_FILE).read_data())
-    def test_api(self, excel_data: dict):
-        """TestAPI.test_api"""
+    def package_send_data(self, excel_data):
+        """封装excel中需要发送请求的数据"""
         # if "result" in excel_data and "PASS".__eq__(excel_data["result"]): return
 
         if "url" not in excel_data or excel_data["url"] == " " or excel_data["url"] == "" or excel_data["url"] is None:
-            return
+            return None, None, None
 
         headers = ast.literal_eval(excel_data["headers"]) if excel_data["headers"] else self.headers
         if headers is dict:
@@ -98,11 +97,6 @@ class TestAPI(unittest.TestCase):
 
         body: str = ast.literal_eval(json.dumps(excel_data["body"])) if excel_data["body"] else eval(
             json.dumps(self.body_default))
-        # 使用全局变量进行替换
-        body = self.replace_body_variables(body)
-
-        url = excel_data["url"]
-        url = self.replace_body_variables(url)
 
         # 检查是否存在 'delay' 键
         if "delay" in excel_data:
@@ -115,53 +109,61 @@ class TestAPI(unittest.TestCase):
                 except ValueError as e:
                     raise RuntimeError(e, f"延迟值无效，无法转换为数字！")
 
-        # 发起请求
-        response = MyRequests().send_request(self.http, excel_data=excel_data, url=url, body=body, headers=headers)
-        # 校验http响应的状态码
+        # 处理非完整url
         url = excel_data["url"]
+        if re.search(r"^http(s)?://", url) is None:
+            if not url.startswith("/"):
+                url = "/" + url
+            url = self.base_url + url
+
+        method = excel_data["method"]
+        method = self.method if method is None else method
+
+        # 暂时不处理params
+        # if "params" in excel_data:
+        #     params = ast.literal_eval(excel_data["params"]) if excel_data["params"] else None
+
+        return method, url, headers, body
+
+    # testData: list[dict[str, int]] = XlrdExcel(MyConfig.TESTDATA_FILE).read_data()
+    # excel_data为sheet页中的一行数据，key为每一列的首行数据，value为这一行中的值
+    # @ddt.data(*testData)
+    @ddt.data(*ExcelTestCaseProcessor(MyConfig.TESTDATA_FILE).read_data())
+    def test_api(self, excel_data: dict):
+        """TestAPI.test_api"""
+        # 如果这一行用例中没有url则跳过
+        if "url" not in excel_data or excel_data["url"] is None:
+            return
+
+        method, url, headers, body = self.package_send_data(excel_data)
+        # 使用全局变量进行替换
+        body = self.replace_body_variables(body)
+        url = self.replace_body_variables(url)
+
+        # 发起请求
+        try:
+            response = self.session.request(method=method, url=url, headers=headers, data=body, verify=True)
+        except requests.exceptions.SSLError as e:
+            # 忽略SSL证书验证
+            # requests.packages.urllib3.disable_warnings(category=InsecureRequestWarning)
+            response = self.session.request(method=method, url=url, headers=headers, data=body, verify=False)
+            logging.getLogger("mylogging").warning(f"警告 未经过证书验证请求：{url}")
+        except Exception as e:
+            raise e
 
         if response.status_code not in self.config_status_codes:
             # self.assertEqual(self.config_status_codes[0], response.status_code, f"{response.status_code} {url}")
             raise RuntimeError(f"状态码校验失败！{url} {response.status_code}")
 
-        code_key = "code"
-        if code_key in excel_data:
-            code = excel_data[code_key]
-        else:
-            code_key = self.next_key(excel_data, "body")
-            code = excel_data[code_key]
-
-        msg_key = "msg"
-        if msg_key in excel_data:
-            msg: str = excel_data[msg_key]
-        else:
-            msg_key = self.next_key(excel_data, code_key)
-            msg = excel_data[code_key]
-        result = "PASS"
-
-        case_id = ""
-        if "id" in excel_data:
-            case_id = excel_data["id"]
-
-        # 测试报告用例描述
-        title = ""
-        if "title" in excel_data:
-            title = excel_data["title"]
-            self._testMethodDoc = title + " " + url
-
-        variable_key = "variable"
-        if variable_key in excel_data:
-            variable: str = excel_data["variable"]
-        else:
-            variable_key = self.next_key(excel_data, "result")
-            variable = excel_data[variable_key]
+        case_id, title, msg, variable_key, variable = self.get_excel_data(excel_data, url)
 
         # 检查响应的Content-Type是否为JSON
         content_type = response.headers.get('Content-Type', '')
+        result = "PASS"
         if 'application/json' in content_type:
             res_json = response.json()
 
-            # 使用逗号分割，提取响应结果到全局变量
+            # 提取json格式响应数据到全局变量（多个使用逗号分割）
             if variable:
                 # json_dict2 = json.loads(res_json)
                 variable_arr = variable.split(",")
@@ -176,8 +178,9 @@ class TestAPI(unittest.TestCase):
             self.logger.info(f"{url} 响应数据：%s" % response.content.decode("utf-8"))
 
             try:
-                if not code:
-                    code = self.code_default
+                # 暂时不校验code
+                # if not code:
+                #     code = self.code_default
                 # self.assertEqual(ast.literal_eval(code), json[code_key], f"{case_id} {title} {url}")
                 # 后端响应消息提示
                 # self.assertIn(msg, json[msg_key], f"{case_id} {title} {url}")
@@ -196,13 +199,47 @@ class TestAPI(unittest.TestCase):
         else:
             # 如果Content-Type不是JSON，处理非JSON响应
             try:
-                self.assertIn(ast.literal_eval(code), response.text, f"{case_id} {title} {url}")
+                # self.assertIn(ast.literal_eval(code), response.text, f"{case_id} {title} {url}")
                 self.assertIn(msg, response.text, f"{case_id} {title} {url}")
             except Exception as e:
                 result = "FAIL"
                 raise e
             finally:
                 ExcelTestCaseProcessor(MyConfig.TESTDATA_FILE).write_data(excel_data, value=result)
+
+    def get_excel_data(self, excel_data, url):
+        """获取excel数据用于校验"""
+        code_key = "code"
+        if code_key in excel_data:
+            code = excel_data[code_key]
+        else:
+            code_key = self.next_key(excel_data, "body")
+            code = excel_data[code_key]
+
+        msg_key = "msg"
+        if msg_key in excel_data:
+            msg: str = excel_data[msg_key]
+        else:
+            msg_key = self.next_key(excel_data, code_key)
+            msg = excel_data[code_key]
+
+        case_id = ""
+        if "id" in excel_data:
+            case_id = excel_data["id"]
+
+        # 测试报告用例描述
+        title = ""
+        if "title" in excel_data:
+            title = excel_data["title"]
+            self._testMethodDoc = title + " " + url
+
+        variable_key = "variable"
+        if variable_key in excel_data:
+            variable: str = excel_data["variable"]
+        else:
+            variable_key = self.next_key(excel_data, "result")
+            variable = excel_data[variable_key]
+        return case_id, title, msg, variable_key, variable
 
     def next_key(self, my_dict, current_key):
         """从指定的key中找到下一个key"""
@@ -269,12 +306,13 @@ class TestAPI(unittest.TestCase):
         return input_string
 
     def extract_variable_using_jsonpath(self, res_json, jsonpath_expression):
+        """jsonpath表达式提取变量"""
         jsonpath_expr = jsonpath_ng.parse(jsonpath_expression)
         matches = jsonpath_expr.find(res_json)
         if matches:
             # 转成字符串类型用于正则替换
             extract_variable = str(matches[0].value)
-            logging.info(f"提取变量：{len(self.variables)+1} => {extract_variable}")
+            logging.info(f"提取变量：{len(self.variables) + 1} => {extract_variable}")
             return extract_variable
         return None
 

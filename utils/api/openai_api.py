@@ -1,3 +1,4 @@
+import base64
 import os
 import re
 import time
@@ -98,9 +99,9 @@ def get_chat_last_number(result):
 
 
 def main():
-    base_url = "https://open.bigmodel.cn/api/paas/v4/"
-    api_key = ""
-    model = "glm-4-flash"
+    # base_url = "https://open.bigmodel.cn/api/paas/v4/"
+    api_key = os.getenv("OPENAI_API_KEY")
+    # model = "glm-4-flash"
     # 示例调用生成器的方法
     img_url = "https://dashscope.oss-cn-beijing.aliyuncs.com/images/dog_and_girl.jpeg"
     messages = [
@@ -118,14 +119,27 @@ def main():
     # messages = [{"role": "user", "content": [{"type": "text", "text": "你好啊"}, ]}]
 
     content = ""
-    requests.get("https://demo.ruoyi.vip/captcha/captchaImage?type=math&s=0.39236748354325024")
-    img_b64_str = "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"
+    from PIL import Image
+    from io import BytesIO
+
+    # 发送请求获取图片数据
+    response = requests.get("https://demo.ruoyi.vip/captcha/captchaImage?type=math&s=0.39236748354325024")
+    # 检查请求是否成功
+    img_path = "captcha_image.png"
+    if response.status_code == 200:
+        # 将二进制数据转为图像并保存
+        image = Image.open(BytesIO(response.content))
+        image.save(img_path)  # 将图像保存为 PNG 格式
+    else:
+        print("无法获取图片")
+    with open(img_path, "rb") as image_file:
+        img_b64_str = base64.b64encode(image_file.read()).decode("utf-8")
 
     # 记录开始时间
     start_time = time.time()
     # 调用生成器并流式处理结果
-    for chunk in stream_openai_response(messages, api_key=api_key, base_url=base_url, model=model):
-        # for chunk in img_base64_to_openai("计算结果。", img_base64_str=img_b64_str, api_key=api_key, base_url=base_url, model=model):
+    # for chunk in stream_openai_response(messages, api_key=api_key, base_url=base_url, model=model):
+    for chunk in img_base64_to_openai("计算结果。", img_base64_str=img_b64_str, api_key=api_key):
         content += chunk
         print(chunk, end='', flush=True)  # 实时打印接收到的每个块
     # 记录结束时间
@@ -134,6 +148,10 @@ def main():
 
     ss = get_chat_last_number(content)
     print(ss)
+
+    # 删除图片
+    if os.path.exists(img_path):
+        os.remove(img_path)
 
 
 if __name__ == '__main__':

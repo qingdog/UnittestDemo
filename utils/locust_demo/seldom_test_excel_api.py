@@ -2,7 +2,7 @@ import unittest
 import ddt
 from seldom import data
 
-from utils.excel_testcase_processor import ExcelTestCaseProcessor
+from utils.excel_testcase_util import ExcelTestCaseProcessor
 # from utils.xlrd_excel import XlrdExcel
 from run_x_test_runner_send_main import MyConfig
 
