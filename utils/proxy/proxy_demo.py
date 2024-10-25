@@ -6,8 +6,6 @@ from bs4 import BeautifulSoup
 from requests.exceptions import Timeout
 from loguru import logger
 
-import youdao_translate
-
 
 # 设置代理服务器地址和端口
 # proxies = {

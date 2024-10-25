@@ -41,3 +41,4 @@ def baidu_orc_general_basic(filename, access_token):
         else:
             text += "\n" + i.get('words')
     return text
+

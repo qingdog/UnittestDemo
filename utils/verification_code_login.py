@@ -1,14 +1,16 @@
-# 方法一  直接在读取图片的时候灰度化
 import base64
 import json
 import logging
 import os
 import re
+import time
 
 import cv2
 import numpy as np
 import requests
 from aip import AipOcr
+
+from utils.api import openai_api
 
 
 # import muggle_ocr
@@ -206,18 +208,22 @@ def calculate_strategy(content):
 
 
 def auto_login(i=4 * 3):
+    """自动登录，失败则重试"""
     i -= 1
     filename = "code.png"
-    uuid = fetch_and_save_image(img_name=filename)
+    uuid, img = fetch_and_save_image(img_name=filename)
     if uuid:
-        result = text_recognition(filename)
+        if i >= 10:
+            result = openai_text_recognition(img)
+        else:
+            result = text_recognition(filename)
 
         if result is None:
             if i < 0: return None  # 超过最大尝试次数时返回 None
             return auto_login(i)  # 递归调用时传递返回值
         login_json = login(uuid=uuid, code=result)
-        logging.debug(f"登录结果：{login_json}")
         if login_json["code"] != 200:
+            logging.debug(f"登录失败：{login_json}")
             if i < 0: return None  # 超过最大尝试次数时返回 None
             logging.info(f"{i} {login_json}")
             return auto_login(i)  # 递归调用时传递返回值
@@ -227,6 +233,29 @@ def auto_login(i=4 * 3):
                 os.remove(filename)
             return login_json["data"]["access_token"]  # 成功时返回 access_token
     return None  # 当 uuid 为 None 时返回 None
+
+
+def openai_text_recognition(img_base64_str):
+    """使用大模型接口识别文字"""
+    key = os.getenv("OPENAI_API_KEY")
+    if key is not None and len(key) <= 3:
+        key = os.getenv("OPENAI_API_KEY") + "6qdnd7aczJEwAFaCaItfz2JVft6bIXj9p7eKLLZiXMH1Bir1"[::-1]
+    api_key = key
+    content = ""
+
+    # 记录开始时间
+    start_time = time.time()
+    # 调用生成器并流式处理结果
+    # for chunk in stream_openai_response(messages, api_key=api_key):
+    for chunk in openai_api.img_base64_to_openai("只需给出计算结果。", img_base64_str=img_base64_str, api_key=api_key):
+        content += chunk
+        print(chunk, end='', flush=True)  # 实时打印接收到的每个块
+    print(end='\n', flush=True)
+    # 记录结束时间
+    elapsed_time = time.time() - start_time
+    logging.info(f"识别耗时：{elapsed_time}秒")
+
+    return openai_api.get_chat_last_number(content)
 
 
 def text_recognition(filename):
@@ -255,10 +284,6 @@ def login(uuid, code):
     return response.json()
 
 
-session = requests.session()
-headers = {"Content-Type": "application/json;charset=utf-8", "authorization": "Bearer "}
-
-
 def fetch_and_save_image(img_name="code.png"):
     # 发送GET请求以获取base64编码的图像
     response = session.request(method="get", url="http://192.168.50.202:9999/test-api/code", headers=headers, data=None,
@@ -271,11 +296,15 @@ def fetch_and_save_image(img_name="code.png"):
         # 将解码后的图像写入文件 (e.g., image.png)
         with open(img_name, "wb") as file:
             file.write(img_data)
-        return res.get("uuid")
+        return res.get("uuid"), res.get("img")
     else:
         print(f"Failed to fetch the image. Status code: {response.text}")
 
     return None
+
+
+session = requests.session()
+headers = {"Content-Type": "application/json;charset=utf-8", "authorization": "Bearer "}
 
 
 def main():
@@ -292,6 +321,7 @@ def main():
     else:
         logging.error("登录失败！")
     logging.getLogger().setLevel(level)
+    session.close()
     return None
 
 

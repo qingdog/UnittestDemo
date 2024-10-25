@@ -77,7 +77,8 @@ def baidu_slice_encrypt(md5str):
 
 
 if __name__ == '__main__':
-    sample_list = ["企业无严重违法", "企业教育经费用支出（万元）", "场地面积（m2）", ]
+    # sample_list = ["企业无严重违法", "企业教育经费用支出（万元）", "场地面积（m2）", ]
+    sample_list = "企业无严重违法"
     reversed_list = sample_list[::-1]
     print(reversed_list)
 
