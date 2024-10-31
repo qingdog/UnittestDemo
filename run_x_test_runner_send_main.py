@@ -113,7 +113,8 @@ def run_case(all_case, report_path=MyConfig.TESTREPORT_DIR):
         # loguru._console_format = "{time} {level} {message}"
         # loguru._console_format = "<green>{time}</green> <level>{message}</level>"
         # runner = XTestRunner.HTMLTestRunner(stream=fp,
-        testcase_url = '测试用例：<a href="https://kdocs.cn/l/coyHI6Y1g5Xr">https://kdocs.cn/l/coyHI6Y1g5Xr</a>'
+        # testcase_url = '测试用例：<a href="https://kdocs.cn/l/coyHI6Y1g5Xr">https://kdocs.cn/l/coyHI6Y1g5Xr</a>'
+        testcase_url = '测试'
         runner = MyHTMLTestRunner(stream=file,
                                   verbosity=3,
                                   title='接口测试报告',
@@ -244,5 +245,5 @@ if __name__ == "__main__":
 
     """加载testcase目录下所有test开头的py文件"""
     # cases = unittest.defaultTestLoader.discover(MyConfig.TEST_CASE, pattern='loguru_test*.py')
-    cases = unittest.defaultTestLoader.discover(MyConfig.TEST_CASE, pattern='test_excel*.py')
+    cases = unittest.defaultTestLoader.discover(MyConfig.TEST_CASE, pattern='test_api*.py')
     run_case(cases)

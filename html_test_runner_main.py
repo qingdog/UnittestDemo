@@ -10,6 +10,7 @@ from jd_HTMLTestRunner.HTMLTestRunner import _TestResult
 
 # from .HTMLTestRunner import HTMLTestRunner, _TestResult
 # from unittest import TextTestResult
+# 存在日志输出 和 print打印问题
 
 test_path = "testcase"
 report_path = "./reports/test-reports" + time.strftime("%Y-%m-%d") + '.html'
@@ -40,7 +41,7 @@ logPath = projectPath + '\\logs\\'
 log_name = os.path.join(logPath, '%s.log' % (time.strftime('%Y%m%d_%H')))
 
 # LOG日志记录
-logging.basicConfig(level=logging.DEBUG,
+logging.basicConfig(level=logging.INFO,
                     format='[%(asctime)s] - [%(filename)s:%(lineno)d] %(levelname)s %(message)s',
                     datefmt='%Y-%m-%d_%H:%M:%S',
                     # stream=sys.stdout,
@@ -120,7 +121,7 @@ class MyHTMLTestRunner(HTMLTestRunner):
 if __name__ == '__main__':
     # 批量执行脚本 unittest.defaultTestLoader.discover
     # 读取脚本，报告路径
-    myTestSuit = unittest.defaultTestLoader.discover(start_dir=test_path, pattern='test*.py')
+    myTestSuit = unittest.defaultTestLoader.discover(start_dir=test_path, pattern='test_api*.py')
 
     # 测试日志输出
     # logging.debug("这是一个debug信息")
@@ -130,8 +131,8 @@ if __name__ == '__main__':
     # logging.critical("这是一个critical信息")
 
     count = myTestSuit.countTestCases()
-    logger.info(f'-----开始执行所有测试,总用例数：{myTestSuit.countTestCases()}')
-    logger.info(myTestSuit)
+    logging.info(f'-----开始执行所有测试,总用例数：{myTestSuit.countTestCases()}')
+    logging.info(myTestSuit)
     try:
         with open(f"./{report_path}", 'wb') as file:
             # with open(report_path, 'wb') as file:
@@ -142,6 +143,6 @@ if __name__ == '__main__':
             # testRunner = MyTestRunner()
             testRunner.run(myTestSuit)
             file.close()
-        logger.info('------所有测试用例执行完毕-------')
+        logging.info('------所有测试用例执行完毕-------')
     except Exception as e:
-        logger.error(f"Framework: 加载异常：{e}", exc_info=True)
+        logging.error(f"Framework: 加载异常：{e}", exc_info=True)

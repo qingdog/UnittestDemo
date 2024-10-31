@@ -4,6 +4,7 @@ import logging
 import os
 import platform
 from collections import namedtuple
+from collections.abc import AsyncGenerator
 from typing import Callable, Coroutine, Any, Awaitable
 
 import aiomysql
@@ -158,7 +159,7 @@ class AioMySQLClient:
     asyncio.set_event_loop(new_event_loop)
 
     @classmethod
-    def run(cls, run_main: Callable[[Any], Coroutine[Any, Any, Any]], *args, is_old_run=True):
+    def run(cls, run_main, *args, is_old_run=True):
         """执行异步函数"""
         if is_old_run:
             cls.new_event_loop.run_until_complete(run_main(*args))

@@ -33,7 +33,7 @@ class ColoredFormatter(logging.Formatter):
 
 
 # 设置 Root Logger 日志记录格式
-logging.basicConfig(level=logging.DEBUG,
+logging.basicConfig(level=logging.INFO,
                     format=f'{logging_format}',
                     datefmt=f'{log_date_format}',
                     # stream=sys.stdout,

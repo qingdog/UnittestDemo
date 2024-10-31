@@ -62,7 +62,7 @@ def stream_openai_response(messages, api_key, model="gpt-4o-mini", base_url=None
 
 
 def img_base64_to_openai(text, img_base64_str, api_key, img_type="image/png",
-                         system_content="你是一个识别图片内容计算器。",
+                         system_content="你是一个识别图片内容并进行数学运算计算器，只需回答计算后的结果。",
                          base_url=None, model="gpt-4o-mini"):
     client = OpenAI(
         api_key=api_key,

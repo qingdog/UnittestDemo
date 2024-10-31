@@ -49,6 +49,8 @@ class TestDvd(unittest.TestCase):
         # try:
         if level == "H":
             self.mylogger.info(f"开始执行用例：{title}")
+            print("1", end="")
+            print("3", end="\n")
 
             res = self.login(user, password)
 

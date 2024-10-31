@@ -58,7 +58,7 @@ if __name__ == '__main__':
         # test_suite = unittest.defaultTestLoader.discover('./tests', pattern='test*.py')
         beautifulReport = MyBeautifulReport(myTestSuit)
         beautifulReport.verbosity = 2
-        beautifulReport.report(description=f'{report_description}: {os.path.join(project_path, test_path, "test*.py")}',
+        beautifulReport.report(description=f'{report_description}: {os.path.join(project_path, test_path, "test_api*.py")}',
                                filename=f'{report_name}',
                                report_dir=f'{report_path}', theme='theme_default')
         logger.info('------所有测试用例执行完毕-------')

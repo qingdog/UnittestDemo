@@ -1,6 +1,6 @@
 {
     "database": {
-        "host": "192.168.50.205",
+        "host": "192.168.50.221",
         "port": 3306,
         "user": "liqi_qiye_test",
         "password": "cABbY6rmS2LDtKPN",

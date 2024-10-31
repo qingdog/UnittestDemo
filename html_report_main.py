@@ -36,7 +36,7 @@ class MyBeautifulReport(BeautifulReport):
 if __name__ == '__main__':
     # 批量执行脚本 unittest.defaultTestLoader.discover
     # 读取脚本，报告路径
-    myTestSuit = unittest.defaultTestLoader.discover(start_dir=test_path, pattern='test*.py')
+    myTestSuit = unittest.defaultTestLoader.discover(start_dir=test_path, pattern='test_api*.py')
 
     # 让unittest框架按照用例方法编写的顺序来执行
     # my_loader = MyTestLoader()

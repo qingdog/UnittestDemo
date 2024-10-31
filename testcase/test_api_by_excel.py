@@ -4,9 +4,12 @@ __author__ = 'YinJia'
 
 import ast
 import configparser
+import datetime
+import io
 import logging
 import os, json
 import re
+import sys
 import time
 
 # from utils.xlrd_excel import XlrdExcel
@@ -79,12 +82,30 @@ class TestAPI(unittest.TestCase):
     def tearDown(self):
         pass
 
+    is_repair_print = True
+
+    def repair_print(self, message, end="\n", flush=True):
+        """修复x-test-runner框架每次print输出都会换行的问题"""
+        original_stdout = sys.stdout
+
+        class MyOutput:
+            def write(self, message):
+                # 将消息输出到标准输出，不添加换行
+                sys.__stdout__.write(f'{message}')
+
+            def flush(self):
+                pass  # 需要实现flush方法以兼容stdout
+
+        # 替换sys.stdout
+        sys.stdout = MyOutput()
+        # 使用示例
+        print(message, end=end, flush=flush)  # 不会换行
+        # sys.stdout = original_stdout
+
     logger = logging.getLogger()
 
     def package_send_data(self, excel_data):
         """封装excel中需要发送请求的数据"""
-        # if "result" in excel_data and "PASS".__eq__(excel_data["result"]): return
-
         if "url" not in excel_data or excel_data["url"] == " " or excel_data["url"] == "" or excel_data["url"] is None:
             return None, None, None
 
@@ -97,17 +118,6 @@ class TestAPI(unittest.TestCase):
 
         body: str = ast.literal_eval(json.dumps(excel_data["body"])) if excel_data["body"] else eval(
             json.dumps(self.body_default))
-
-        # 检查是否存在 'delay' 键
-        if "delay" in excel_data:
-            delay = excel_data["delay"]  # 获取延迟时间
-            if delay:  # 确保延迟时间存在且不为空
-                try:
-                    # 转换字符串为浮点数，并进行延迟
-                    delay_seconds = float(delay)
-                    time.sleep(delay_seconds)  # 延迟操作
-                except ValueError as e:
-                    raise RuntimeError(e, f"延迟值无效，无法转换为数字！")
 
         # 处理非完整url
         url = excel_data["url"]
@@ -131,6 +141,11 @@ class TestAPI(unittest.TestCase):
     @ddt.data(*ExcelTestCaseProcessor(MyConfig.TESTDATA_FILE).read_data())
     def test_api(self, excel_data: dict):
         """TestAPI.test_api"""
+        if self.is_repair_print:
+            self.is_repair_print = False
+            self.repair_print("", end="")
+
+        if "result" in excel_data and "PASS" == excel_data["result"]: return
         # 如果这一行用例中没有url则跳过
         if "url" not in excel_data or excel_data["url"] is None:
             return
@@ -206,6 +221,28 @@ class TestAPI(unittest.TestCase):
                 raise e
             finally:
                 ExcelTestCaseProcessor(MyConfig.TESTDATA_FILE).write_data(excel_data, value=result)
+        delay_seconds = 5
+
+        # 检查是否存在 'delay' 键
+        if "delay" in excel_data:
+            delay = excel_data["delay"]  # 获取延迟时间
+            if delay:  # 确保延迟时间存在且不为空
+                try:
+                    # 转换字符串为浮点数，并进行延迟
+                    delay_seconds = float(delay)
+                    print(f"正在睡眠{delay_seconds}秒", end="", flush=True)
+                    for _ in range(int(delay_seconds)):
+                        print(".", end="", flush=True)  # 每秒打印一个点，不换行
+                        time.sleep(1)  # 每次延迟一秒
+                    print()  # 默认换行
+                    # 处理非整数秒的情况（如果delay_seconds有小数部分）
+                    remainder = delay_seconds - int(delay_seconds)
+                    if remainder > 0:
+                        time.sleep(remainder)
+
+                    # time.sleep(delay_seconds)  # 延迟操作
+                except ValueError as e:
+                    raise RuntimeError(e, f"延迟值无效，无法转换为数字！")
 
     def get_excel_data(self, excel_data, url):
         """获取excel数据用于校验"""
@@ -239,6 +276,7 @@ class TestAPI(unittest.TestCase):
         else:
             variable_key = self.next_key(excel_data, "result")
             variable = excel_data[variable_key]
+
         return case_id, title, msg, variable_key, variable
 
     def next_key(self, my_dict, current_key):

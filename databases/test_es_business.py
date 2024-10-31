@@ -25,13 +25,13 @@ if __name__ == '__main__':
         return source
 
 
-    async def query():
+    async def query(sql="select * from qiye_base_business limit 2160000, 300000"):
         logger = MyLogging.getLogger()
         logger.setLevel(10)
         mysql_client = await AioMySQLClient.get_instance()
         # result_business = await mysql_client.execute_query("select * from qiye_base_business limit 10")
         no = 2160000
-        async for row in mysql_client.async_for_cursor("select * from qiye_base_business limit 2160000, 300000"):
+        async for row in mysql_client.async_for_cursor(sql):
             row: dict
             # print(result_business[0]) 取出来每一行 *离散作为参数 []合成列表
             # qiye_base_businesses = [QiyeBaseBusiness(*row) for row in result_business]
