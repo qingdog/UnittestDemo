@@ -4,6 +4,7 @@ import logging
 import os
 import re
 import time
+from datetime import datetime
 
 import cv2
 import numpy as np
@@ -232,13 +233,14 @@ def openai_text_recognition(img_base64_str):
     start_time = time.time()
     # 调用生成器并流式处理结果
     # for chunk in stream_openai_response(messages, api_key=api_key):
-    for chunk in openai_api.img_base64_to_openai("只需回答计算后的结果。", img_base64_str=img_base64_str, api_key=api_key):
+    for chunk in openai_api.img_base64_to_openai("只需回答计算后的结果。", img_base64_str=img_base64_str,
+                                                 api_key=api_key):
         content += chunk
         print(chunk, end='', flush=True)  # 实时打印接收到的每个块
     print(end='\n', flush=True)
     # 记录结束时间
     elapsed_time = time.time() - start_time
-    logging.info(f"识别耗时：{elapsed_time}秒")
+    logging.info(f"文本识别耗时：{elapsed_time}秒")
 
     return openai_api.get_chat_last_number(content)
 
@@ -289,7 +291,7 @@ def fetch_and_save_image(img_name="code.png"):
 
 
 session = requests.session()
-headers = {"Content-Type": "application/json;charset=utf-8", "authorization": "Bearer "}
+headers = {"Content-Type": "application/json;charset=utf-8"}
 
 
 def main():
@@ -297,17 +299,51 @@ def main():
     if level > logging.INFO:
         # logging.getLogger().setLevel(logging.DEBUG)
         logging.getLogger().setLevel(logging.INFO)
-    access_token = auto_login()
-
+    start_time = time.time()
+    # access_token = auto_login()
+    # 引入持久化功能
+    access_token = login_save_token_with_expiry(auto_login)
+    logging.info(f"登录成功耗时：{time.time() - start_time}秒 {access_token}")
     if access_token:
-        headers["authorization"] = f"Bearer {access_token}"
-        logging.info(f"登录成功 {headers}")
-        return headers
+        return access_token
     else:
         logging.error("登录失败！")
     logging.getLogger().setLevel(level)
     session.close()
     return None
+
+
+# 用于保存 token 和日期的文件名
+TOKEN_FILE = 'token.json'
+
+
+def load_token():
+    try:
+        with open(TOKEN_FILE, 'r') as f:
+            data = json.load(f)
+            return data['token'], data['date']
+    except (FileNotFoundError, json.JSONDecodeError):
+        return None, None
+
+
+def save_token(token, current_date=datetime.now().strftime('%Y-%m-%d')):
+    with open(TOKEN_FILE, 'w') as f:
+        json.dump({'token': token, 'date': current_date}, f)
+
+
+def login_save_token_with_expiry(login_func):
+    """登录并保存带有过期时间的token
+    :param login_func: 登录函数
+    :return: token令牌 | 登录函数的返回值
+    """
+    token, last_date = load_token()
+    current_date = datetime.now().strftime('%Y-%m-%d')
+
+    # 如果没有 token 或者日期不同，则重新登录
+    if token is None or last_date != current_date:
+        token = login_func()
+        save_token(token, current_date)
+    return token
 
 
 if __name__ == '__main__':

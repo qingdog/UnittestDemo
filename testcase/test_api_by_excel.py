@@ -64,12 +64,11 @@ class TestAPI(unittest.TestCase):
     def setUpClass(cls):
         cls.session = requests.session()
         """根据验证码进行登录"""
-        h = verification_code_login.main()
-        if h:
-            cls.headers = h
-            pass
-        else:
-            cls.headers = eval(cls.headers)
+        token = verification_code_login.main()
+        # 字符串转dict
+        cls.headers = eval(cls.headers)
+        if token and isinstance(cls.headers, dict):
+            cls.headers["authorization"] = f"Bearer {token}"
 
     @classmethod
     def tearDownClass(cls):
