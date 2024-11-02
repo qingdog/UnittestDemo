@@ -11,6 +11,7 @@ import numpy as np
 import requests
 
 import utils.api.ocr_baidu_api
+from utils import myutil
 from utils.api import openai_api
 
 
@@ -314,7 +315,7 @@ def main():
 
 
 # 用于保存 token 和日期的文件名
-TOKEN_FILE = 'token.json'
+TOKEN_FILE = os.path.join(myutil.get_project_path(), 'token.json')
 
 
 def load_token():
