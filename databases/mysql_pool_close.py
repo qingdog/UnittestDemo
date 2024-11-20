@@ -1,7 +1,9 @@
 import asyncio
 import json
+import os
 
 import aiomysql
+from dotenv import load_dotenv
 
 
 # import aiomysql.sa as aio_sa
@@ -19,26 +21,12 @@ class MySQLPoolClose:
     """异步上下文管理器 连接池使用完就释放（错误的用法）"""
     pool: aiomysql.Pool = None
 
-    # 读取主配置文件
-    with open('../../config.json', 'r') as file:
-        conf = json.load(file)
-        config = conf["database"]
-        if conf["env"] == "test":
-            # 读取测试配置文件
-            with open('../../config_test.json', 'r') as f:
-                config_test = json.load(f)["database"]
-            # 使用测试配置文件中的值覆盖主配置文件中的空字段
-            for key, value in config_test.items():
-                if key not in config or not config[key]:
-                    config[key] = value
-
-    def __init__(self, host=config['host'], port=config['port'], user=config['user'], password=config['password'],
-                 db=config['db']):
-        self.host = host
-        self.port = port
-        self.user = user
-        self.password = password
-        self.db = db
+    def __init__(self, host=None, port=None, user=None, password=None, db=None):
+        self.host = host or os.getenv("database_host"),
+        self.port = port or eval(os.getenv("database_port")),
+        self.user = user or os.getenv("database_user"),
+        self.password = password or os.getenv("database_password"),
+        self.db = db or os.getenv("database_db"),
 
     async def connect(self):
         self.pool = await aiomysql.create_pool(
@@ -116,6 +104,7 @@ class MySQLPoolClose:
 
 # 使用示例
 if __name__ == '__main__':
+    load_dotenv()
     async def query():
         # 创建MySQLClient实例
         async with MySQLPoolClose() as mysql_client:

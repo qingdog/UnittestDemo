@@ -16,46 +16,23 @@ import time
 from run_x_test_runner_send_main import MyConfig
 import unittest, requests, ddt
 
-from utils import verification_code_login
 from utils.excel_testcase_util import ExcelTestCaseProcessor
 import jsonpath_ng
+
+from utils.login_ruoyi_verification_code import login_verification_code
 
 
 @ddt.ddt
 class TestAPI(unittest.TestCase):
     """
-    自动化测试excel中api
+    自动化测试最新excel文件中的api `testdata/new.xlsx`
     """
-    """
-    该类用于读取指定的Excel测试用例文件，并对每个测试用例执行API请求，然后验证响应。
-    测试用例文件路径定义在配置文件中，默认为 `testdata/auto_test_case.xlsx`。
-    测试流程包括：
-    - 从Excel文件中读取测试用例。
-    - 发送HTTP请求。
-    - 验证响应状态码。
-    - 验证响应内容中的特定字段。
-    类属性:
-    - configParser: ConfigParser实例，用于读取配置文件。
-    - config_status_codes: 期望的HTTP状态码列表。
-    注意:
-    - 请确保配置文件 `config.ini` 存在并且格式正确。
-    - Excel文件中的测试用例应遵循特定的格式定义。
-    - 日志配置需要在运行测试之前完成。
-    """
-
-    # 创建ConfigParser对象
-    configParser = configparser.ConfigParser()
-
-    # 读取配置文件
-    config_file_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "config.ini")
-    configParser.read(config_file_path, encoding='UTF-8')
-    status_codes_str = configParser.get('request', 'status_code')
-    code_default = configParser.get('request', 'code')
-    body_default = configParser.get("request", "body")
-    headers = configParser.get("request", "headers")
-    base_url = configParser.get("request", "base_url")
-    method = configParser.get("request", "method")
-
+    status_codes_str = os.getenv("status_code")
+    code_default = os.getenv("code")
+    body_default = os.getenv("body")
+    headers = os.getenv("headers")
+    base_url = os.getenv("base_url")
+    method = os.getenv("method")
     # 将字符串分割成列表，并转换为整数
     config_status_codes = [int(code) for code in status_codes_str.split(',')]
     session = None
@@ -64,7 +41,7 @@ class TestAPI(unittest.TestCase):
     def setUpClass(cls):
         cls.session = requests.session()
         """根据验证码进行登录"""
-        token = verification_code_login.main()
+        token = login_verification_code()
         # 字符串转dict
         cls.headers = eval(cls.headers)
         if token and isinstance(cls.headers, dict):
@@ -140,58 +117,59 @@ class TestAPI(unittest.TestCase):
     @ddt.data(*ExcelTestCaseProcessor(MyConfig.TESTDATA_FILE).read_data())
     def test_api(self, excel_data: dict):
         """TestAPI.test_api"""
-        if self.is_repair_print:
-            self.is_repair_print = False
-            self.repair_print("", end="")
-
-        if "result" in excel_data and "PASS" == excel_data["result"]: return
-        # 如果这一行用例中没有url则跳过
-        if "url" not in excel_data or excel_data["url"] is None:
-            return
-
-        method, url, headers, body = self.package_send_data(excel_data)
-        # 使用全局变量进行替换
-        body = self.replace_body_variables(body)
-        url = self.replace_body_variables(url)
-
-        # 发起请求
-        try:
-            response = self.session.request(method=method, url=url, headers=headers, data=body, verify=True)
-        except requests.exceptions.SSLError as e:
-            # 忽略SSL证书验证
-            # requests.packages.urllib3.disable_warnings(category=InsecureRequestWarning)
-            response = self.session.request(method=method, url=url, headers=headers, data=body, verify=False)
-            logging.getLogger("mylogging").warning(f"警告 未经过证书验证请求：{url}")
-        except Exception as e:
-            raise e
-
-        if response.status_code not in self.config_status_codes:
-            # self.assertEqual(self.config_status_codes[0], response.status_code, f"{response.status_code} {url}")
-            raise RuntimeError(f"状态码校验失败！{url} {response.status_code}")
-
-        case_id, title, msg, variable_key, variable = self.get_excel_data(excel_data, url)
-
-        # 检查响应的Content-Type是否为JSON
-        content_type = response.headers.get('Content-Type', '')
+        body = ""
         result = "PASS"
-        if 'application/json' in content_type:
-            res_json = response.json()
+        try:
+            if self.is_repair_print:
+                self.is_repair_print = False
+                self.repair_print("", end="")
 
-            # 提取json格式响应数据到全局变量（多个使用逗号分割）
-            if variable:
-                # json_dict2 = json.loads(res_json)
-                variable_arr = variable.split(",")
-                for vari in variable_arr:
-                    extract_variable = self.extract_variable_using_jsonpath(res_json, jsonpath_expression=vari)
-                    self.variables[f"{variable_key}{len(self.variables) + 1}"] = extract_variable
+            if "result" in excel_data and "PASS" == excel_data["result"]: return
+            # 如果这一行用例中没有url则跳过
+            if "url" not in excel_data or excel_data["url"] is None:
+                return
 
-                # if isinstance(res_json, dict):
-                #     self.get_veal_variable(res_json, variable)
+            method, url, headers, body = self.package_send_data(excel_data)
+            # 使用全局变量进行替换
+            body = self.replace_body_variables(body)
+            url = self.replace_body_variables(url)
 
-            self.logger.debug(f"用例数据：{excel_data}")
-            self.logger.info(f"{url} 响应数据：%s" % response.content.decode("utf-8"))
-
+            # 发起请求
             try:
+                response = self.session.request(method=method, url=url, headers=headers, data=body, verify=True)
+            except requests.exceptions.SSLError as e:
+                # 忽略SSL证书验证
+                # requests.packages.urllib3.disable_warnings(category=InsecureRequestWarning)
+                response = self.session.request(method=method, url=url, headers=headers, data=body, verify=False)
+                logging.getLogger("mylogging").warning(f"警告 未经过证书验证请求：{url}")
+            except Exception as e:
+                raise e
+
+            if response.status_code not in self.config_status_codes:
+                # self.assertEqual(self.config_status_codes[0], response.status_code, f"{response.status_code} {url}")
+                raise RuntimeError(f"状态码校验失败！{url} {response.status_code}")
+
+            case_id, title, msg, variable_key, variable = self.get_excel_data(excel_data, url)
+
+            # 检查响应的Content-Type是否为JSON
+            content_type = response.headers.get('Content-Type', '')
+            if 'application/json' in content_type:
+                res_json = response.json()
+
+                # 提取json格式响应数据到全局变量（多个使用逗号分割）
+                if variable:
+                    # json_dict2 = json.loads(res_json)
+                    variable_arr = variable.split(",")
+                    for vari in variable_arr:
+                        extract_variable = self.extract_variable_using_jsonpath(res_json, jsonpath_expression=vari)
+                        self.variables[f"{variable_key}{len(self.variables) + 1}"] = extract_variable
+
+                    # if isinstance(res_json, dict):
+                    #     self.get_veal_variable(res_json, variable)
+
+                self.logger.debug(f"用例数据：{excel_data}")
+                self.logger.info(f"{url} 响应数据：%s" % response.content.decode("utf-8"))
+
                 # 暂时不校验code
                 # if not code:
                 #     code = self.code_default
@@ -203,45 +181,37 @@ class TestAPI(unittest.TestCase):
                     self.assertNotIn(msg, response.content.decode("utf-8"), f"{case_id} {title} {url}")
                 else:
                     self.assertIn(msg, response.content.decode("utf-8"), f"{case_id} {title} {url}")
-
-            except Exception as e:
-                result = "FAIL"
-                logging.warning(f"请求参数：{body}")
-                raise e
-            finally:
-                ExcelTestCaseProcessor(MyConfig.TESTDATA_FILE).write_data(excel_data, value=result)
-        else:
-            # 如果Content-Type不是JSON，处理非JSON响应
-            try:
+            else:  # 如果Content-Type不是JSON，处理非JSON响应
                 # self.assertIn(ast.literal_eval(code), response.text, f"{case_id} {title} {url}")
                 self.assertIn(msg, response.text, f"{case_id} {title} {url}")
-            except Exception as e:
-                result = "FAIL"
-                raise e
-            finally:
-                ExcelTestCaseProcessor(MyConfig.TESTDATA_FILE).write_data(excel_data, value=result)
-        delay_seconds = 5
+            # 检查是否存在 'delay' 键
+            if "delay" in excel_data:
+                delay = excel_data["delay"]  # 获取延迟时间
+                self.delay_print(delay)
+        except Exception as e:
+            result = "FAIL"
+            logging.warning(f"请求参数：{body}")
+            raise e
+        finally:
+            ExcelTestCaseProcessor(MyConfig.TESTDATA_FILE).write_data(excel_data, value=result)
 
-        # 检查是否存在 'delay' 键
-        if "delay" in excel_data:
-            delay = excel_data["delay"]  # 获取延迟时间
-            if delay:  # 确保延迟时间存在且不为空
-                try:
-                    # 转换字符串为浮点数，并进行延迟
-                    delay_seconds = float(delay)
-                    print(f"正在睡眠{delay_seconds}秒", end="", flush=True)
-                    for _ in range(int(delay_seconds)):
-                        print(".", end="", flush=True)  # 每秒打印一个点，不换行
-                        time.sleep(1)  # 每次延迟一秒
-                    print()  # 默认换行
-                    # 处理非整数秒的情况（如果delay_seconds有小数部分）
-                    remainder = delay_seconds - int(delay_seconds)
-                    if remainder > 0:
-                        time.sleep(remainder)
-
-                    # time.sleep(delay_seconds)  # 延迟操作
-                except ValueError as e:
-                    raise RuntimeError(e, f"延迟值无效，无法转换为数字！")
+    def delay_print(self, delay):
+        if not delay:  # 确保延迟时间存在且不为空
+            return
+        try:
+            # 转换字符串为浮点数，并进行延迟
+            delay_seconds = float(delay)
+            print(f"正在睡眠{delay_seconds}秒", end="", flush=True)
+            for _ in range(int(delay_seconds)):
+                print(".", end="", flush=True)  # 每秒打印一个点，不换行
+                time.sleep(1)  # 每次延迟一秒
+            print()  # 默认换行
+            # 处理非整数秒的情况（如果delay_seconds有小数部分）
+            remainder = delay_seconds - int(delay_seconds)
+            if remainder > 0:
+                time.sleep(remainder)
+        except ValueError as e:
+            raise RuntimeError(e, f"延迟值无效，无法转换为数字！")
 
     def get_excel_data(self, excel_data, url):
         """获取excel数据用于校验"""
@@ -267,7 +237,7 @@ class TestAPI(unittest.TestCase):
         title = ""
         if "title" in excel_data:
             title = excel_data["title"]
-            self._testMethodDoc = title + " " + url
+            self._testMethodDoc = f"{title} {url}"
 
         variable_key = "variable"
         if variable_key in excel_data:
@@ -287,6 +257,43 @@ class TestAPI(unittest.TestCase):
         if current_index + 1 >= len(keys):
             return None  # 如果当前键是最后一个，返回None
         return keys[current_index + 1]  # 返回下一个键
+
+    def replace_body_variables(self, input_string):
+        """正则匹配类似 ${variable1} 的占位符（可替换多个）"""
+        pattern = r"\${([a-zA-Z_][\w]*)}"  # 构造变量格式${variable1}
+
+        # 替换占位符为 variables 中的实际值
+        def replacer(match):
+            var_name = match.group(1)  # 获取变量名
+            result = self.variables.get(var_name, match.group(0))  # 没有替换则返回全部原始字符
+            logging.info(f"变量替换：{var_name} => {result}")
+            return result
+
+        return re.sub(pattern, replacer, input_string)
+
+    def extract_variable_using_jsonpath(self, res_json, jsonpath_expression="$.data.list[0].id"):
+        """使用jsonpath表达式从响应json中提取值返回 保存成变量"""
+        jsonpath_expr = jsonpath_ng.parse(jsonpath_expression)
+        matches = jsonpath_expr.find(res_json)
+        if matches:
+            # 转成字符串类型用于正则替换
+            extract_variable = str(matches[0].value)
+            logging.info(f"提取变量：{len(self.variables) + 1} => {extract_variable}")
+            return extract_variable
+        return None
+
+    variables = {}
+
+    # 废弃方法
+    def replace_variables_discard(self, input_string):
+        """替换字符串中的占位符"""
+        for var_name in self.variables.keys():
+            # placeholder = f"${{{var_name}}}"
+            placeholder = "${%s}" % var_name  # 构造变量格式${variable1}
+            if placeholder in input_string:
+                input_string = input_string.replace(placeholder, str(self.variables[var_name]))
+                logging.info(f"变量替换：{placeholder} => {self.variables[var_name]}")
+        return input_string
 
     def get_value_from_dict(self, data_dict, key):
         """【废弃】将 key 按 '.' 分割"""
@@ -318,42 +325,6 @@ class TestAPI(unittest.TestCase):
             raise e
         finally:
             pass
-
-    def replace_body_variables(self, input_string):
-        """正则匹配类似 ${variable1} 的占位符（可替换多个）"""
-        pattern = r"\${([a-zA-Z_][\w]*)}"
-
-        # 替换占位符为 variables 中的实际值
-        def replacer(match):
-            var_name = match.group(1)  # 获取变量名
-            result = self.variables.get(var_name, match.group(0))  # 没有替换则返回全部原始字符
-            logging.info(f"变量替换：{var_name} => {result}")
-            return result
-
-        return re.sub(pattern, replacer, input_string)
-
-    def replace_body_variables2(self, input_string):
-        """替换字符串中的占位符"""
-        for var_name in self.variables.keys():
-            # ${{表示${
-            placeholder = f"${{{var_name}}}"
-            if placeholder in input_string:
-                input_string = input_string.replace(placeholder, str(self.variables[var_name]))
-                logging.info(f"变量替换：{placeholder} => {self.variables[var_name]}")
-        return input_string
-
-    def extract_variable_using_jsonpath(self, res_json, jsonpath_expression):
-        """jsonpath表达式提取变量"""
-        jsonpath_expr = jsonpath_ng.parse(jsonpath_expression)
-        matches = jsonpath_expr.find(res_json)
-        if matches:
-            # 转成字符串类型用于正则替换
-            extract_variable = str(matches[0].value)
-            logging.info(f"提取变量：{len(self.variables) + 1} => {extract_variable}")
-            return extract_variable
-        return None
-
-    variables = {}
 
 
 if __name__ == '__main__':

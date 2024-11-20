@@ -37,45 +37,42 @@ class Chat:
                 break
 
     def sse_to_json(self, text):
+        if "data: [DONE]" in text: return ""
         sse_prefix = "data: "
         result = text if re.search(f"^{sse_prefix}", text) is None else f"{text[len(sse_prefix):]}"
-        if re.search("^{\"", result) is None:
-            # logging.debug(result)
-            return None
-        return json.loads(result)
+        if re.search(r"^{\"", result) is None: return text
+        row = json.loads(result)
+        if "choices" in row and len(row["choices"]) > 0 and "delta" in row["choices"][0] and "content" in \
+                row["choices"][0]["delta"]:
+            content = row["choices"][0]["delta"]["content"]
+            if content:
+                return content
+        return ""
 
 
 if __name__ == '__main__':
     def chat_content(content="你好！"):
-        res = Chat().completions(content)
+        con = Chat().completions(content)
         rows = ""
-        for row in res:
-            if row is None:
-                print(end="\n")
-                continue
-            if "choices" in row and len(row["choices"]) > 0 and "delta" in row["choices"][0] and "content" in \
-                    row["choices"][0]["delta"]:
-                content = row["choices"][0]["delta"]["content"]
-                print(content, end="")
-                rows += content
-            elif "choices" in row and len(row["choices"]) > 0 and "delta" in row["choices"][0]:
-                pass
-            else:
-                logs.color_root_logger.logger.warning(row)
-
+        print(con, end="")
         # logs.color_root_logger.logger.info(rows)
 
+
     async def get_origin_text(*arg):
-        aiomysql_client = await AioMySQLClient().connect(user="liqi_cloud_test",password="G85BkJywwRxY5XBy",db="liqi_cloud_test")
+        aiomysql_client = await AioMySQLClient().connect(user="liqi_cloud_test", password="G85BkJywwRxY5XBy",
+                                                         db="liqi_cloud_test")
         query_result: tuple = await aiomysql_client.execute_query(
             "select origin_text from lqc_extension_info where project_base_id = %s ", *arg)
         return query_result
+
 
     async def origin_handler():
         # res = await get_origin_text("1775462556439420929")
         res = await get_origin_text("1823192245796511745")
         # chat_content(f"请提取中文（只需要返回结果）：{res}")
         # 鸡肋
-        chat_content(f"以下是政策原文：{res}。\n请从政策原文中提取 符合申报的条件信息。（保留换行以纯文本格式返回。注意：不需要markdown的格式返回也不要添加额外的文本）")
+        chat_content(
+            f"以下是政策原文：{res}。\n请从政策原文中提取 符合申报的条件信息。（保留换行以纯文本格式返回。注意：不需要markdown的格式返回也不要添加额外的文本）")
+
 
     AioMySQLClient.run(origin_handler)

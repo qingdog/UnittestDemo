@@ -8,6 +8,7 @@ from collections.abc import AsyncGenerator
 from typing import Callable, Coroutine, Any, Awaitable
 
 import aiomysql
+from dotenv import load_dotenv
 
 from databases.qiye_base_business import QiyeBaseBusiness
 from logs.mylogging import MyLogging
@@ -28,36 +29,14 @@ class AioMySQLClient:
                     await cls._instance.connect()
         return cls._instance
 
-    # 读取主配置文件
-    @staticmethod
-    def load_config():
-        with open(os.path.join(myutil.get_project_path(), './config.json'), 'r') as file:
-            conf = json.load(file)
-            config = conf["database"]
-            if conf["env"] == "test":
-                # 读取测试配置文件
-                with open(os.path.join(myutil.get_project_path(), './config_test.json'), 'r') as f:
-                    config_test = json.load(f)["database"]
-                # 使用测试配置文件中的值覆盖主配置文件中的空字段
-                for key, value in config_test.items():
-                    if key not in config or not config[key]:
-                        config[key] = value
-        return config
-
-    config = load_config()
-
-    # def __init__(self):
-    #     self.config = self.load_config()
-
-    async def connect(self, host=config['host'], port=config['port'], user=config['user'], password=config['password'],
-                      db=config['db'], loop=None):
+    async def connect(self, host=None, port=None, user=None, password=None, db=None, loop=None):
         # MyLogging.getLogger("database").info("database connecting...")
         self.pool = await aiomysql.create_pool(
-            host=host,
-            port=port,
-            user=user,
-            password=password,
-            db=db,
+            host=host or os.getenv("database_host"),
+            port=port or eval(os.getenv("database_port")),
+            user=user or os.getenv("database_user"),
+            password=password or os.getenv("database_password"),
+            db=db  or os.getenv("database_db"),
             loop=loop
         )
         return self
@@ -195,6 +174,7 @@ async def main():
 
 # 使用示例
 if __name__ == '__main__':
+    load_dotenv()
     asyncio.run(main())
 
 

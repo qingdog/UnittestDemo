@@ -259,7 +259,6 @@ def wecom_key(title, content):
             json=data,
             headers=headers).json()
         print(response)
-        # todo 不知道怎么判断是否成功
     except Exception as e:
         print(f"报错信息:{e}")
         print("推送失败")
@@ -283,7 +282,6 @@ def fs_key(title, content):
             json=data,
             headers=headers).json()
         print(response)
-        # todo 不知道怎么判断是否成功
     except Exception as e:
         print(f"报错信息:{e}")
         print("推送失败")

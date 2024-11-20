@@ -22,8 +22,6 @@ class MyConfig:
     FILE_DIR = os.path.dirname(__file__)
     sys.path.append(FILE_DIR)
 
-    # 配置文件
-    CONFIG_INI = os.path.join(FILE_DIR, "config.ini")
     # 测试数据
     TESTDATA_DIR = os.path.join(FILE_DIR, "testdata")
 

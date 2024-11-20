@@ -1,11 +1,8 @@
-import json
 import asyncio
 import logging
 import platform
-import re
 import subprocess
 import os
-import random
 from datetime import datetime, timedelta, timezone
 
 from pyppeteer import launch
@@ -19,39 +16,9 @@ PIG_PASSWORD = os.getenv('PIG_PASSWORD')
 
 OS_NAME = platform.system()
 
-
-def find_chrome_path():
-    """查找 Chrome 浏览器路径（Linux）"""
-    if OS_NAME == "Windows":
-        win_browser_path = get_win_browser_path()
-        if len(win_browser_path) > 0:
-            return get_win_browser_path()[0]
-    else:
-        try:
-            path = subprocess.check_output(['which', 'google-chrome']).decode().strip()
-            return path
-        except subprocess.CalledProcessError:
-            pass
-    return None
-
-
-def get_win_browser_path(path="C:", file_list=[], program_name=r"(?i)chrome\.exe$", program_dir=r"(?i)program|google|users"):
-    try:
-        os.listdir(path)
-    except Exception:
-        return
-    for i in os.listdir(path):
-        path1 = os.path.join(path, i)
-        if os.path.isdir(path1) and re.search(program_dir, path1):
-            get_win_browser_path(path1, file_list)
-        elif os.path.isfile(path1):
-            if re.search(program_name, path1):
-                file_list.append(path1.replace('\\\\', '\\'))
-                return file_list
-    return file_list
-
-
-chrome_executable_path = find_chrome_path()
+# Pyppeteer 也可以用来控制 Chrome 浏览器，但与它捆绑的 Chromium 版本配合最佳。无法保证它与其他版本兼容。请谨慎使用 executablePath 选项
+debug_chrome_path = "C:\Program Files\Google\Chrome\Application\chrome.exe"
+chrome_executable_path = debug_chrome_path if OS_NAME == "Windows" else subprocess.check_output(['which', 'google-chrome']).decode().strip()
 # is_headless = OS_NAME != "Windows"  # 非windows则以无头模式启动
 is_headless = True
 chrome_startup_args = ['--no-sandbox', '--disable-setuid-sandbox']
@@ -121,6 +88,7 @@ async def main():
     now_beijing = (datetime.now(timezone.utc) + timedelta(hours=8)).strftime('%Y-%m-%d %H:%M:%S')
     if is_logged_in:
         print(f'🐖^(*￣(oo)￣)^ 于北京时间 {now_beijing}（UTC时间 {now_utc}）登录成功！')
+
 
 if __name__ == '__main__':
     # 这里不区分OS直接执行

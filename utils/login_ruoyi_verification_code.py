@@ -9,6 +9,8 @@ from datetime import datetime
 import cv2
 import numpy as np
 import requests
+from dotenv import set_key, load_dotenv
+from sympy import false
 
 import utils.api.ocr_baidu_api
 from utils import myutil
@@ -235,7 +237,7 @@ def openai_text_recognition(img_base64_str):
     # 调用生成器并流式处理结果
     # for chunk in stream_openai_response(messages, api_key=api_key):
     for chunk in openai_api.img_base64_to_openai("只需回答计算后的结果。", img_base64_str=img_base64_str,
-                                                 api_key=api_key):
+                                                 api_key=api_key, stream=False):
         content += chunk
         print(chunk, end='', flush=True)  # 实时打印接收到的每个块
     print(end='\n', flush=True)
@@ -265,16 +267,16 @@ def text_recognition(filename):
     return result
 
 
-def login(uuid, code):
+def login(uuid, code, url="http://192.168.50.202:9999/test-api/auth/login"):
     body = {"username": "admin", "password": "admin123", "code": code, "uuid": f"{uuid}"}
-    response = session.request(method="post", url="http://192.168.50.202:9999/test-api/auth/login", headers=headers,
+    response = session.request(method="post", url=f"{url}", headers=headers,
                                data=json.dumps(body), verify=True)
     return response.json()
 
 
-def fetch_and_save_image(img_name="code.png"):
+def fetch_and_save_image(img_name="code.png", url="http://192.168.50.202:9999/test-api/code"):
     # 发送GET请求以获取base64编码的图像
-    response = session.request(method="get", url="http://192.168.50.202:9999/test-api/code", headers=headers, data=None,
+    response = session.request(method="get", url=f"{url}", headers=headers, data=None,
                                verify=True)
     if response.status_code == 200:
         res = response.json()
@@ -286,7 +288,7 @@ def fetch_and_save_image(img_name="code.png"):
             file.write(img_data)
         return res.get("uuid"), res.get("img")
     else:
-        print(f"Failed to fetch the image. Status code: {response.text}")
+        print(f"获取图像失败.: {response.text}")
 
     return None
 
@@ -295,16 +297,15 @@ session = requests.session()
 headers = {"Content-Type": "application/json;charset=utf-8"}
 
 
-def main():
+def login_verification_code():
     level = logging.getLogger().level
     if level > logging.INFO:
         # logging.getLogger().setLevel(logging.DEBUG)
         logging.getLogger().setLevel(logging.INFO)
-    start_time = time.time()
     # access_token = auto_login()
     # 引入持久化功能
     access_token = login_save_token_with_expiry(auto_login)
-    logging.info(f"登录成功耗时：{time.time() - start_time}秒 {access_token}")
+    logging.info(f"登录成功令牌：{access_token}")
     if access_token:
         return access_token
     else:
@@ -314,40 +315,25 @@ def main():
     return None
 
 
-# 用于保存 token 和日期的文件名
-TOKEN_FILE = os.path.join(myutil.get_project_path(), 'token.json')
-
-
-def load_token():
-    try:
-        with open(TOKEN_FILE, 'r') as f:
-            data = json.load(f)
-            return data['token'], data['date']
-    except (FileNotFoundError, json.JSONDecodeError):
-        return None, None
-
-
-def save_token(token, current_date=datetime.now().strftime('%Y-%m-%d')):
-    with open(TOKEN_FILE, 'w') as f:
-        json.dump({'token': token, 'date': current_date}, f)
-
-
 def login_save_token_with_expiry(login_func):
     """登录并保存带有过期时间的token
     :param login_func: 登录函数
     :return: token令牌 | 登录函数的返回值
     """
-    token, last_date = load_token()
+    token, last_date = os.getenv("login_token"), os.getenv("login_token_date")
     current_date = datetime.now().strftime('%Y-%m-%d')
 
     # 如果没有 token 或者日期不同，则重新登录
     if token is None or last_date != current_date:
         token = login_func()
-        save_token(token, current_date)
+        # 保存token
+        set_key(os.path.join(myutil.get_project_path(), '.env'), "login_token", token)
+        set_key(os.path.join(myutil.get_project_path(), '.env'), "login_token_date", current_date)
     return token
 
 
 if __name__ == '__main__':
+    load_dotenv()
     logging.getLogger().setLevel(logging.DEBUG)
-    main()
-    # text_recognition("4.png")
+    # text_recognition("4.png") # 识别
+    login_verification_code()  # https://vue.ruoyi.vip/login?redirect=%2Findex

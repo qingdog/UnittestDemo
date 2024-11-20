@@ -12,24 +12,21 @@ import sys
 import time
 import unittest
 
-# import loguru
 import XTestRunner
 import requests
 from XTestRunner import HTMLTestRunner, Weinxin
 from XTestRunner.htmlrunner.result import _TestResult
+from dotenv import load_dotenv
 
 from logs.mylogging import MyLogging, ColoredFormatter
 from utils import myutil
 from utils.myutil import get_latest_file_path
-from utils.mail_util import send_mail
 
 
 class MyConfig:
     FILE_DIR = os.path.dirname(__file__)
     sys.path.append(FILE_DIR)
 
-    # 配置文件
-    CONFIG_INI = os.path.join(FILE_DIR, "config.ini")
     # 测试数据
     TESTDATA_DIR = os.path.join(FILE_DIR, "testdata")
 
@@ -136,46 +133,38 @@ def run_case(all_case, report_path=MyConfig.TESTREPORT_DIR):
     re_new_line = "\\1 ;;showCase(5, 1);"
     myutil.html_line_to_new_line(latest_file_path, "utf-8", re_line, re_new_line)
 
-    # 调用发送邮件模块
-    config_p = configparser.ConfigParser()
-    config_p.read(MyConfig.CONFIG_INI, encoding='utf-8')
-    config_smtp = config_p.items("smtp")
-    # 创建一个字典来存储SMTP配置
-    smtp_config = {key: value for key, value in config_smtp}
-    # 不发送邮件
-    smtp_config["password"] = ""
-    if "password" in smtp_config and smtp_config["password"] != "":
-        # send_mail(latest_file_path, smtp_config)
-        # 使用XTestRunner发送邮件
-        to = "1759765836@qq.com"
+    # return  # 不发送邮件
+    # mail_util.send_mail(latest_file_path, smtp_config)
+    logging.info(f"XTestRunner发送邮件到 {os.getenv("smtp_email_recipient")}")
+    if os.getenv("smtp_email_recipient"):
         runner.send_email(
-            user=smtp_config["user"],
-            password=smtp_config["password"],
-            host=smtp_config["smtp_host"],
-            to=to,
+            to=os.getenv("smtp_email_recipient"),
+            user=os.getenv("smtp_user"),
+            password=os.getenv("smtp_password"),
+            host=os.getenv("smtp_host"),
+            port=os.getenv("smtp_port"),
             attachments=latest_file_path,
             ssl=True
         )
-        logging.info(f"向 {to} 发送邮箱！")
 
-    # send = False
-    # if send:
-    #     report = "./reports/result-20240823.html"
-    #     with open(report, 'wb') as fp:
-    #         runner = HTMLTestRunner(
-    #             stream=fp,
-    #             title='测试发送到企业微信',
-    #             tester='huang',
-    #             description=['类型：发送测试消息'],
-    #             language="zh-CN"
-    #         )
-    #         # runner.run(suit)
-    #         # 方式一： send_weixin() 方法
-    #         runner.send_weixin(
-    #             access_token="a-b-c-d-e",
-    #             at_mobiles=[12345678901],
-    #             is_at_all=False,
-    #         )
+    def send_wx_notify(self, send=False):
+        if send:
+            report = "./reports/result-20240823.html"
+            with open(report, 'wb') as fp:
+                runner = HTMLTestRunner(
+                    stream=fp,
+                    title='测试发送到企业微信',
+                    tester='huang',
+                    description=['类型：发送测试消息'],
+                    language="zh-CN"
+                )
+                # runner.run(suit)
+                # 方式一： send_weixin() 方法
+                runner.send_weixin(
+                    access_token="a-b-c-d-e",
+                    at_mobiles=[12345678901],
+                    is_at_all=False,
+                )
 
 
 class EnterpriseWeiXin(Weinxin):
@@ -240,6 +229,7 @@ class EnterpriseWeiXin(Weinxin):
 
 if __name__ == "__main__":
     MyLogging.set_root_logger_format()
+    load_dotenv()
     logging.info("main start...", extra={"prefix": "\n"})
     logging.getLogger().setLevel(logging.INFO)
 

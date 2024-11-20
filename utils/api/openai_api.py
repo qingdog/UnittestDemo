@@ -61,16 +61,15 @@ def stream_openai_response(messages, api_key, model="gpt-4o-mini", base_url=None
     pass
 
 
-def img_base64_to_openai(text, img_base64_str, api_key, img_type="image/png",
-                         system_content="你是一个识别图片内容并进行数学运算计算器，只需回答计算后的结果。",
-                         base_url=None, model="gpt-4o-mini"):
+def img_base64_to_openai(text, img_base64_str, system_content="你是一个识别图片内容并进行数学运算计算器，只需回答计算后的结果。",
+                         base_url=None, api_key=None, stream=True, model="gpt-4o-mini", img_type="image/png"):
     client = OpenAI(
         api_key=api_key,
         base_url=base_url
     )
-    stream = client.chat.completions.create(
+    completion = client.chat.completions.create(
         model=model,
-        stream=True,
+        stream=stream,
         messages=[
             {"role": "system", "content": f"{system_content}"},
             {
@@ -85,8 +84,11 @@ def img_base64_to_openai(text, img_base64_str, api_key, img_type="image/png",
             }
         ],
     )
-    for chunk in stream:
-        yield chunk.choices[0].delta.content or ""
+    if stream:
+        for chunk in completion:
+            yield chunk.choices[0].delta.content or ""
+    else:
+        yield completion.choices[0].message.content
 
 
 def get_chat_last_number(result):
