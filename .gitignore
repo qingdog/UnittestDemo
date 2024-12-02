@@ -1,5 +1,11 @@
+.env
 **/__pycache__
 logs/*.log
 reports/*.html
+reports/*.md
+reports/*.xml
+reports/*.log
 testdata/*.xlsx
-.env
+uiauto/**/user_data/
+uiauto/xhr/hars/
+uiauto/xhr/logs/

@@ -26,9 +26,10 @@ class MySingletonMeta(metaclass=SingletonMeta):
         self.logger.info(message)
 
 
-# 使用MyLogger类
-logger1 = MySingletonMeta()
-logger1.log_info("This is an info message from logger1")
+if __name__ == '__main__':
+    # 使用MyLogger类
+    logger1 = MySingletonMeta()
+    logger1.log_info("This is an info message from logger1")
 
-logger2 = MySingletonMeta()
-logger2.log_info("This is an info message from logger2")
+    logger2 = MySingletonMeta()
+    logger2.log_info("This is an info message from logger2")

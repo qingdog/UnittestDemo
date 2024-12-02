@@ -65,7 +65,8 @@ def img_base64_to_openai(text, img_base64_str, system_content="你是一个识�
                          base_url=None, api_key=None, stream=True, model="gpt-4o-mini", img_type="image/png"):
     client = OpenAI(
         api_key=api_key,
-        base_url=base_url
+        base_url=base_url,
+        timeout=10
     )
     completion = client.chat.completions.create(
         model=model,

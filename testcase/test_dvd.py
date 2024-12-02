@@ -10,10 +10,6 @@ from run_x_test_runner_send_main import MyConfig
 from loguru import logger
 
 
-# from ddt_demo.common.mylog import mylog
-# from ddt_demo.common.mylogging import Mylogging
-# from ddt_demo.common.mylogger import MyLogger
-
 class ApiList:
     __headers = {
         "Content-Type": "application/json;charset=UTF-8",
@@ -40,8 +36,6 @@ class ApiList:
 @ddt  # 2、使用ddt标识
 class TestDvd(unittest.TestCase):
     """得有店接口测试"""
-    # log = mylog(os.path.basename(__file__))
-    # mylogger = Mylogging().logger
     mylogger = logging.getLogger()
 
     api_list = ApiList()  # 实例化接口

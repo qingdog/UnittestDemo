@@ -13,6 +13,8 @@ class ExcelTestCaseProcessor:
 
     def __init__(self, filepath):
         self.filepath = filepath
+        if not filepath:
+            return
         self.workbook = openpyxl.load_workbook(filepath)
         # if not os.path.exists(self.filename):
         #     # 文件不存在，则拷贝模板文件至指定报告目录下
@@ -22,6 +24,8 @@ class ExcelTestCaseProcessor:
         # self.workbook = self.wb.active()
 
     def read_data(self) -> list[dict[str, int | str]]:
+        if not self.filepath:
+            return []
         all_data = []
         for sheet in self.workbook.sheetnames:
             work_sheet = self.workbook[sheet]

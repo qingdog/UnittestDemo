@@ -100,8 +100,11 @@ def project_manage_marking():
     left_container_p = tab.ele('css=div.annotator-container>div>p')
     left_container_p_len = len(left_container_p.text)
     if left_container_p_len > 0:
-        if left_container_p_len > 29: left_container_p_len = 29  # 24寸显示器一行最多29个文字
-        width = (left_container_p_len - 0) * 16 - 16 / 1.2  # 16px
+        # if left_container_p_len > 29: left_container_p_len = 29  # 24寸显示器一行最多29个文字
+        p_width, p_height = left_container_p.rect.size
+        width = (left_container_p_len - 0) * 16 - 16 / 1.2  # 16px字体大小
+        if width > p_width:
+            width = p_width - 16 - 16 / 1.2  # 使用p标签宽度回退两位字体大小
         left_container_p.click.at(offset_x=width, count=2, button="left")  # 双击最后一个字
         left_container_p.click.at(offset_x=width, count=1, button="right")
 
@@ -116,7 +119,6 @@ def project_manage_marking():
         if check_message():
             text = "用例5：项目打标制造业成功！"
             print(f"\033[32m{text}\033[0m")
-
 
 def main():
     global tab
@@ -177,4 +179,4 @@ if __name__ == '__main__':
         print("finally.")
         time.sleep(30) # 睡眠延时30s，便于观察结果
         # pycharm强行关闭运行进程会触发回收资源关闭Windows浏览器
-        if os_name != "Windows": globals().get("tab").close()  # 关闭浏览器
+        if os_name != "Windows11" and globals().get("tab"): globals().get("tab").close()  # 关闭浏览器

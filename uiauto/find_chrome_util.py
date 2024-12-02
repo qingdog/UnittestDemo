@@ -50,7 +50,7 @@ def find_win_exe(program_name=r"(?i)chrome\.exe$", default_exe_dirs=None):
     return exe_file_paths
 
 
-def find_chrome_util(exe_dirs=None) -> tuple[str | None, list[str]]:
+def find_chrome_util(exe_dirs=None) -> str | None:
     os_name = platform.system()
 
     def find_chrome_path(exe_dir=None):
@@ -95,4 +95,7 @@ def find_chrome_util(exe_dirs=None) -> tuple[str | None, list[str]]:
         # Disables the sandbox for all process types that are normally sandboxed. Meant to be used as a browser-level switch for testing purposes only. ↪
         chrome_startup_args.append("--no-sandbox")  # 禁用沙箱进程
         chrome_startup_args.append("--disable-setuid-sandbox") # Disable the setuid sandbox (Linux only).
-    return chrome_executable_path, chrome_startup_args
+    return chrome_executable_path
+
+if __name__ == '__main__':
+    print(find_chrome_util())

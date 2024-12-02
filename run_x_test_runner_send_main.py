@@ -18,7 +18,6 @@ from XTestRunner import HTMLTestRunner, Weinxin
 from XTestRunner.htmlrunner.result import _TestResult
 from dotenv import load_dotenv
 
-from logs.mylogging import MyLogging, ColoredFormatter
 from utils import myutil
 from utils.myutil import get_latest_file_path
 
@@ -29,21 +28,14 @@ class MyConfig:
 
     # 测试数据
     TESTDATA_DIR = os.path.join(FILE_DIR, "testdata")
-
     # 测试用例报告
     TESTREPORT_DIR = os.path.join(FILE_DIR, "reports")
     # 测试用例程序文件
     TEST_CASE = os.path.join(FILE_DIR, "testcase")
-
-    # 测试用例模板文件
     # 首先尝试在TESTDATA_DIR中查找.xlsx文件
-    xlsx_files = [file for file in os.listdir(TESTDATA_DIR) if re.search("\\.xlsx?$", file)]
-    # 如果在TESTDATA_DIR中没有找到，则在FILE_DIR中查找
-    if not xlsx_files:
-        xlsx_files = [file for file in os.listdir(FILE_DIR) if file.endswith('.xlsx')]
-    # 如果找到了.xlsx文件，则设置TESTDATA_FILE
-    # if xlsx_files:
-    TESTDATA_FILE = os.path.join(TESTDATA_DIR if xlsx_files else FILE_DIR, xlsx_files[-1])
+    # xlsx_files = [file for file in os.listdir(TESTDATA_DIR) if re.search("\\.xlsx?$", file)]
+    xlsx_file = get_latest_file_path(".", ".xlsx")
+    TESTDATA_FILE = os.path.join(FILE_DIR, xlsx_file) if xlsx_file else None
 
 
 class MyTestResult(_TestResult):
@@ -51,12 +43,12 @@ class MyTestResult(_TestResult):
         super().addFailure(test, err)
         if self.verbosity >= 3:
             # 用例执行失败后，使用 `严重错误` 级别的日志输出
-            MyLogging.getLogger().critical(test, exc_info=True)
+            logging.critical(test, exc_info=True)
 
     def addError(self, test, err):
         super().addError(test, err)
         if self.verbosity >= 3:
-            MyLogging.getLogger().error(test, exc_info=True)
+            logging.error(test, exc_info=True)
 
 
 class MyHTMLTestRunner(XTestRunner.HTMLTestRunner):
@@ -103,7 +95,7 @@ class MyHTMLTestRunner(XTestRunner.HTMLTestRunner):
 def run_case(all_case, report_path=MyConfig.TESTREPORT_DIR):
     now = time.strftime("%Y%m%d")
     filename = report_path + '/' + f"result-{now}" + '.html'
-    log_latest_file_path = get_latest_file_path(os.path.join(MyConfig.FILE_DIR, "logs"))
+    log_latest_file_path = get_latest_file_path(os.path.join(MyConfig.FILE_DIR, "logs"), ".log")
 
     with open(filename, 'wb') as file:
         # loguru._level = "DEBUG"
@@ -133,7 +125,7 @@ def run_case(all_case, report_path=MyConfig.TESTREPORT_DIR):
     re_new_line = "\\1 ;;showCase(5, 1);"
     myutil.html_line_to_new_line(latest_file_path, "utf-8", re_line, re_new_line)
 
-    # return  # 不发送邮件
+    return  # 不发送邮件
     # mail_util.send_mail(latest_file_path, smtp_config)
     logging.info(f"XTestRunner发送邮件到 {os.getenv("smtp_email_recipient")}")
     if os.getenv("smtp_email_recipient"):
@@ -228,11 +220,11 @@ class EnterpriseWeiXin(Weinxin):
 
 
 if __name__ == "__main__":
-    MyLogging.set_root_logger_format()
     load_dotenv()
-    logging.info("main start...", extra={"prefix": "\n"})
-    logging.getLogger().setLevel(logging.INFO)
+    import utils.color_format_logging
 
+    logging.getLogger().setLevel(logging.INFO)
+    logging.info("main start...", extra={"prefix": "\n"})
     """加载testcase目录下所有test开头的py文件"""
     # cases = unittest.defaultTestLoader.discover(MyConfig.TEST_CASE, pattern='loguru_test*.py')
     cases = unittest.defaultTestLoader.discover(MyConfig.TEST_CASE, pattern='test_api*.py')

@@ -1,14 +1,10 @@
 # encoding=utf-8
 import logging
 import os
-import sys
 import time
 
 import unittest
 from BeautifulReport import BeautifulReport
-from my_test_loader import MyTestLoader
-import logs.color_root_logger
-
 
 test_path = "testcase"
 str_time = time.strftime("%Y-%m-%d_%H")
@@ -19,7 +15,8 @@ report_description = "测试用例详情"
 
 project_path = os.path.abspath('.')
 
-logger = logs.color_root_logger.logger
+import utils.color_format_logging
+logger = logging.getLogger()
 
 
 class MyBeautifulReport(BeautifulReport):

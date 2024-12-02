@@ -1,8 +1,6 @@
 import logging
 import unittest
-from test_async_demo import TestDemo
 from test_no_async import TestNoAsync
-import logs.color_root_logger
 
 if __name__ == '__main__':
     logging.getLogger().setLevel(logging.DEBUG)

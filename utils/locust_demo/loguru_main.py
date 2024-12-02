@@ -1,10 +1,7 @@
-import datetime
 import functools
 import logging
 import re
 
-import XTestRunner
-from XTestRunner.htmlrunner.result import _TestResult
 from loguru import logger
 import os
 import sys
@@ -13,7 +10,6 @@ import unittest
 
 from XTestRunner import HTMLTestRunner
 
-from logs.mylogging import MyLogging
 from utils import myutil
 from utils.myutil import get_latest_file_path
 

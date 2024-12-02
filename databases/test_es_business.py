@@ -1,10 +1,10 @@
 import dataclasses
 import decimal
+import logging
 from datetime import datetime, date, timedelta
 import requests
 from databases.aiomysql_client import AioMySQLClient
 from databases.qiye_base_business import QiyeBaseBusiness
-from logs.mylogging import MyLogging
 
 if __name__ == '__main__':
 
@@ -26,7 +26,7 @@ if __name__ == '__main__':
 
 
     async def query(sql="select * from qiye_base_business limit 2160000, 300000"):
-        logger = MyLogging.getLogger()
+        logger = logging.getLogger()
         logger.setLevel(10)
         mysql_client = await AioMySQLClient.get_instance()
         # result_business = await mysql_client.execute_query("select * from qiye_base_business limit 10")

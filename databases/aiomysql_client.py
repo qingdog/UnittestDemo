@@ -11,7 +11,6 @@ import aiomysql
 from dotenv import load_dotenv
 
 from databases.qiye_base_business import QiyeBaseBusiness
-from logs.mylogging import MyLogging
 from utils import myutil
 
 
@@ -30,7 +29,6 @@ class AioMySQLClient:
         return cls._instance
 
     async def connect(self, host=None, port=None, user=None, password=None, db=None, loop=None):
-        # MyLogging.getLogger("database").info("database connecting...")
         self.pool = await aiomysql.create_pool(
             host=host or os.getenv("database_host"),
             port=port or eval(os.getenv("database_port")),

@@ -1,11 +1,10 @@
 # encoding=utf-8
 import logging
 import os
-import sys
 import time
 import unittest
 import HTMLReport
-from logs.mylogging import MyLogging
+
 
 
 from BeautifulReport import BeautifulReport
@@ -43,11 +42,10 @@ if __name__ == '__main__':
     # myTestSuit = my_loader.discover(start_dir=test_path, pattern='test*.py'
 
     count = myTestSuit.countTestCases()
-    logger = MyLogging.getLogger()
-    # logger = logging.getLogger()
 
-    logger.info(f'-----开始执行所有测试,总用例数：{myTestSuit.countTestCases()}')
-    logger.info(myTestSuit)
+    import utils.color_format_logging
+    logging.info(f'-----开始执行所有测试,总用例数：{myTestSuit.countTestCases()}')
+    logging.info(myTestSuit)
     try:
         # HTMLReport移除了已有的根处理器
         test_runner = HTMLReport.TestRunner(
@@ -68,6 +66,6 @@ if __name__ == '__main__':
 
         # test_suite = unittest.defaultTestLoader.discover('./tests', pattern='test*.py')
         test_runner.run(myTestSuit)
-        logger.info('------所有测试用例执行完毕-------')
+        logging.info('------所有测试用例执行完毕-------')
     except Exception as e:
-        logger.error(f"异常：{e}", exc_info=True)
+        logging.error(f"异常：{e}", exc_info=True)

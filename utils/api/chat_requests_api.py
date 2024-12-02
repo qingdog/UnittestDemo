@@ -1,10 +1,7 @@
-import asyncio
 import json
-import logging
 
 import requests
 import re
-import logs.color_root_logger
 from databases.aiomysql_client import AioMySQLClient
 
 

@@ -20,6 +20,7 @@ from utils.excel_testcase_util import ExcelTestCaseProcessor
 import jsonpath_ng
 
 from utils.login_ruoyi_verification_code import login_verification_code
+from utils.myutil import repair_stdout_print_one
 
 
 @ddt.ddt
@@ -58,28 +59,6 @@ class TestAPI(unittest.TestCase):
     def tearDown(self):
         pass
 
-    is_repair_print = True
-
-    def repair_print(self, message, end="\n", flush=True):
-        """修复x-test-runner框架每次print输出都会换行的问题"""
-        original_stdout = sys.stdout
-
-        class MyOutput:
-            def write(self, message):
-                # 将消息输出到标准输出，不添加换行
-                sys.__stdout__.write(f'{message}')
-
-            def flush(self):
-                pass  # 需要实现flush方法以兼容stdout
-
-        # 替换sys.stdout
-        sys.stdout = MyOutput()
-        # 使用示例
-        print(message, end=end, flush=flush)  # 不会换行
-        # sys.stdout = original_stdout
-
-    logger = logging.getLogger()
-
     def package_send_data(self, excel_data):
         """封装excel中需要发送请求的数据"""
         if "url" not in excel_data or excel_data["url"] == " " or excel_data["url"] == "" or excel_data["url"] is None:
@@ -108,7 +87,6 @@ class TestAPI(unittest.TestCase):
         # 暂时不处理params
         # if "params" in excel_data:
         #     params = ast.literal_eval(excel_data["params"]) if excel_data["params"] else None
-
         return method, url, headers, body
 
     # testData: list[dict[str, int]] = XlrdExcel(MyConfig.TESTDATA_FILE).read_data()
@@ -120,10 +98,6 @@ class TestAPI(unittest.TestCase):
         body = ""
         result = "PASS"
         try:
-            if self.is_repair_print:
-                self.is_repair_print = False
-                self.repair_print("", end="")
-
             if "result" in excel_data and "PASS" == excel_data["result"]: return
             # 如果这一行用例中没有url则跳过
             if "url" not in excel_data or excel_data["url"] is None:
@@ -141,7 +115,7 @@ class TestAPI(unittest.TestCase):
                 # 忽略SSL证书验证
                 # requests.packages.urllib3.disable_warnings(category=InsecureRequestWarning)
                 response = self.session.request(method=method, url=url, headers=headers, data=body, verify=False)
-                logging.getLogger("mylogging").warning(f"警告 未经过证书验证请求：{url}")
+                logging.warning(f"警告 未经过证书验证请求：{url}")
             except Exception as e:
                 raise e
 
@@ -167,8 +141,8 @@ class TestAPI(unittest.TestCase):
                     # if isinstance(res_json, dict):
                     #     self.get_veal_variable(res_json, variable)
 
-                self.logger.debug(f"用例数据：{excel_data}")
-                self.logger.info(f"{url} 响应数据：%s" % response.content.decode("utf-8"))
+                logging.debug(f"用例数据：{excel_data}")
+                logging.info(f"{url} 响应数据：%s" % response.content.decode("utf-8"))
 
                 # 暂时不校验code
                 # if not code:
@@ -195,6 +169,7 @@ class TestAPI(unittest.TestCase):
         finally:
             ExcelTestCaseProcessor(MyConfig.TESTDATA_FILE).write_data(excel_data, value=result)
 
+    @repair_stdout_print_one  # 修复x-test-runner框架的换行问题
     def delay_print(self, delay):
         if not delay:  # 确保延迟时间存在且不为空
             return

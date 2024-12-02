@@ -124,7 +124,7 @@ def click_cloudflare_turnstile(tab: MixTab, button: ChromiumElement = None):
             tab.scroll.down(30)
             tab.wait(60)
             # tab.get_screenshot(path='tmp', name='wait_click2_wait.jpg', full_page=True)
-            cf_turnstile_ele.click.at(width / 4, 30) # 不点击
+            cf_turnstile_ele.click.at(width / 4, 30)  # 不点击
             time.sleep(20)
     except Exception as e:
         print(f"\033[35m{traceback.format_exc()}\033[0m")
@@ -142,6 +142,9 @@ def click_cloudflare_turnstile(tab: MixTab, button: ChromiumElement = None):
         print(button.text)
 
 
+global chromium
+
+
 def main_bak():
     # 配置 Chromium 选项
     chromium_options = ChromiumOptions().set_load_mode("normal")
@@ -150,10 +153,14 @@ def main_bak():
     chromium_options.set_argument("--no-sandbox")
     chromium_options.set_argument("--disable-setuid-sandbox")
     chromium_options.set_argument("--headless=new")  # 无界面系统添加
-
-    chromium_page = ChromiumPage(chromium_options)
+    chromium_options.set_paths(local_port=9222)
+    # 兼容无头模式中的参数 --headless=new
+    if not chromium_options.is_headless:
+        chromium_options.remove_argument("--headless=new")
+    global chromium
     try:
-        tab = Chromium().latest_tab
+        chromium = Chromium(chromium_options)
+        tab = chromium.latest_tab
         token = os.getenv("EGG_SESS")
 
         def set_cookies(_tab, _token):
@@ -200,12 +207,15 @@ def main_bak():
             click_turnstile(tab)  # 处理验证码
 
         # 打印 cf-turnstile-response 的值
-        cf_turnstile_response = etree.HTML(chromium_page.html).xpath('//*[@name="cf-turnstile-response"]/@value')
+        cf_turnstile_response = etree.HTML(tab.html).xpath('//*[@name="cf-turnstile-response"]/@value')
         print(f"cf_turnstile_response: {cf_turnstile_response}")
     except Exception as e:
         print(f"\033[34m{traceback.format_exc()}\033[0m")
     finally:
-        chromium_page.close()
+        if globals().get("chromium"):
+            print("quit...")
+            chromium.quit()
+
 
 def main():
     os_name = platform.system()
@@ -244,6 +254,7 @@ def main():
         print("done.")
         time.sleep(60)
         chromium_page.quit()  # 关闭浏览器
+
 
 if __name__ == '__main__':
     load_dotenv()
