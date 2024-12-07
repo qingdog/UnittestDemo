@@ -5,7 +5,14 @@ import sys
 import time
 
 
-def get_file_path(path=".", re_pattern=r"", file_list=None):
+def get_file_path(path=".", re_pattern=r".", file_list=None):
+    """
+    递归使用正则查找目录及其子目录下符合的文件
+    :param path: 起始路径，默认是当前目录 ("." 表示当前目录)。
+    :param re_pattern: 正则表达式，用于匹配文件名。默认为.表示匹配所有文件。
+    :param file_list: 存放匹配文件路径的列表，默认为 None，表示首次调用时会初始化为空列表。
+    :return: 包含所有匹配文件路径的列表
+    """
     if file_list is None:
         file_list = []
     try:
@@ -22,19 +29,33 @@ def get_file_path(path=".", re_pattern=r"", file_list=None):
     return file_list
 
 
-def get_latest_file_path(dir_path=".", suffix=""):
+def get_latest_file_path(dir_path=".", suffix="."):
     """
     获取指定目录下最新的文件
     :param suffix: 根据后缀进行过滤
     :param dir_path:生成报告的目录
     :return:返回文件的相对路径
     """
-    file_list = get_file_path(dir_path, re_pattern=suffix)  # 查找目录下后缀的所有文件
+    match_file_list = get_file_path(dir_path, re_pattern=suffix)  # 查找目录下后缀的所有文件
     # 使用 自定义的key函数对文件列表进行排序，排序依据是 os.path.getmtime(path) 文件的最后修改时间（时间戳浮点数）
-    file_list.sort(key=lambda f_name: os.path.getmtime(os.path.join(dir_path, f_name)))
+    match_file_list.sort(key=lambda f_name: os.path.getmtime(os.path.join(dir_path, f_name)))
     # 因为文件已经根据修改时间排序了，最新的文件会在列表的最后
-    new_file = file_list[-1] if len(file_list) > 0 else None
-    return new_file
+    latest_file = match_file_list[-1] if len(match_file_list) > 0 else None
+    return latest_file
+
+
+def get_latest_dir(dir_path=".", re_pattern=r"."):
+    """获取最新的目录"""
+    listdir = os.listdir(dir_path)
+    match_file_list = []
+    for filename in listdir:
+        file_path = os.path.join(dir_path, filename)
+        if os.path.isdir(file_path) and re.search(re_pattern, filename):
+            match_file_list.append(file_path)
+    match_file_list.sort(key=lambda f_name: os.path.getmtime(file_path))
+    # 因为文件已经根据修改时间排序了，最新的文件会在列表的最后
+    latest_dir = match_file_list[-1] if len(match_file_list) > 0 else None
+    return latest_dir
 
 
 def get_project_path():
@@ -140,7 +161,7 @@ def say_hello(msg):
 
 if __name__ == '__main__':
     logging.getLogger().setLevel(logging.INFO)
-    say_hello()
+    say_hello("hello")
 
     # sample_list = ["企业无严重违法", "企业教育经费用支出（万元）", "场地面积（m2）", ]
     sample_list = "企业无严重违法"
@@ -149,3 +170,5 @@ if __name__ == '__main__':
 
     print(baidu_slice_encrypt("697914dfbf71fcb1040647760a0fb722"))
     # http_to_https("../reports/result-20240807.html")
+
+    print(get_latest_dir(r"D:\mytest\UnittestDemo\uiauto\allure-project\allure-report-plus", r"\d+"))

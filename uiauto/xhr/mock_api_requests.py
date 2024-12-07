@@ -1,23 +1,26 @@
 import re
 import time
 
+import requests
 from playwright._impl._errors import TargetClosedError
-from playwright.sync_api import sync_playwright, Page, expect
+from playwright.sync_api import sync_playwright, Page, Route, expect
 from uiauto.find_chrome_util import find_chrome_util
 from utils.login_ruoyi_verification_code import login_verification_code
 
 
-def test_records_or_updates_the_har_file(page: Page, url):
-    # Get the response from the HAR file
-    re_pattern = r"^http(s)?://[\d\.a-z:]+/"
-    result = re.search(rf"{re_pattern}", url)
-    prefix = result.group(0) if result else re_pattern
-    # 只根据域名进行录制接口请求
-    page.route_from_har(f"./hars/{time.strftime('%Y%m%d')}.har", url=re.compile(rf"{prefix}[a-z\d\-/]*[a-z\d\-]+$"), update=True)
-    # 录制所有ip域名请求，不录制js、css、png等请求
-    # page.route_from_har(f"./hars/{time.strftime('%Y%m%d')}.har", url=re.compile(r"^http(s)?://[\d\.a-z:]+/[a-z\d\-/]*[a-z\d\-]+$"), update=True)
-    page.goto(url)
-    # page.goto("https://playwright.dev/python/docs/codegen-intro")
+def test_mock_the_fruit_api(page: Page):
+    def handle(route: Route):
+        # res = requests.session().request(route.request.method, route.request.url, json=route.request.post_data_json, headers=route.request.headers, timeout=10)
+        res = route.fetch()
+        result: list = res.json()
+        route.fulfill(status=200, headers=res.headers, json=[*result, {"name": "apple666", "id": 66}], response=res, )
+
+    # Intercept the route to the fruit API */**/api/v1/fruits
+    page.route(re.compile(r".+/fruits"), handle)
+    # Go to the page
+    page.goto("https://demo.playwright.dev/api-mocking")
+    # Assert that the Strawberry fruit is visible
+    # expect(page.get_by_text("apple666")).to_be_visible()
 
 
 def record_har():
@@ -30,7 +33,7 @@ def record_har():
         url = "http://192.168.50.202:9999/projectManage"
         context.add_cookies([{'name': 'Admin-Token', 'value': login_verification_code(), 'domain': '192.168.50.202', 'path': '/'}])
 
-        test_records_or_updates_the_har_file(page, url=url)
+        test_mock_the_fruit_api(page)
 
         try:
             page.wait_for_timeout(60 * 1000)

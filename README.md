@@ -23,6 +23,7 @@ pip install htmlreport
 pip install -i https://pypi.tuna.tsinghua.edu.cn/simple openpyxl
 # 带截图，饼图，折线图，历史结果查看的测试报告
 https://github.com/githublitao/HTMLTestRunner_Chart
+```
 
 ```shell
 # 集成邮件/钉钉/企微/飞书 发送消息。
@@ -36,7 +37,6 @@ https://seldomqa.github.io/getting-started/quick_start.html#多线程运行
 
 ### 安装旧版本
 ```shell
-
 #卸载已安装的
 pip uninstall xlrd 
 #下载对应的版本
@@ -99,85 +99,45 @@ load_dotenv()
 
 TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
 ```
-```shell
-pip list
-Package                   Version
-------------------------- -----------
-aiomysql                  0.2.0
-Appium-Python-Client      3.2.1
-asyncpg                   0.29.0
-attrs                     23.2.0
-BeautifulReport           0.1.3
-beautifulsoup4            4.12.3
-bs4                       0.0.2
-certifi                   2024.6.2
-cffi                      1.16.0
-charset-normalizer        3.3.2
-cli_helpers               2.3.1
-click                     8.1.7
-colorama                  0.4.6
-configobj                 5.0.8
-cryptography              42.0.8
-ddt                       1.7.2
-distlib                   0.3.8
-et-xmlfile                1.1.0
-filelock                  3.15.4
-genson                    1.2.2
-h11                       0.14.0
-HTMLReport                2.4.0
-idna                      3.7
-jd-HTMLTestRunner         1.7.0
-Jinja2                    3.1.4
-jmespath                  0.10.0
-jsonschema                4.23.0
-jsonschema-specifications 2023.12.1
-loguru                    0.6.0
-markdown-it-py            3.0.0
-MarkupSafe                2.1.5
-mdurl                     0.1.2
-mycli                     1.27.2
-openpyxl                  3.1.5
-outcome                   1.3.0.post0
-pip                       24.1.2
-pip-search                0.0.12
-pipenv                    2024.0.1
-platformdirs              4.2.2
-prompt_toolkit            3.0.47
-pyaes                     1.6.1
-pycparser                 2.22
-Pygments                  2.18.0
-PyMySQL                   1.1.1
-pyperclip                 1.9.0
-PySocks                   1.7.1
-python-dateutil           2.8.2
-PyYAML                    6.0.1
-referencing               0.35.1
-requests                  2.32.3
-rich                      13.7.1
-rpds-py                   0.19.0
-seldom                    3.7.0
-selenium                  4.21.0
-setuptools                70.1.1
-six                       1.16.0
-sniffio                   1.3.1
-sortedcontainers          2.4.0
-soupsieve                 2.5
-sqlglot                   25.5.1
-sqlparse                  0.4.4
-tabulate                  0.9.0
-trio                      0.26.0
-trio-websocket            0.11.1
-typing_extensions         4.12.2
-urllib3                   2.2.2
-virtualenv                20.26.3
-wcwidth                   0.2.13
-websocket-client          1.7.0
-win32-setctime            1.1.0
-wsproto                   1.2.0
-XTestRunner               1.7.4
-jsonpath-ng               1.6.1
-```
 * 更新包
 ```shell
 pip install XTestRunner==1.7.5 --index-url https://pypi.org/simple
+```
+### playwright 自动录制操作（生成代码）
+* 设置playwright浏览器 `playwright install`
+```shell
+mkdir C:\Users\Administrator\AppData\Local\ms-playwright\chromium-1140\
+# 创建浏览器所在目录（文件夹）的符号链接
+cmd /c mklink /d "C:\Users\Administrator\AppData\Local\ms-playwright\chromium-1140\chrome-win\" "C:\Program Files\Google\Chrome\Application\"
+# touch 'C:\Users\Administrator\AppData\Local\ms-playwright\chromium-1140\DEPENDENCIES_VALIDATED'
+playwright codegen demo.playwright.dev/todomvc
+# playwright codegen --timezone="Asia/Shanghai" --geolocation="31.235564,121.481099" --lang="zh-CN" --color-scheme=dark --save-storage=auth.json bing.com/maps
+# playwright codegen --load-storage=auth.json github.com/microsoft/playwright
+```
+### playwright 生成报告
+* 安装依赖
+```shell
+pip install pytest pytest-playwright allure-pytest
+npm install -g allure-commandline # 安装 Allure 命令行工具
+ls $(npm config get prefix) -r allure.* # 查看安装位置
+```
+
+* shell执行
+
+```shell
+# 生成测试结果（allure-results）
+pytest --alluredir=allure-results
+# 生成多页面报告（allure-results）
+allure generate allure-results --clean
+# allure open allure-report # 打开报告
+
+# 生成单页面报告（allure-results）
+allure generate --single-file allure-results --clean
+```
+* python执行
+```python
+import os
+# 设置 - Python 集成工具 - 默认测试运行程序 Unittest
+os.system("pytest --alluredir=allure-results")
+os.system("allure generate --single-file allure-results --clean")
 ```

@@ -1,4 +1,5 @@
 .env
+.idea/
 **/__pycache__
 logs/*.log
 reports/*.html
@@ -9,3 +10,5 @@ testdata/*.xlsx
 uiauto/**/user_data/
 uiauto/xhr/hars/
 uiauto/xhr/logs/
+uiauto/allure-project/allure-report-plus/
+uiauto/allure-project/allure-results/

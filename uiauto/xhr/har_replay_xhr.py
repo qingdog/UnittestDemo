@@ -1,10 +1,12 @@
 import json
 import logging
+import os
 import re
 
 import requests
 from requests import Response
 
+from utils.login_ruoyi_verification_code import login_verification_code
 from utils.myutil import get_latest_file_path
 
 
@@ -27,6 +29,20 @@ class HarRequestTool:
         with open(self.har_file_path, 'r', encoding='utf-8') as f:
             return json.load(f)
 
+    def _read_body_from_file(self, file_name):
+        """
+        从文件中读取请求体内容。
+        :param file_name: 文件名
+        :return: 文件内容
+        """
+        # 获取 self.har_file_path 所在的目录
+        har_file_dir = os.path.dirname(self.har_file_path)
+        file_path = os.path.join(har_file_dir, file_name)
+        if not os.path.exists(file_path):
+            raise FileNotFoundError(f"Body file '{file_path}' not found.")
+        with open(file_path, 'r', encoding='utf-8') as f:
+            return f.read()
+
     def get_request_details(self, entry_index: int):
         """
         获取指定索引位置的请求详情。
@@ -45,8 +61,21 @@ class HarRequestTool:
             if not header['name'].startswith(':')
         }
 
-        body: str = request_data.get('postData', {}).get('text', '')  # 获取请求体（如果存在）
-        return method, url, headers, body, entry_index
+        # 获取请求体
+        dict_data = {}
+        post_data = request_data.get('postData', {})
+        body = post_data.get('text', '').strip()
+
+        # 如果 body 为空，则尝试从 _file 中读取
+        if not body and "_file" in post_data:
+            body = self._read_body_from_file(post_data["_file"])
+        if body:
+            try:
+                dict_data = json.loads(body)  # 转换为字典
+            except json.JSONDecodeError as e:
+                print(f"解析错误: {e}")
+
+        return method, url, headers, dict_data, entry_index
 
     def send_requests(self, entries_index: int = None, ) -> list[Response]:
         """
@@ -63,26 +92,28 @@ class HarRequestTool:
         return response_result
 
     def send(self, method, url, headers, body, index=0):
-        response: Response = self.session.request(method=method, url=url, headers=headers, data=body, timeout=10)
+        response: Response = self.session.request(method=method, url=url, headers=headers, json=body, timeout=10)
         return response
 
 
-def main(re_pattern):
+def main(url_re_pattern):
     session = requests.session()
     import utils.color_format_logging
-    logging.getLogger().setLevel(logging.INFO)
-    har_tool = HarRequestTool(get_latest_file_path("..", ".har"))
+    logging.getLogger().setLevel(logging.DEBUG)
+    har_tool = HarRequestTool(get_latest_file_path(".", ".har"))
     for index in range(har_tool.entries_len):
         method, url, headers, body, index = har_tool.get_request_details(index)
-        if re.search(re_pattern, url):
-            # logging.debug(f"登录码{index}: {headers.get("Authorization")}")
-            logging.info(f"请求{index}: {url}")
-            res = session.request(method=method, url=url, headers=headers, data=body)
+        if re.search(url_re_pattern, url):
+            headers["Authorization"] = login_verification_code()
+            body = {"pageSize":10,"pageNo":1,"name":"青岛市就业创业政策清单（家庭服务业商业综合保险补贴）"}
+            logging.debug(f"请求{index}: {url} {body}")
+            res = session.request(method=method, url=url, headers=headers, json=body)
             logging.info(f"结果{index}: {res.text}")
+            break
 
 
 if __name__ == "__main__":
-    main(r"test-api")
+    main(url_re_pattern=r"project.select")
     # responses = HarRequestTool("cloud.har").send_requests()  # 输出每个请求的响应信息
     # for res in responses:
     #     print(res.text)

@@ -305,7 +305,7 @@ def login_verification_code():
     # access_token = auto_login()
     # 引入持久化功能
     access_token = login_save_token_with_expiry(auto_login)
-    logging.info(f"登录成功令牌：{access_token}")
+    logging.debug(f"登录成功令牌：{access_token}")
     if access_token:
         return access_token
     else:
@@ -320,15 +320,17 @@ def login_save_token_with_expiry(login_func):
     :param login_func: 登录函数
     :return: token令牌 | 登录函数的返回值
     """
-    token, last_date = os.getenv("login_token"), os.getenv("login_token_date")
+    login_token_key = "login_token"
+    login_token_date_key = "login_token_date"
+    token, last_date = os.getenv(login_token_key), os.getenv(login_token_date_key)
     current_date = datetime.now().strftime('%Y-%m-%d')
 
     # 如果没有 token 或者日期不同，则重新登录
     if token is None or last_date != current_date:
         token = login_func()
-        # 保存token
-        set_key(os.path.join(myutil.get_project_path(), '.env'), "login_token", token)
-        set_key(os.path.join(myutil.get_project_path(), '.env'), "login_token_date", current_date)
+        # 重新加载 .env 文件到 os.environ
+        os.environ[login_token_key] = set_key(os.path.join(myutil.get_project_path(), '.env'), login_token_key, token)[2]
+        os.environ[login_token_date_key] = set_key(os.path.join(myutil.get_project_path(), '.env'), login_token_date_key, current_date)[2]
     return token
 
 
