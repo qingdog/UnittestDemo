@@ -91,7 +91,7 @@ def main():
     # 通过cdp连接到已经启动的 Chrome 浏览器
     # browser = playwright_instance.chromium.connect_over_cdp(f"http://127.0.0.1:{start_remote_chrome_port(chrome_path=chrome_executable_path)}")
     # 启动持久化Chrome
-    persistent_context = playwright.chromium.launch_persistent_context(executable_path=chrome_executable_path, headless=False, user_data_dir="./")
+    persistent_context = playwright.chromium.launch_persistent_context(executable_path=chrome_executable_path, headless=False, user_data_dir="/")
     page = persistent_context.new_page()
 
 

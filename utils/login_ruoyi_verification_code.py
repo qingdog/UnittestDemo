@@ -10,9 +10,7 @@ import cv2
 import numpy as np
 import requests
 from dotenv import set_key, load_dotenv
-from sympy import false
 
-import utils.api.ocr_baidu_api
 from utils import myutil
 from utils.api import openai_api
 
@@ -112,6 +110,7 @@ def img_ocr(img_name, fun=2):
         # pip install baidu-aip chardet
         # https://ai.baidu.com/tech/ocr#百度ocr识别文字
         # https://console.bce.baidu.com/ai-engine/ocr/resource?apiId=27#每月1000次
+        import utils.api.ocr_baidu_api
         text = utils.api.ocr_baidu_api.baidu_orc_general_basic(img_name)
         """
         # 高精度版

@@ -5,6 +5,7 @@ import time
 
 import unittest
 from BeautifulReport import BeautifulReport
+from utils import color_format_logging
 
 test_path = "testcase"
 str_time = time.strftime("%Y-%m-%d_%H")
@@ -15,7 +16,7 @@ report_description = "测试用例详情"
 
 project_path = os.path.abspath('.')
 
-import utils.color_format_logging
+color_format_logging.main()
 logger = logging.getLogger()
 
 

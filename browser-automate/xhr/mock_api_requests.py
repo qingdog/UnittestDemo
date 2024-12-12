@@ -1,7 +1,5 @@
 import re
-import time
 
-import requests
 from playwright._impl._errors import TargetClosedError
 from playwright.sync_api import sync_playwright, Page, Route, expect
 from uiauto.find_chrome_util import find_chrome_util

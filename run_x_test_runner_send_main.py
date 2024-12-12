@@ -222,6 +222,7 @@ class EnterpriseWeiXin(Weinxin):
 if __name__ == "__main__":
     load_dotenv()
     import utils.color_format_logging
+    utils.color_format_logging.main()
 
     logging.getLogger().setLevel(logging.INFO)
     logging.info("main start...", extra={"prefix": "\n"})

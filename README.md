@@ -10,7 +10,7 @@ pip install -r requirements.txt
 # 更新
 python -m pip install --upgrade pip
 # 安装搜索库
-pip3 install pip_search
+pip install pip_search
 pip_search.exe htmltest -i https://pypi.tuna.tsinghua.edu.cn/simple
 # 设置清华源
 pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
@@ -141,3 +141,5 @@ import os
 os.system("pytest --alluredir=allure-results")
 os.system("allure generate --single-file allure-results --clean")
 ```
+* https://playwright.dev/python/docs/next/locators
+* https://allurereport.org/docs/gettingstarted-navigation/#suite-based-hierarchy

@@ -5,8 +5,6 @@ import platform
 import re
 import shutil
 import subprocess
-from os import mkdir
-from time import time
 
 import allure
 import pytest
@@ -138,7 +136,7 @@ allure_results = os.path.join("allure-results", str(build_order))
 allure_report = os.path.join(allure_report_plus, str(build_order))
 
 
-def main(clear_results=False, cp_history=True, open_report=False, single_report=False):
+def main(clear_results=False, record_history=True, open_report=False, single_report=False):
     if single_report:
         if clear_results:
             for filename in os.listdir(os.path.join(os.getcwd(), allure_results)):
@@ -149,14 +147,17 @@ def main(clear_results=False, cp_history=True, open_report=False, single_report=
 
     if clear_results: os.remove(allure_results)
     os.system(f'pytest {"."} -s  --alluredir={allure_results}')
-    if cp_history and latest_history_trend_data:  # 复制上一个报告的 widgets/ 到新生成的测试结果的 history/
-        latest_history = os.path.join(allure_report_plus, str(len(latest_history_trend_data)), "widgets")
-        shutil.copytree(latest_history, os.path.join(allure_results, "history"), dirs_exist_ok=True)
+
+    if latest_history_trend_data:  # 复制上一个报告的 widgets/ 到新生成的测试结果的 history/
+        latest_history = os.path.join(allure_report_plus, str(len(latest_history_trend_data)), "widgets", "history-trend.json")
+        os.makedirs(os.path.join(allure_results, "history"), exist_ok=True)  # 创建history目录
+        shutil.copy(latest_history, os.path.join(allure_results, "history", "history-trend.json"))
+
     os.system(f"allure generate {allure_results} -o {allure_report} --clean")
 
     # 生成报告后更新趋势图
     update_history_trend_data(build_order)
-    if open_report: os.system(f"allure open {allure_report_plus}")
+    if open_report: os.system(f"allure open {allure_report_plus} --host 127.0.0.1 --port 12320")
 
 
 if __name__ == '__main__':

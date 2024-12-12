@@ -98,9 +98,10 @@ class HarRequestTool:
 
 def main(url_re_pattern):
     session = requests.session()
-    import utils.color_format_logging
+    from utils import color_format_logging
+    color_format_logging.main()
     logging.getLogger().setLevel(logging.DEBUG)
-    har_tool = HarRequestTool(get_latest_file_path(".", ".har"))
+    har_tool = HarRequestTool(get_latest_file_path("", ".har"))
     for index in range(har_tool.entries_len):
         method, url, headers, body, index = har_tool.get_request_details(index)
         if re.search(url_re_pattern, url):

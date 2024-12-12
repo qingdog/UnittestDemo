@@ -171,4 +171,4 @@ if __name__ == '__main__':
     print(baidu_slice_encrypt("697914dfbf71fcb1040647760a0fb722"))
     # http_to_https("../reports/result-20240807.html")
 
-    print(get_latest_dir(r"D:\mytest\UnittestDemo\uiauto\allure-project\allure-report-plus", r"\d+"))
+    print(get_latest_dir(r"/browser-automate\allure-project\allure-report-plus", r"\d+"))

@@ -43,14 +43,15 @@ if __name__ == '__main__':
 
     count = myTestSuit.countTestCases()
 
-    import utils.color_format_logging
+    from utils import color_format_logging
+    color_format_logging.main()
     logging.info(f'-----开始执行所有测试,总用例数：{myTestSuit.countTestCases()}')
     logging.info(myTestSuit)
     try:
         # HTMLReport移除了已有的根处理器
         test_runner = HTMLReport.TestRunner(
             report_file_name=report_name,
-            log_file_name="./logs",
+            log_file_name="utils/logs",
             output_path=report_path,
             title=None,
             description=None,

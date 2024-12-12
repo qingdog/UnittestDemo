@@ -1,4 +1,5 @@
 import base64
+import logging
 import os
 import re
 import time
@@ -7,7 +8,7 @@ import requests
 from dotenv import load_dotenv
 
 load_dotenv()
-from openai import OpenAI
+from openai import OpenAI, RateLimitError
 
 
 def stream_openai_response(messages, api_key, model="gpt-4o-mini", base_url=None,
@@ -68,28 +69,45 @@ def img_base64_to_openai(text, img_base64_str, system_content="你是一个识�
         base_url=base_url,
         timeout=10
     )
-    completion = client.chat.completions.create(
-        model=model,
-        stream=stream,
-        messages=[
-            {"role": "system", "content": f"{system_content}"},
-            {
-                "role": "user",
-                "content": [
-                    {"type": "text", "text": f"{text}"},
+    # 重试机制的初始设置
+    max_retries = 5
+    retry_delay = 1  # 初始延迟时间，单位为秒
+
+    for attempt in range(max_retries):
+        try:
+            completion = client.chat.completions.create(
+                model=model,
+                stream=stream,
+                messages=[
+                    {"role": "system", "content": f"{system_content}"},
                     {
-                        "type": "image_url",
-                        "image_url": {"url": f"data:{img_type};base64,{img_base64_str}"},
-                    },
+                        "role": "user",
+                        "content": [
+                            {"type": "text", "text": f"{text}"},
+                            {
+                                "type": "image_url",
+                                "image_url": {"url": f"data:{img_type};base64,{img_base64_str}"},
+                            },
+                        ],
+                    }
                 ],
-            }
-        ],
-    )
-    if stream:
-        for chunk in completion:
-            yield chunk.choices[0].delta.content or ""
+            )
+            if stream:
+                for chunk in completion:
+                    yield chunk.choices[0].delta.content or ""
+            else:
+                yield completion.choices[0].message.content
+            break
+        except RateLimitError as e:
+            if e.response.headers.get("Retry-After"): retry_delay = e.response.headers.get("Retry-After")
+            logging.info(f"遇到 RateLimitError 错误。在 {retry_delay} 秒内重试...")
+            time.sleep(retry_delay)
+            retry_delay *= 2  # 使用指数退避，每次延迟时间翻倍
+        except Exception as e:
+            raise e
     else:
-        yield completion.choices[0].message.content
+        logging.info("已达到最大重试次数。无法处理请求.")
+        return None
 
 
 def get_chat_last_number(result):

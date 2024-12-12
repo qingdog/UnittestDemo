@@ -38,10 +38,11 @@ class ExcelTestCaseProcessor:
                 elif row and row[0] is not None:  # 确保行不为空
                     # row_cell = work_sheet[row_no] # 一行单元格对象的元组
                     # row_dict = dict(zip(row_cell, row))
+                    # 表头为key value为每个单元格数据
                     row_dict = dict(zip(row0, row))
-                    # 在字典中添加行号，行号从1开始
-                    row_dict[self.row_number] = row_no
-                    row_dict[self.sheet_name] = sheet
+
+                    row_dict[self.row_number] = row_no # 在字典中添加行号，行号从1开始
+                    row_dict[self.sheet_name] = sheet # 在字典中添加sheet的名称
                     logging.debug(row_dict)
                     list_data.append(row_dict)
                 row_no += 1
@@ -52,10 +53,10 @@ class ExcelTestCaseProcessor:
     # 定义颜色常量
     GREEN = '008000'
     RED = 'FF0000'
-    DARKYELLOW = 'FFCC00'
+    DARK_YELLOW = 'FC0'
     font_green = Font(name='宋体', color=GREEN, bold=True)
     font_red = Font(name='宋体', color=RED, bold=True)
-    font_yellow = Font(name='宋体', color=DARKYELLOW, bold=True)
+    font_yellow = Font(name='宋体', color=DARK_YELLOW, bold=True)
     alignment_center = Alignment(horizontal='center', vertical='center')
 
     def write_data(self, row_data, value="PASS"):
