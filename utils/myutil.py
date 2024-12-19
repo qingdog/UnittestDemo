@@ -4,6 +4,8 @@ import re
 import sys
 import time
 
+import requests
+
 
 def get_file_path(path=".", re_pattern=r".", file_list=None):
     """
@@ -38,7 +40,8 @@ def get_latest_file_path(dir_path=".", suffix="."):
     """
     match_file_list = get_file_path(dir_path, re_pattern=suffix)  # 查找目录下后缀的所有文件
     # 使用 自定义的key函数对文件列表进行排序，排序依据是 os.path.getmtime(path) 文件的最后修改时间（时间戳浮点数）
-    match_file_list.sort(key=lambda f_name: os.path.getmtime(os.path.join(dir_path, f_name)))
+    # match_file_list.sort(key=lambda f_name: os.path.getmtime(os.path.join(dir_path, f_name)))
+    match_file_list.sort(key=lambda f_name: os.path.getmtime(f_name))
     # 因为文件已经根据修改时间排序了，最新的文件会在列表的最后
     latest_file = match_file_list[-1] if len(match_file_list) > 0 else None
     return latest_file
@@ -94,6 +97,34 @@ def html_line_to_new_line(file_name: str, encoding="utf-8", re_line="失败([\u4
             new_content = re.sub(rf'{re_line}', rf"{re_new_line}", line)
             write_file.write(new_content)
 
+    os.replace(f'{file_name}.tmp', file_name)
+
+
+def html_cdn_to_static(file_name: str, encoding="utf-8", re_line='<link href="https://cdn.+?>'):
+    """将cdn下载后转换成静态css、js"""
+    with (open(file_name, 'r', encoding=encoding) as read_file,
+          open(f'{file_name}.tmp', 'w', encoding=encoding) as write_file):
+        # 逐行读取并替换
+        for line in read_file:
+            result = re.search(rf'{re_line}', line)
+            if result:
+                cdn = result.group()
+                cdn_url = re.search(r"http(s)?://cdn.+.css", cdn)
+                logging.debug(cdn_url.group())
+                response = requests.get(cdn_url.group())
+
+                # new_content = re.sub(rf'{cdn}', rf"{response.text}", line)
+                write_file.write(f"<style>{response.text}</style>")
+            else:
+                result = re.search(r'<script src="https://cdn.+?></script>', line)
+                if result:
+                    cdn = result.group()
+                    js_url = re.search(r"http(s)?://cdn.+.js", cdn)
+                    logging.debug(js_url.group())
+                    response = requests.get(js_url.group())
+                    write_file.write(f"<script>{response.text}</script>")
+                else:
+                    write_file.write(f"{line}")
     os.replace(f'{file_name}.tmp', file_name)
 
 

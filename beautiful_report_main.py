@@ -3,9 +3,10 @@ import logging
 import os
 import time
 
-import unittest
 from BeautifulReport import BeautifulReport
+from utils.order_test_loader import OrderTestLoader
 from utils import color_format_logging
+import utils.myutil
 
 test_path = "testcase"
 str_time = time.strftime("%Y-%m-%d_%H")
@@ -31,18 +32,16 @@ class MyBeautifulReport(BeautifulReport):
         super().addFailure(test, err)
 
 
-if __name__ == '__main__':
-    # 批量执行脚本 unittest.defaultTestLoader.discover
-    # 读取脚本，报告路径
-    myTestSuit = unittest.defaultTestLoader.discover(start_dir=test_path, pattern='test*.py')
+def main():
+    # 批量执行脚本
+    # myTestSuit = unittest.defaultTestLoader.discover(start_dir=test_path, pattern='test*.py')
 
-    # 让unittest框架按照用例方法编写的顺序来执行
-    # my_loader = MyTestLoader()
-    # myTestSuit = my_loader.discover(start_dir=test_path, pattern='test*.py')
+    # 使用自定义的加载器来执行用例
+    my_loader = OrderTestLoader()
+    my_test_suite = my_loader.discover(start_dir=test_path, pattern='test*.py')
 
-    count = myTestSuit.countTestCases()
-    logger.info(f'-----开始执行所有测试,总用例数：{myTestSuit.countTestCases()}')
-    logger.info(myTestSuit)
+    logger.info(f'-----开始执行所有测试,总用例数：{my_test_suite.countTestCases()}')
+    logger.info(my_test_suite)
     try:
         # with open(f"./{report_path}", 'w', encoding='UTF-8') as file:
         #     # with open(report_path, 'wb') as file:
@@ -54,11 +53,20 @@ if __name__ == '__main__':
         # file.close()
 
         # test_suite = unittest.defaultTestLoader.discover('./tests', pattern='test*.py')
-        beautifulReport = MyBeautifulReport(myTestSuit)
-        beautifulReport.verbosity = 2
-        beautifulReport.report(description=f'{report_description}: {os.path.join(project_path, test_path, "test_api*.py")}',
-                               filename=f'{report_name}',
-                               report_dir=f'{report_path}', theme='theme_default')
+        beautiful_report = MyBeautifulReport(my_test_suite)
+        beautiful_report.verbosity = 2
+        beautiful_report.report(description=f'{report_description}: {os.path.join(project_path, test_path, "test_api*.py")}',
+                                filename=f'{report_name}',
+                                report_dir=f'{report_path}', theme='theme_default')
+
         logger.info('------所有测试用例执行完毕-------')
+
+        # 最新测试报告文件的路径
+        latest_file_path = utils.myutil.get_latest_file_path(report_path)
+        utils.myutil.html_cdn_to_static(latest_file_path, "utf-8")
     except Exception as e:
         logger.error(f"异常：{e}", exc_info=True)
+
+
+if __name__ == '__main__':
+    main()

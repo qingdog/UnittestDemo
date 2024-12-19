@@ -5,10 +5,6 @@ import time
 import unittest
 import HTMLReport
 
-
-
-from BeautifulReport import BeautifulReport
-
 test_path = "testcase"
 str_time = time.strftime("%Y-%m-%d")
 report_path = "reports"
@@ -18,32 +14,19 @@ report_description = "测试用例详情"
 
 project_path = os.path.abspath('.')
 
-
-class MyBeautifulReport(BeautifulReport):
-    logger = logging.getLogger()
-
-    def addFailure(self, test, err):
-        # 重写 unittest.TestResult 的 addFailure 方法打印和记录日志
-        self.logger.error(test, exc_info=True)
-        super().addFailure(test, err)
-
-    def addError(self, test, err):
-        self.logger.error(test, exc_info=True)
-        super().addFailure(test, err)
-
-
 if __name__ == '__main__':
     # 批量执行脚本 unittest.defaultTestLoader.discover
     # 读取脚本，报告路径
     myTestSuit = unittest.defaultTestLoader.discover(start_dir=test_path, pattern='test_api*.py')
 
     # 让unittest框架按照用例方法编写的顺序来执行
-    # my_loader = MyTestLoader()
+    # my_loader = OrderTestLoader()
     # myTestSuit = my_loader.discover(start_dir=test_path, pattern='test*.py'
 
     count = myTestSuit.countTestCases()
 
     from utils import color_format_logging
+
     color_format_logging.main()
     logging.info(f'-----开始执行所有测试,总用例数：{myTestSuit.countTestCases()}')
     logging.info(myTestSuit)

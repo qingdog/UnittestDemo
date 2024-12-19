@@ -90,7 +90,7 @@ class TestDemo(unittest.TestCase):
 
     # @logger.catch(reraise=True)
     async def query23(self):
-        aiomysql_client = await AioMySQLClient().connect()
+        aiomysql_client = await AioMySQLClient().connect_pool()
         result: tuple = await aiomysql_client.select('qiye_declareable_project',
                                                      where="entity_id = '91441300717867103C' and report_deadline_time is not null")
         return result
@@ -102,7 +102,7 @@ class TestDemo(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        AioMySQLClient().connect()
+        AioMySQLClient().connect_pool()
 
     @classmethod
     def tearDownClass(cls):

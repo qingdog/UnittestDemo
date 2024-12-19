@@ -38,8 +38,8 @@ class TestNoAsync(unittest.TestCase):
         self.query_by_key(title, name)
 
     async def query(self, *arg):
-        self.aiomysql_client = await AioMySQLClient().get_instance()
-        query_result: tuple = await self.aiomysql_client.execute_query(
+        self.aiomysql_client = AioMySQLClient()
+        query_result: tuple = await self.aiomysql_client.execute(
             "SELECT * FROM qiye_declareable_project WHERE project_name=%s limit 2", *arg)
         self.assertIsNot(len(query_result), 0)
 

@@ -56,9 +56,9 @@ if __name__ == '__main__':
 
 
     async def get_origin_text(*arg):
-        aiomysql_client = await AioMySQLClient().connect(user="liqi_cloud_test", password="G85BkJywwRxY5XBy",
-                                                         db="liqi_cloud_test")
-        query_result: tuple = await aiomysql_client.execute_query(
+        aiomysql_client = await AioMySQLClient().connect_pool(user="liqi_cloud_test", password="G85BkJywwRxY5XBy",
+                                                              db="liqi_cloud_test")
+        query_result: tuple = await aiomysql_client.execute(
             "select origin_text from lqc_extension_info where project_base_id = %s ", *arg)
         return query_result
 

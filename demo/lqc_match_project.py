@@ -47,8 +47,8 @@ def policy_dept_add(area, city, province, name, rank=4):
 
 async def main():
     mysql_client = await AioMySQLClient.get_instance()
-    mysql_client = await mysql_client.connect(host="192.168.50.221", port=3306, user="liqi_cloud_test",
-                                              password="G85BkJywwRxY5XBy", db="liqi_cloud_test")
+    mysql_client = await mysql_client.connect_pool(host="192.168.50.221", port=3306, user="liqi_cloud_test",
+                                                   password="G85BkJywwRxY5XBy", db="liqi_cloud_test")
     # 根据26个省份新增组织部门，新增项目
     # lqc_city_s = await query(mysql_client, sql="select * from lqc_city where leveltype = 1")
     lqc_city_s = await query(mysql_client, sql="select * from lqc_city where leveltype = 2 ")

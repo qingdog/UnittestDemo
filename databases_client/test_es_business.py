@@ -1,3 +1,4 @@
+import asyncio
 import dataclasses
 import decimal
 import logging
@@ -6,8 +7,8 @@ import requests
 from databases.aiomysql_client import AioMySQLClient
 from databases.qiye_base_business import QiyeBaseBusiness
 
-if __name__ == '__main__':
 
+async def main():
     def send(entity_id="91110101MA003TBX2T"):
         url = f"http://192.168.50.206:9200/qiye_base_business/_search?pretty&from=0&size=100"
         body = {
@@ -24,11 +25,10 @@ if __name__ == '__main__':
         # merged_dict = {**data, **base_data}
         return source
 
-
     async def query(sql="select * from qiye_base_business limit 2160000, 300000"):
         logger = logging.getLogger()
         logger.setLevel(10)
-        mysql_client = await AioMySQLClient.get_instance()
+        mysql_client = AioMySQLClient()
         # result_business = await mysql_client.execute_query("select * from qiye_base_business limit 10")
         no = 2160000
         async for row in mysql_client.async_for_cursor(sql):
@@ -92,4 +92,6 @@ if __name__ == '__main__':
             no += 1
 
 
-    AioMySQLClient.run(run_main=query)
+if __name__ == '__main__':
+    # AioMySQLClient.run(run_main=query)
+    asyncio.run(main())

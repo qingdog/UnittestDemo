@@ -152,7 +152,7 @@ def main_bak():
     chromium_options.headless(on_off=True).set_user_agent(user_agent).set_argument('--window-size', '1800, 900')
     chromium_options.set_argument("--no-sandbox")
     chromium_options.set_argument("--disable-setuid-sandbox")
-    chromium_options.set_argument("--headless=new")  # 无界面系统添加
+    # chromium_options.set_argument("--headless=new")  # 无界面系统添加
     chromium_options.set_paths(local_port=9222)
     # 兼容无头模式中的参数 --headless=new
     if not chromium_options.is_headless:

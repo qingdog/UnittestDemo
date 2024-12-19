@@ -24,7 +24,7 @@ class TestDemo(unittest.IsolatedAsyncioTestCase):
 
         self.aiomysql_client = AioMySQLClient()
         try:
-            await self.aiomysql_client.connect()
+            await self.aiomysql_client.connect_pool()
             # await self.mysql_pool.init_pool()
         except Exception as e:
             print(f"Error initializing MySQLPool: {e}")

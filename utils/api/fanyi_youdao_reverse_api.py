@@ -96,4 +96,4 @@ class YoudaoTranslate2024(object):
 
 
 if __name__ == '__main__':
-    print(YoudaoTranslate2024().translate())
+    print(YoudaoTranslate2024().translate("i have to go"))

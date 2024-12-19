@@ -53,7 +53,7 @@ class ExcelTestCaseProcessor:
     # 定义颜色常量
     GREEN = '008000'
     RED = 'FF0000'
-    DARK_YELLOW = 'FC0'
+    DARK_YELLOW = "FFCC00"
     font_green = Font(name='宋体', color=GREEN, bold=True)
     font_red = Font(name='宋体', color=RED, bold=True)
     font_yellow = Font(name='宋体', color=DARK_YELLOW, bold=True)

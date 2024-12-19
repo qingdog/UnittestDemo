@@ -5,7 +5,7 @@ import time
 
 import requests
 
-from databases.aiomysql_client import AioMySQLClient
+from databases_client.aiomysql_client import AioMySQLClient
 
 headers = {"content-type": "application/json;charset=UTF-8",
            "authorization": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJ1c2VyRGVwdElkIjoxMDMsInVzZXJfaWQiOjEsInVzZXJfa2V5IjoiNGU3NWE2MTItNWE5MC00NzhlLTgwYjMtMDM1OTY0ZWE3ODhiIiwidXNlcm5hbWUiOiJhZG1pbiJ9.tb5M4tKly5QaSPTLrxw2KaIfVwueNze0Ji1d2BIHbBdEYxmfFZBa6np68Cet9Tnftss5eBpDMChf7X2kBh4jow"}
@@ -48,7 +48,7 @@ def qiye_project_reportable(url, body, method="POST", index=5):
 
 async def query(
         sql: str):
-    mysql_client = await AioMySQLClient.get_instance()
+    mysql_client = AioMySQLClient()
     # result_business = await mysql_client.execute_query("select * from qiye_base_business limit 10")
     results = []
     async for row in mysql_client.async_for_cursor(sql=sql):
@@ -163,4 +163,4 @@ async def main():
 
 if __name__ == '__main__':
     # 启动 asyncio 事件循环并调用 main 函数
-    AioMySQLClient.run(run_main=main)
+    asyncio.run(main())
