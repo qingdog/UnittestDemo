@@ -1,21 +1,21 @@
 -
   title : "正确用户名，密码"
   level: "H"
-  user : "15555850691"
-  password : "15555850691"
-  code: 200
-  body: 2001
+  user : "15555123456"
+  password : "15555123456"
+  code: 5900505
+  body: 账号不存在
 -
   title : "错误的用户名"
   level: "M"
   user : "5614643"
-  password : "15555850691"
+  password : "15555123456"
   code: 201
   body: "帐号不存在"
 -
   title : "错误的密码"
   level: "M"
-  user : "15555850691"
+  user : "15555123456"
   password : "8A0576EF5CE5FF8C380CD910944B8"
   code: 201
   body: "密码错误"

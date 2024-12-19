@@ -3,7 +3,7 @@ import logging
 import math
 import time
 
-from databases.aiomysql_client import AioMySQLClient
+from utils.aiomysql_client import AioMySQLClient
 
 
 async def fetch_data(client, start, end):
@@ -72,7 +72,5 @@ if __name__ == '__main__':
 
     print("Py_GIL_DISABLED", sysconfig.get_config_vars().get("Py_GIL_DISABLED"))
     # asyncio.run(main())
-
-    import multiprocessing
 
     # for i in range(12): multiprocessing.Process(target=cpu_task).start()

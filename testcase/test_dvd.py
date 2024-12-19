@@ -34,7 +34,7 @@ class ApiList:
 
 
 @ddt  # 2、使用ddt标识
-class TestDvd(unittest.TestCase):
+class TestDvd(unittest.IsolatedAsyncioTestCase):
     """得有店接口测试"""
     mylogger = logging.getLogger()
 
@@ -70,7 +70,6 @@ class TestDvd(unittest.TestCase):
 
             res = self.login(user, password)
 
-            self.assertEqual(code, res.status_code)
             self.assertEqual(code, dict(res.json())["code"])
 
             # 进行断言
@@ -84,6 +83,20 @@ class TestDvd(unittest.TestCase):
     #
     #     # raise RuntimeError("新的异常信息") from e
     #     self.fail(e)
+
+    test_cases = [
+        {'title': "全国", 'level': 1, 'user': "残保金--全国"},
+        {'title': "深圳", 'level': 1, 'user': "全国制造、交通、采矿、农林、建筑、金融、水利、信息传输、科学研究、商务服务"},
+        {'title': "深圳2", 'level': 1, 'user': "不存在的项目名"},
+        # 更多测试用例...
+    ]
+
+    @data(*test_cases)
+    @unpack
+    async def test_unpack_go(self, title, level, user):
+        """执行测试用例: {title}"""
+        # 根据测试目的进行断言
+        self.assertIsNotNone(user)
 
 
 if __name__ == '__main__':

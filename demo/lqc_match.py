@@ -5,7 +5,7 @@ import time
 
 import requests
 
-from databases_client.aiomysql_client import AioMySQLClient
+from utils.aiomysql_client import AioMySQLClient
 
 headers = {"content-type": "application/json;charset=UTF-8",
            "authorization": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJ1c2VyRGVwdElkIjoxMDMsInVzZXJfaWQiOjEsInVzZXJfa2V5IjoiNGU3NWE2MTItNWE5MC00NzhlLTgwYjMtMDM1OTY0ZWE3ODhiIiwidXNlcm5hbWUiOiJhZG1pbiJ9.tb5M4tKly5QaSPTLrxw2KaIfVwueNze0Ji1d2BIHbBdEYxmfFZBa6np68Cet9Tnftss5eBpDMChf7X2kBh4jow"}

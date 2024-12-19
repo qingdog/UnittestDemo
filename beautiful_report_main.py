@@ -35,6 +35,7 @@ class MyBeautifulReport(BeautifulReport):
 def main():
     # 批量执行脚本
     # myTestSuit = unittest.defaultTestLoader.discover(start_dir=test_path, pattern='test*.py')
+    # suite = loader.loadTestsFromTestCase(TestDemo)
 
     # 使用自定义的加载器来执行用例
     my_loader = OrderTestLoader()

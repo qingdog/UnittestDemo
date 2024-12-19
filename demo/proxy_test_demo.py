@@ -17,9 +17,9 @@ def test_proxy(ip_port: str, username=None, password=None, url='https://fanyi.ba
     :param ip_port: 127.0.0.1:80
     :return: 请求响应耗时
     """
-    login = ""
-    if username and password: login = f"{username}:{password}@"
-    proxies = {'http': f'http://{login}{ip_port}', 'https': f'http://{login}{ip_port}'}
+    username_password = ""
+    if username and password: username_password = f"{username}:{password}@"
+    proxies = {'http': f'http://{username_password}{ip_port}', 'https': f'http://{username_password}{ip_port}'}
 
     # 发送请求，设置5秒超时
     start_time = time.time()
@@ -41,12 +41,13 @@ def test_proxy(ip_port: str, username=None, password=None, url='https://fanyi.ba
         logger.warning(f"{time.time() - start_time}s {ip_port} {e}", exc_info=False)
     except Exception as e:
         raise e
+    # 异常则返回 超时时间+1s
     return response_time if response_time else timeout + 1
 
 
 def multi_test_proxy(ip: str, timeout_avg=3):
     """
-    检查代理ip是否有效
+    多次测试代理取平均值比较是否超过平均值，超过了平均值则返回None
     """
     logger.debug(f"{ip} ...")
     consumes = []
@@ -84,6 +85,7 @@ proxy-list.download：https://www.proxy-list.download/#（直接调api接口，�
         if check_ip: ips.append(check_ip)
     logger.info(time.time() - stime)'''
 
+    # 使用多进程来执行测试
     for check_ip in utils.multiprocess_util.submit_to_multiprocess(multi_test_proxy, all_proxy_list):
         if check_ip: ips.append(check_ip)
         logger.critical(check_ip, exc_info=False)
