@@ -16,7 +16,7 @@ locust -V
 UI 模式可以直接在浏览器上配置要压测的用户数，以及每秒产生的用户数等等信息，比较直观方便。如下所示：
 
 ```python
-#test_locust_01.py
+#locust_test_task.py
 
 from locust import HttpUser, task
 
@@ -29,7 +29,7 @@ class HelloWorldUser(HttpUser):
 ```shell
 打开命令行，运行脚本（默认需在浏览器web端启动）：
 
-locust -f test_locust_01.py
+locust -f locust_test_task.py
 ```
 > [2024-08-30 16:34:49,729] QC134/INFO/locust.main: Starting web interface at http://localhost: 8089 (accepting connections from all network interfaces)
 > 
@@ -37,7 +37,7 @@ locust -f test_locust_01.py
 
 * 无头模式
 ```shell
-locust -f test_locust_01.py --users 10 --run-time 20s --spawn-rate 1 -H http://192.168.50.202:9999
+locust -f locust_test_task.py --users 10 --run-time 20s --spawn-rate 1 -H http://192.168.50.202:9999
 #测试持续时间（秒）= 804 / 40.34 ≈ 19.91 秒
 
 

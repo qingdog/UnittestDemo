@@ -61,13 +61,22 @@ def get_latest_dir(dir_path=".", re_pattern=r"."):
     return latest_dir
 
 
-def get_project_path():
+def find_project_root_path(start_path):
+    """根据根路径下特定的文件查找该目录"""
+    markers = ['README.md', '.git', 'requirements.txt', '.env']  # 可以根据需要扩展
+    current_path = start_path
+    while current_path != os.path.dirname(current_path):  # 路径已经到达根
+        if any(os.path.exists(os.path.join(current_path, marker)) for marker in markers):
+            return current_path
+        current_path = os.path.dirname(current_path)
+    return None  # 没有找到根路径
+
+
+def get_project_path(start_path=os.path.dirname(__file__)):
     """获取项目路径"""
-    project_path = os.path.join(
-        os.path.dirname(__file__),
-        "..",
-    )
-    return project_path
+    project_root_path = find_project_root_path(start_path)
+    if project_root_path: return project_root_path
+    return os.path.join(start_path, "..")
 
 
 def http_to_https(file_name: str, encoding="utf-8", re_remove_line=".+XTestRunner.+"):

@@ -74,7 +74,6 @@ if __name__ == '__main__':
     -t， --run-time 在指定的时间段后停止，例如（300s，20m，3h，1h30m等）。仅与–headless一起使用。默认为永久运行。
     """
     # os.system(
-    #     "locust -f test_locust_02.py --headless --users 10 --run-time 5 --spawn-rate 1 -H http://192.168.50.202:9999")
-    os.system("locust -f test_locust_02.py --users 8 --run-time 20s --spawn-rate 1 -H "
-              "https://test-lqc-api.liqicloud.com:443")
+    #     "locust -f locust_test_task_set.py --headless --users 10 --run-time 5 --spawn-rate 1 -H http://192.168.50.202:9999")
+    os.system("locust -f locust_test_task_set.py --users 8 --run-time 20s --spawn-rate 1 -H  https://test-lqc-api.liqicloud.com:443")
 

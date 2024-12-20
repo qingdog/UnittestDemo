@@ -34,7 +34,7 @@ if __name__ == '__main__':
         # HTMLReport移除了已有的根处理器
         test_runner = HTMLReport.TestRunner(
             report_file_name=report_name,
-            log_file_name="utils/logs",
+            log_file_name="logs",
             output_path=report_path,
             title=None,
             description=None,

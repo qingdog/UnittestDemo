@@ -4,6 +4,8 @@ import sys
 import time
 from typing import Literal
 
+import utils.myutil
+
 
 class ColoredFormatter(logging.Formatter):
     """定义一个日志格式化器，添加颜色代码"""
@@ -32,8 +34,8 @@ class ColoredFormatter(logging.Formatter):
 
 def create_file_handler(logging_format, log_date_format=None, style: Literal["%", "{", "$"] = "%", defaults=None):
     """创建并返回一个文件处理器"""
-    current_file_path = os.path.abspath(__file__)
-    current_directory = os.path.dirname(current_file_path)
+    # current_directory = os.path.dirname(os.path.abspath(__file__))
+    current_directory = utils.myutil.get_project_path()  # 存储日志的目录
     log_path_name = os.path.join(current_directory, "logs", f'{time.strftime("%Y%m%d")}.log')
     # if not os.path.exists(current_directory): os.makedirs(log_path_name)  # 创建目录
 
