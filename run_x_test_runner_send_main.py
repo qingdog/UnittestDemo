@@ -18,7 +18,8 @@ from XTestRunner import HTMLTestRunner, Weinxin
 from XTestRunner.htmlrunner.result import _TestResult
 from dotenv import load_dotenv
 
-from utils import myutil
+from utils import myutil, mail_util, notify_util
+from utils.mail_util import EmailConfig
 from utils.myutil import get_latest_file_path
 
 
@@ -124,10 +125,20 @@ def run_case(all_case, report_path=MyConfig.TESTREPORT_DIR):
     re_line = "(.*<script language=\"javascript\".*)"
     re_new_line = "\\1 ;;showCase(5, 1);"
     myutil.html_line_to_new_line(latest_file_path, "utf-8", re_line, re_new_line)
+    # 读取邮件内容
+    try:
+        with open(latest_file_path, 'rb') as f:
+            email_content = f.read()  # .decode("UTF-8")
+    except UnicodeDecodeError:
+        logging.error(f"读取 HTML 邮件文件 {latest_file_path} 时发生编码错误")
+        raise
+
+    mail_util.send_mail(EmailConfig(os.getenv("smtp_email_sender"), os.getenv("smtp_email_recipient"), os.getenv("smtp_user"), os.getenv("smtp_password"),
+                                    os.getenv("smtp_host"), int(os.getenv("smtp_port")), os.getenv("subject")),
+                        email_content, email_content_subtype="html")
 
     return  # 不发送邮件
-    # mail_util.send_mail(latest_file_path, smtp_config)
-    logging.info(f"XTestRunner发送邮件到 {os.getenv("smtp_email_recipient")}")
+    '''logging.info(f"XTestRunner发送邮件到 {os.getenv("smtp_email_recipient")}")
     if os.getenv("smtp_email_recipient"):
         runner.send_email(
             to=os.getenv("smtp_email_recipient"),
@@ -137,7 +148,7 @@ def run_case(all_case, report_path=MyConfig.TESTREPORT_DIR):
             port=os.getenv("smtp_port"),
             attachments=latest_file_path,
             ssl=True
-        )
+        )'''
 
     def send_wx_notify(self, send=False):
         if send:
@@ -222,6 +233,7 @@ class EnterpriseWeiXin(Weinxin):
 if __name__ == "__main__":
     load_dotenv()
     import utils.color_format_logging
+
     utils.color_format_logging.main()
 
     logging.getLogger().setLevel(logging.INFO)
