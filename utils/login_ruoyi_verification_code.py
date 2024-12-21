@@ -238,6 +238,7 @@ def openai_text_recognition(img_base64_str):
     for chunk in openai_api.img_base64_to_openai("只需回答计算后的结果。", img_base64_str=img_base64_str,
                                                  api_key=api_key, stream=False):
         content += chunk
+        print("验证码识别结果：", end='', flush=True)
         print(chunk, end='', flush=True)  # 实时打印接收到的每个块
     print(end='\n', flush=True)
     # 记录结束时间

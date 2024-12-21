@@ -1,14 +1,11 @@
 import json
-import logging
 import os
 import platform
 import re
 import shutil
 import subprocess
 
-import allure
-import pytest
-from playwright.sync_api import sync_playwright, Page, Browser
+from playwright.sync_api import Page, Browser
 
 from utils import myutil
 
@@ -42,52 +39,6 @@ def generate_environment_properties():
     with open(env_file_path, "w") as env_file:
         for key, value in env_data.items():
             env_file.write(f"{key}={value}\n")  # 写入 environment.properties 文件
-
-
-@pytest.fixture(scope="module", autouse=True)
-def browser_setup_and_teardown():
-    """
-    测试会话的前置和后置步骤：
-    - 启动 Playwright 和浏览器
-    - 创建一个页面
-    """
-    generate_environment_properties()
-    global browser, page
-    playwright = sync_playwright().start()
-    browser = playwright.chromium.launch(headless=False)
-    page = browser.new_page()
-    yield  # 测试运行期间，提供全局页面对象供测试使用
-    # 测试会话结束后关闭浏览器和 Playwright
-    browser.close()
-    playwright.stop()
-
-
-@allure.step("打开页面")
-def open_page(url):
-    page.goto(url)
-
-
-def test_example():
-    """这是一个示例测试，用于展示 Allure 报告功能"""
-    open_page("https://example.com")
-    assert "Example Domain" in page.title()
-
-
-@allure.title("一个错误的示例")
-@allure.description("验证 Example 网站标题是否正确，失败时附加更多上下文")
-@allure.tag("功能测试", "异常处理")
-@allure.severity(allure.severity_level.CRITICAL)
-def test_error_example():
-    """测试失败时附加上下文"""
-    open_page("https://example.com")
-    try:
-        assert "Example Domain" in page.title()
-    except AssertionError as e:
-        # 捕获页面截图
-        allure.attach(page.screenshot(), name="失败时的页面截图", attachment_type=allure.attachment_type.PNG)
-        # 捕获页面内容
-        allure.attach(page.content(), name="页面内容", attachment_type=allure.attachment_type.HTML)
-        raise e
 
 
 def update_history_trend_data(_build_order: int):
@@ -146,7 +97,7 @@ def main(clear_results=False, record_history=True, open_report=False, single_rep
         return
 
     if clear_results: os.remove(allure_results)
-    os.system(f'pytest {"."} -s  --alluredir={allure_results}')
+    os.system(f'pytest {"."} -vs  --alluredir={allure_results}')
 
     if latest_history_trend_data:  # 复制上一个报告的 widgets/ 到新生成的测试结果的 history/
         latest_history = os.path.join(allure_report_plus, str(len(latest_history_trend_data)), "widgets", "history-trend.json")

@@ -2,7 +2,6 @@
 # _*_ coding:utf-8 _*_
 __author__ = 'YinJia'
 
-import configparser
 from datetime import datetime, timedelta
 import functools
 import logging
@@ -125,6 +124,8 @@ def run_case(all_case, report_path=MyConfig.TESTREPORT_DIR):
     re_line = "(.*<script language=\"javascript\".*)"
     re_new_line = "\\1 ;;showCase(5, 1);"
     myutil.html_line_to_new_line(latest_file_path, "utf-8", re_line, re_new_line)
+
+    return  # 不发送邮件
     # 读取邮件内容
     try:
         with open(latest_file_path, 'rb') as f:
@@ -136,8 +137,6 @@ def run_case(all_case, report_path=MyConfig.TESTREPORT_DIR):
     mail_util.send_mail(EmailConfig(os.getenv("smtp_email_sender"), os.getenv("smtp_email_recipient"), os.getenv("smtp_user"), os.getenv("smtp_password"),
                                     os.getenv("smtp_host"), int(os.getenv("smtp_port")), os.getenv("subject")),
                         email_content, email_content_subtype="html")
-
-    return  # 不发送邮件
     '''logging.info(f"XTestRunner发送邮件到 {os.getenv("smtp_email_recipient")}")
     if os.getenv("smtp_email_recipient"):
         runner.send_email(
