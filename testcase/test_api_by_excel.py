@@ -3,22 +3,19 @@
 __author__ = 'YinJia'
 
 import ast
-import configparser
-import datetime
-import io
+import ddt
+import json
 import logging
-import os, json
+import os
 import re
-import sys
+import requests
 import time
+import unittest
 
-# from utils.xlrd_excel import XlrdExcel
-from run_x_test_runner_send_main import MyConfig
-import unittest, requests, ddt
-
-from utils.excel_testcase_util import ExcelTestCaseProcessor
 import jsonpath_ng
 
+from run_x_test_runner_send_main import MyConfig
+from utils.excel_testcase_util import ExcelTestCaseProcessor
 from utils.login_ruoyi_verification_code import login_verification_code
 from utils.myutil import repair_stdout_print_one
 

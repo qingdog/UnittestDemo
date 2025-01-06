@@ -226,6 +226,7 @@ def auto_login(i=4 * 3):
 def openai_text_recognition(img_base64_str):
     """使用大模型接口识别文字"""
     key = os.getenv("OPENAI_API_KEY")
+    api_model = os.getenv("OPENAI_API_MODEL")
     if key is not None and len(key) <= 3:
         key = os.getenv("OPENAI_API_KEY") + "6qdnd7aczJEwAFaCaItfz2JVft6bIXj9p7eKLLZiXMH1Bir1"[::-1]
     api_key = key
@@ -236,7 +237,7 @@ def openai_text_recognition(img_base64_str):
     # 调用生成器并流式处理结果
     # for chunk in stream_openai_response(messages, api_key=api_key):
     for chunk in openai_api.img_base64_to_openai("只需回答计算后的结果。", img_base64_str=img_base64_str,
-                                                 api_key=api_key, stream=False):
+                                                 api_key=api_key,model=api_model, stream=False):
         content += chunk
         print("验证码识别结果：", end='', flush=True)
         print(chunk, end='', flush=True)  # 实时打印接收到的每个块

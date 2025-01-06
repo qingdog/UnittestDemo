@@ -110,7 +110,7 @@ mkdir C:\Users\Administrator\AppData\Local\ms-playwright\chromium-1140\
 # 创建浏览器所在目录（文件夹）的符号链接
 cmd /c mklink /d "C:\Users\Administrator\AppData\Local\ms-playwright\chromium-1140\chrome-win\" "C:\Program Files\Google\Chrome\Application\"
 # touch 'C:\Users\Administrator\AppData\Local\ms-playwright\chromium-1140\DEPENDENCIES_VALIDATED'
-playwright codegen demo.playwright.dev/todomvc
+playwright codegen demo.playwright.dev/todomvc #设置位置语言启动
 # playwright codegen --timezone="Asia/Shanghai" --geolocation="31.235564,121.481099" --lang="zh-CN" --color-scheme=dark --save-storage=auth.json bing.com/maps
 # playwright codegen --load-storage=auth.json github.com/microsoft/playwright
 ```

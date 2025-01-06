@@ -78,6 +78,8 @@ def img_base64_to_openai(text, img_base64_str, system_content="你是一个识�
             completion = client.chat.completions.create(
                 model=model,
                 stream=stream,
+                temperature=0.2,
+                top_p=0.4,
                 messages=[
                     {"role": "system", "content": f"{system_content}"},
                     {

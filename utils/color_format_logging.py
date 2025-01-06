@@ -56,11 +56,14 @@ def configure_logging(loger_name=None):
     logging_format = "{prefix}[{asctime}] - [{filename}:{lineno}] {levelname} {user}{message}"
     log_date_format = "%Y-%m-%d_%H:%M:%S"
     logger = logging.getLogger(loger_name)
+    log_file_name = None
     if len(logger.handlers) == 0:  # 没有handler意为未使用过logger
         '''logging.basicConfig(level=logging.INFO, format=f'[%(asctime)s] - [%(filename)s:%(lineno)d] %(levelname)s %(message)s', datefmt=f"%Y-%m-%d_%H:%M:%S",
                             handlers=[logging.FileHandler(f"{time.strftime("%Y-%m-%d")}.log", encoding="UTF-8", mode='a'), logging.StreamHandler(sys.stdout)])'''
-        logger.addHandler(create_file_handler(logging_format, log_date_format, style="{", defaults={'user': '', 'prefix': ''}))
+        file_handler = create_file_handler(logging_format, log_date_format, style="{", defaults={'user': '', 'prefix': ''})
+        logger.addHandler(file_handler)
         logger.addHandler(create_console_handler(logging_format, log_date_format, style="{", defaults={'user': '', 'prefix': ''}))
+        log_file_name = file_handler.baseFilename
     else:
         has_file_handler = any(isinstance(handler, logging.FileHandler) for handler in logger.handlers)
         # 修改 StreamHandler 格式
@@ -69,14 +72,17 @@ def configure_logging(loger_name=None):
                 handler.setFormatter(ColoredFormatter(fmt=logging_format, datefmt=log_date_format, style="{", defaults={'user': '', 'prefix': ''}))
         # 如果没有文件处理器，则添加文件处理器
         if not has_file_handler:
-            logger.addHandler(create_file_handler(logging_format, log_date_format))
+            file_handler = create_file_handler(logging_format, log_date_format)
+            logger.addHandler(file_handler)
+            log_file_name = file_handler.baseFilename
     logger.setLevel(logging.INFO)
-    return logger
+    return logger, log_file_name
 
 
 def main():
     """主函数，执行日志配置"""
-    configure_logging()
+    logger, log_file_name = configure_logging()
+    return logger, log_file_name
 
 
 if __name__ == '__main__':
