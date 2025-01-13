@@ -143,3 +143,21 @@ os.system("allure generate --single-file allure-results --clean")
 ```
 * https://playwright.dev/python/docs/next/locators
 * https://allurereport.org/docs/gettingstarted-navigation/#suite-based-hierarchy
+
+### ubuntu2404执行
+* 安装chrome
+```shell
+wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+apt install ./google-chrome-stable_current_amd64.deb
+which google-chrome
+google-chrome --version
+```
+
+* 使用虚拟环境运行
+```shell
+python3 -m venv venv/
+cd venv/bin/
+./pip install DrissionPage python-dotenv
+./pip list
+./python3 ../../playwright_project/drissionpage_cf.py
+```

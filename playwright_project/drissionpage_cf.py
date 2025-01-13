@@ -36,7 +36,12 @@ def god_checkin(tab: MixTab, token: str):
     time.sleep(0.5)
     tab.get("https://gptgod.online/#/token?tab=rule")
     logging.info(tab.cookies())
-    logging.info(tab.eles('xpath=//*[@id="root"]/div/div[2]/aside/div/div[3]/div/div[2]/div/div[7]/button/div')[0].text)
+    # logging.info(tab.eles('xpath=//*[@id="root"]/div/div[2]/aside/div/div[3]/div/div[2]/div/div[7]/button/div')[0].text)
+    buttons = tab.eles('css=div.ant-space-item>div>div.ant-space-item>button.ant-btn')
+    if len(buttons) >= 7:
+        logging.info(buttons[6].text)
+    else:
+        logging.warning("疑似不在首页...")
     # tab.scroll.down(20)
 
     css_buttons = tab.eles("css:button.ant-btn.css-1jr6e2p.ant-btn-default.ant-btn-color-default.ant-btn-variant-outlined")
@@ -88,7 +93,9 @@ def click_cloudflare_turnstile(tab: MixTab, button: ChromiumElement = None):
     # 点击元素上中部，x相对左上角向右偏移50，y保持在元素中点
     # cf_turnstile_ele.click.at(offset_x=28, offset_y=32, button="right", count=1)
     time.sleep(2)
-    cf_turnstile_ele.click.at(offset_x=28, offset_y=32)  # 正中复选框
+    if cf_turnstile_ele.states.has_rect:
+        cf_turnstile_ele.click.at(offset_x=28, offset_y=32)  # 正中复选框
+    else: logging.info("该元素没有位置及大小。疑似页面已经发生变化或已操作过...")
     logging.info("86 tab.wait.load_start...")
     tab.wait.load_start()  # 等待页面加载
 
@@ -150,11 +157,10 @@ def main_bak():
     # 配置 Chromium 选项
     chromium_options = ChromiumOptions().set_load_mode("normal")
     user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36"
-    chromium_options.headless(on_off=True).set_user_agent(user_agent).set_argument('--window-size', '1800, 900')
-    chromium_options.set_argument("--no-sandbox")
-    chromium_options.set_argument("--disable-setuid-sandbox")
+    chromium_options.headless(on_off=False).set_user_agent(user_agent).set_argument('--start-maximized')#.set_argument('--window-size', '1800, 900')
+    chromium_options.set_argument("--no-sandbox")#.set_argument("--disable-setuid-sandbox").set_argument("--lang=zh-CN").set_paths(local_port=9222)
     # chromium_options.set_argument("--headless=new")  # 无界面系统添加
-    chromium_options.set_paths(local_port=9222)
+    chromium_options.no_imgs(True).mute(True)
     # 兼容无头模式中的参数 --headless=new
     if not chromium_options.is_headless:
         chromium_options.remove_argument("--headless=new")
@@ -168,16 +174,29 @@ def main_bak():
             cookies = f'EGG_SESS={_token}; path=/; domain=gptgod.online;'
             _tab.set.cookies(cookies)
 
-        def click_turnstile(tab):
+        def click_turnstile(tab :MixTab):
             """处理 Turnstile 验证和点击动作"""
-            elements = tab.eles('css:#cf-turnstile')
-            if elements:
-                time.sleep(3)
-                tab.get_screenshot(path='temp', name='wait_load_start.jpg')
-                elements[0].click.at(28, 32)  # 点击验证码复选框
-                logging.info("Clicked on Turnstile.")
+            ele = tab.ele('css:#cf-turnstile')
+            # tab.get_screenshot(path='temp', name=f'wait_{time.strftime("%Y%m%d%H%M%S")}.jpg', full_page=True)
+            time.sleep(10)
+            # tab.get_screenshot(path='temp', name=f'click_{time.strftime("%Y%m%d%H%M%S")}.jpg', full_page=True)
+
+            if ele:
+                if ele.states.has_rect:
+                    ele.click.at(28, 32)  # 点击验证码复选框
+                    logging.info("Clicked on Turnstile.")
+                else:
+                    logging.info("Turnstile 元素没有大小.")
+                    # 查找按钮并点击
+                    bb = tab.ele('xpath=//*[@role="tabpanel"]/div/button')
+                    if bb:
+                        logging.info(bb.text)
             else:
-                logging.info("No Turnstile element found.")
+                logging.info("未找到 Turnstile 元素.")
+                # 查找按钮并点击
+                bb = tab.ele('xpath=//*[@role="tabpanel"]/div/button')
+                if bb:
+                    logging.info(bb.text)
 
         def wait_for_load(tab):
             """等待页面加载完成"""
@@ -192,27 +211,39 @@ def main_bak():
 
         url = "https://gptgod.online/#/token?tab=rule"
         tab.get(url)
-        time.sleep(1)
+        time.sleep(5)
         logging.info(tab.cookies())
 
-        logging.info(tab.ele('xpath=//*[@id="root"]/div/div[2]/aside/div/div[3]/div/div[2]/div/div[7]/button/div').text)
-        tab.scroll.down(100)
+        # tab.get_screenshot(path='temp', name=f'start_{time.strftime("%Y%m%d%H%M%S")}.jpg', full_page=True)
+        buttons = tab.eles('css=div.ant-space-item>div>div.ant-space-item>button.ant-btn')
+        if len(buttons) >= 7: logging.info(buttons[6].text)
 
         # 查找按钮并点击
-        buttons = tab.eles("css:button.ant-btn.css-1jr6e2p.ant-btn-default.ant-btn-color-default.ant-btn-variant-outlined")
-        if buttons:
-            logging.info(buttons[0].text)
-            buttons[0].click()
+        # tab.scroll.down(1700)
+        check_button = tab.ele('xpath=//*[@role="tabpanel"]/div/button')
+        if check_button:
+            # tab.actions.scroll(on_ele=check_button)
+            # tab.scroll.down(100)
+            # check_button = tab.ele('xpath=//*[@role="tabpanel"]/div/button')
+            time.sleep(1)
+            # tab.get_screenshot(path='temp', name=f'scroll_{time.strftime("%Y%m%d%H%M%S")}.jpg', full_page=False)
+            time.sleep(1)
+
+            logging.info(check_button.text)
+            check_button.click()
             logging.info("Button clicked.")
             wait_for_load(tab)
 
             click_turnstile(tab)  # 处理验证码
 
+
         # 打印 cf-turnstile-response 的值
+        time.sleep(20)
+        # tab.get_screenshot(path='temp', name=f'done_{time.strftime("%Y%m%d%H%M%S")}.jpg', full_page=True)
         cf_turnstile_response = etree.HTML(tab.html).xpath('//*[@name="cf-turnstile-response"]/@value')
         logging.info(f"cf_turnstile_response: {cf_turnstile_response}")
     except Exception as e:
-        logging.info(f"\033[34m{traceback.format_exc()}\033[0m")
+        logging.info(e, exc_info=True)
     finally:
         if globals().get("chromium"):
             logging.info("quit...")
@@ -249,7 +280,7 @@ def main():
         god_checkin(tab, token)
         # god_index(tab, token)
 
-        logging.info(f"cf-turnstile-response: {etree.HTML(tab.html).xpath('//*[@name="cf-turnstile-response"]')}")
+        # logging.info(f"cf-turnstile-response: {etree.HTML(tab.html).xpath('//*[@name="cf-turnstile-response"]')}")
     except Exception as e:
         raise e
     finally:
@@ -262,16 +293,17 @@ if __name__ == '__main__':
     try:
         import sys
 
-        sys.path.append(r'D:\mytest\UnittestDemo')
+        sys.path.extend(['D:\\mytest\\UnittestDemo', '/mnt/d/mytest/UnittestDemo'])
         from utils import color_format_logging
 
         color_format_logging.main()
     except Exception as e:
         logging.error(e)
-        
+
     load_dotenv()
     try:
-        main_bak()
+        # main_bak()
+        main()
     except Exception:
         logging.critical(f"\033[34m{traceback.format_exc()}\033[0m")
         main()  # 异常就重试一次

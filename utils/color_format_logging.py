@@ -86,7 +86,16 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    try:
+        import sys
+
+        sys.path.extend(['D:\\mytest\\UnittestDemo', '/mnt/d/mytest/UnittestDemo'])
+        from utils import color_format_logging
+
+        color_format_logging.main()
+    except Exception as e:
+        logging.critical(e, exc_info=True)
+
     logging.getLogger().setLevel(logging.DEBUG)
     logging.debug("先换行再输出DEBUG级别的日志", extra={"prefix": "\n"})
     logging.info("这是一个INFO级别的日志", extra={"user": "lucy"})
