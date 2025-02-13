@@ -19,6 +19,7 @@ pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
 pip install setuptools
 # 安装unittest的可多线程测试报告
 pip install htmlreport
+pip install --upgrade numpy
 # 安装操作excel库
 pip install -i https://pypi.tuna.tsinghua.edu.cn/simple openpyxl
 # 带截图，饼图，折线图，历史结果查看的测试报告
