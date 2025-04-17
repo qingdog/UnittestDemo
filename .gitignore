@@ -8,5 +8,6 @@ reports/
 testdata/*.xlsx
 playwright_project/**/user_data/
 playwright_project/xhr/hars/
+playwright_project/auth.json
 pytest_project/allure_project/allure-results/
 pytest_project/allure_project/allure-report-plus/

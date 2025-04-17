@@ -5,7 +5,7 @@ from DrissionPage.common import from_playwright
 from playwright.sync_api import sync_playwright, Page, BrowserContext, expect, Route
 
 from utils.login_ruoyi_verification_code import login_verification_code
-from uiauto.find_chrome_util import find_chrome_util
+from find_chrome_util import find_chrome_util
 
 
 def chromium_page_from_playwright(playwright_page: Page):
@@ -91,7 +91,8 @@ def main():
     # 通过cdp连接到已经启动的 Chrome 浏览器
     # browser = playwright_instance.chromium.connect_over_cdp(f"http://127.0.0.1:{start_remote_chrome_port(chrome_path=chrome_executable_path)}")
     # 启动持久化Chrome
-    persistent_context = playwright.chromium.launch_persistent_context(executable_path=chrome_executable_path, headless=False, user_data_dir="/")
+    persistent_context = playwright.chromium.launch_persistent_context(executable_path=chrome_executable_path, headless=False, user_data_dir="temp")
+    # persistent_context = playwright.chromium.launch(headless=False, executable_path=chrome_executable_path)
     page = persistent_context.new_page()
 
 

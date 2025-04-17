@@ -3,7 +3,7 @@ import time
 
 from playwright._impl._errors import TargetClosedError
 from playwright.sync_api import sync_playwright, Page, expect
-from uiauto.find_chrome_util import find_chrome_util
+from playwright_project.find_chrome_util import find_chrome_util
 from utils.login_ruoyi_verification_code import login_verification_code
 
 
