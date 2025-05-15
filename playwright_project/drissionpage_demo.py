@@ -1,182 +1,121 @@
-import platform
 import time
 import traceback
 
-from DrissionPage import ChromiumOptions
-from DrissionPage._base.chromium import Chromium
-from DrissionPage._pages.chromium_tab import ChromiumTab
-from dotenv import load_dotenv
+from DrissionPage.common import from_playwright
+from playwright.sync_api import sync_playwright, Page, BrowserContext, expect, Route
 
 from utils.login_ruoyi_verification_code import login_verification_code
-
-tab: ChromiumTab
-os_name = platform.system()
+from find_chrome_util import find_chrome_util
 
 
-def check_message():
-    return len(tab.eles("css=.el-message.el-message--success")) > 0
+def chromium_page_from_playwright(playwright_page: Page):
+    """从Page对象创建Chromium对象"""
+    chromium = from_playwright(playwright_page)
+    chromium.latest_tab.get("https://www.drissionpage.cn")
 
 
-def add_project():
-    tab.get("http://192.168.50.202:9999/projectManage", timeout=10)
-
-    tab.eles("xpath=//button[span[text()='新增']]")[0].click()
-    tab.eles("xpath=//input[@placeholder='请输入项目名称']")[0].input(f"测试test{time.strftime("%Y-%m-%d_%H:%M")}")
-    tab.eles("xpath=//div[span[text()='请选择项目类型']]")[0].click()
-    tab.eles("xpath=//li[span[text()='财务、税收优惠']]")[0].click()
-
-    tab.eles("xpath=//label[text()='组织部门']")[0].parent().click()
-    tab.eles("xpath=//li[span[text()='钓鱼岛-钓鱼岛发展']]")[0].click()
-
-    tab.eles("xpath=//div[span[text()='请选择项目分类']]")[0].click()
-    tab.eles("xpath=//li[span[text()='普惠型']]")[0].click()
-
-    tab.eles("xpath=//button[span[text()='添加']]")[0].click()
-    tab.eles("xpath=//div[span[text()='请选择行业']]")[0].click()
-    tab.eles("xpath=//div[span[text()='制造业']]")[0].parent().ele("xpath=./div/label").click()
-    tab.eles("xpath=//button[span[text()='确 定']]")[0].click()
-
-    tab.get_frame('css=#ueditor_2').ele("xpath=//html/body").input("地区\n行业")
-
-    iframe = tab.get_frame('css=#ueditor_3')
-    iframe.ele("xpath=//html/body").input(1)
-    tab.eles("xpath=//button[span[text()='提交审核']]")[0].click()
-
-    tab.wait.doc_loaded()
-    if check_message():
-        text = "用例1：新增项目成功！"
-        print(f"\033[32m{text}\033[0m")
+# https://playwright.dev/python/docs/intro#system-requirements
+# uname -m # Debian 11, Debian 12, Ubuntu 20.04 or Ubuntu 22.04, Ubuntu 24.04, on x86-64 and arm64 architecture.
+def lqy_cloud_login(browser_context: BrowserContext, token: str):
+    # page.evaluate('''(token) => {document.cookie=`Admin-Token=${token};`;}''', token)
+    new_cookie = [{'name': 'Admin-Token', 'value': token, 'domain': '192.168.50.202', 'path': '/'}]
+    browser_context.add_cookies(new_cookie)
+    print(browser_context.cookies())
+    # page.goto('http://192.168.50.202:9999')
+    # page.evaluate('''() =>{ console.log(document.cookie);}''')
 
 
-def select_project():
-    tab.get("http://192.168.50.202:9999/projectManage")
-    tab.eles("xpath=//input[@placeholder='输入项目名称进行查询']")[0].input(f"测试test{time.strftime("%Y-%m-%d")}", clear=True)
-    tab.eles("xpath=//button[span[text()='搜索']]")[0].click()
+def test_mock_the_fruit_api(page: Page):
+    def handle(route: Route):
+        json = [{"name": "Strawberry1", "id": 21}]
+        # fulfill the route with the mock data
+        route.fulfill(json=json)
 
-    if tab.eles("css=tbody>tr>td")[1].text.find("测试test") != -1:
-        text = "用例2：查询项目成功！"
-        print(f"\033[32m{text}\033[0m")
+    # Intercept the route to the fruit API
+    page.route("*/**/api/v1/fruits", handle)
 
+    # Go to the page
+    page.goto("https://demo.playwright.dev/api-mocking")
 
-def del_project():
-    tab.eles("xpath=//div[@class='el-dropdown']/div[' 更多 ']")[0].hover()
-    tab.eles("xpath=//li[text()='删除']")[0].click()
-    tab.wait.doc_loaded()
-    tab.eles("xpath=//button/span[text()='确定']")[0].click()
-
-
-def audit_project():
-    print(tab.eles("xpath=//div[@class='option-btn-wrap']/div[text()='审核']"))
-    tab.eles("xpath=//div[@class='option-btn-wrap']/div[text()='审核']")[0].click(by_js=True)
-    tab.eles("xpath=//label/span[text()='通过']")[0].click()
-    tab.eles("xpath=//button[span[text()='确 定']]")[0].click()
-    if check_message():
-        text = "用例3：审核项目成功！"
-        print(f"\033[32m{text}\033[0m")
+    # Assert that the Strawberry fruit is visible
+    expect(page.get_by_text("Strawberry1")).to_be_visible()
 
 
-def edit_project():
-    tab.get("http://192.168.50.202:9999/projectManage")
-    tab.wait.doc_loaded()
-    tab.eles("xpath=//div[@class='option-btn-wrap']/div[text()='编辑']")[0].click()
+def test_gets_the_json_from_api_and_adds_a_new_fruit(page: Page):
+    def handle(route: Route):
+        response = route.fetch()
+        json = response.json()
+        json.append({"name": "Loquat1", "id": 100})
+        # Fulfill using the original response, while patching the response body
+        # with the given JSON object.
+        route.fulfill(response=response, json=json)
 
-    # tab.eles("xpath=//div[@class='option-btn-wrap']/div[text()='编辑']")[0].click(by_js=True)
-    # tab.eles("css=div.option-btn-wrap>div.link-text")[1].click()
-    # tab.eles("xpath=//div[@class='option-btn-wrap']/div[text()='编辑']")[0].click.at(offset_x=10)
+    page.route("https://demo.playwright.dev/api-mocking/api/v1/fruits", handle)
+    # Go to the page
+    page.goto("https://demo.playwright.dev/api-mocking")
 
-    # tab.wait.doc_loaded()
-    tab.eles("xpath=//button[span[text()='保存']]")[0].click()
-    if check_message():
-        text = "用例4：编辑项目成功！"
-        print(f"\033[32m{text}\033[0m")
+    # Assert that the new fruit is visible
+    expect(page.get_by_text("Loquat1", exact=True)).to_be_visible()
 
 
-def project_manage_marking():
-    tab.wait.doc_loaded()
-    tab.eles("xpath=//div[@class='el-dropdown']/div[' 更多 ']")[0].hover()
-    tab.ele("xpath=//li[text()='打标']").click()
-    tab.wait.doc_loaded()
-    tab.eles("xpath=//button/span[text()=' 新增组 ']")[0].click()
-    left_container_p = tab.ele('css=div.annotator-container>div>p')
-    left_container_p_len = len(left_container_p.text)
-    if left_container_p_len > 0:
-        # if left_container_p_len > 29: left_container_p_len = 29  # 24寸显示器一行最多29个文字
-        p_width, p_height = left_container_p.rect.size
-        width = (left_container_p_len - 0) * 16 - 16 / 1.2  # 16px字体大小
-        if width > p_width:
-            width = p_width - 16 - 16 / 1.2  # 使用p标签宽度回退两位字体大小
-        left_container_p.click.at(offset_x=width, count=2, button="left")  # 双击最后一个字
-        left_container_p.click.at(offset_x=width, count=1, button="right")
+def test_records_or_updates_the_har_file(page: Page):
+    # Get the response from the HAR file
+    page.route_from_har("xhr/hars/fruit1.har", url="*/**/api/v1/fruits", update=True)
+    # Go to the page
+    page.goto("https://demo.playwright.dev/api-mocking")
+    # Assert that the fruit is visible
+    expect(page.get_by_text("Strawberry")).to_be_visible()
 
-        tab.ele("xpath=//div[@class='rightMenu-item']/span[text()='行业要求']").click()
-        # 选择行业
-        tab.ele("xpath=//button/span[text()='关联']").click()
-        tab.eles("xpath=//div[span[text()='请选择行业']]")[0].click()
-        tab.eles("xpath=//div[span[text()='制造业']]")[0].parent().ele("xpath=./div/label").click()
-        tab.eles("xpath=//button[span[text()='确 定']]")[0].click()
-        tab.eles("xpath=//tr/td[last()]/div/div/div/i")[0].click()
 
-        if check_message():
-            text = "用例5：项目打标制造业成功！"
-            print(f"\033[32m{text}\033[0m")
+def test_gets_the_json_from_har_and_checks_the_new_fruit_has_been_added(page: Page):
+    # Replay API requests from HAR.
+    # Either use a matching response from the HAR,
+    # or abort the request if nothing matches.
+    page.route_from_har("xhr/hars/policy.har", url="*/**/test-api/policylibrary/**/*", update=True)
+
+    # Go to the page
+    page.goto("http://192.168.50.202:9999/projectManage")
+
+
+page: Page
+persistent_context: BrowserContext
+
 
 def main():
-    global tab
-    chromium_options = (ChromiumOptions().set_load_mode('normal').set_paths(browser_path=None, user_data_path=None, cache_path=None)
-                        .no_imgs(False).mute(True).headless(on_off=False))  # 设置不加载图片、静音
-    if os_name != "Windows":
-        # https://drissionpage.cn/versions/4.0.x #linux取消了自动无头模式浏览器，使用 chrome 关键字路径
-        user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36"
-        chromium_options.headless(on_off=True).set_user_agent(user_agent).set_argument('--window-size', '1920, 1080')
-        '''chromium_options.set_argument("--no-sandbox")
-        chromium_options.set_argument("--disable-setuid-sandbox")
-        chromium_options.set_argument('--start-maximized')'''
-        # chrome.exe --incognito
-        # chromium_options.incognito().set_argument("--headless=new")  # 无界面系统添加
-    # 兼容无头模式中的参数 --headless=new
-    if not chromium_options.is_headless:
-        chromium_options.remove_argument("--headless=new")
-    chromium_page = Chromium(chromium_options)
-    chromium_page.set.timeouts(10, 10, 10)
-    tab = chromium_page.latest_tab
+    global persistent_context
+    global page
+    chrome_executable_path = find_chrome_util()
+    print(f"\033[34m{chrome_executable_path} #start...\033[0m")
+    # with sync_playwright() as playwright_instance:
+    playwright = sync_playwright().start()
+    # 通过cdp连接到已经启动的 Chrome 浏览器
+    # browser = playwright_instance.chromium.connect_over_cdp(f"http://127.0.0.1:{start_remote_chrome_port(chrome_path=chrome_executable_path)}")
+    # 启动持久化Chrome
+    # C:\Users\Administrator\AppData\Local\ms-playwright\chromium-1155\chrome-win\playwright_user_data
+    persistent_context = playwright.chromium.launch_persistent_context(executable_path=chrome_executable_path, headless=False, user_data_dir="temp")
+    # persistent_context = playwright.chromium.launch(headless=False, executable_path=chrome_executable_path)
+    page = persistent_context.new_page()
 
-    load_dotenv()
+
     token = login_verification_code()
+    lqy_cloud_login(persistent_context, token)
 
-    def save_cookie(_token: str):
-        # tab.run_js("((token) => { document.cookie=`Admin-Token=${token};`; })('%s')" % token)
-        tab.set.cookies(f'Admin-Token={_token}; path=/; domain=192.168.50.202;')
-        tab.run_js('''((s) =>{ console.log(s);})("设置cookie登录 "+document.cookie)''')
+    page.goto(url="http://192.168.50.202:9999/projectManage", wait_until="load")
+    page.locator("xpath=//div[@class='option-btn-wrap']/div[text()='编辑']").first.click()
+    print(page.title())  # 打印页面标题
 
-    save_cookie(token)
-
-    '''add_project()
-    select_project()
-    audit_project()
-    edit_project()'''
-
-    select_project()
-    project_manage_marking()
-
-    # del_project()
-
-    '''tab.get("http://192.168.50.202:9999/enterpriseInforManage")
-    tab.ele('xpath=//button/span[text()="详情"]').click()
-    tab.get("http://192.168.50.202:9999/projectManage")
-    # tab.ele('xpath=//div/div[text()="编辑"]').click()
-    tab.ele("xpath=//div[@class='option-btn-wrap']/div[text()='编辑']").click()'''
+    # test_gets_the_json_from_api_and_adds_a_new_fruit(page)
+    # test_records_or_updates_the_har_file(page)
+    test_gets_the_json_from_har_and_checks_the_new_fruit_has_been_added(page)
 
 
 if __name__ == '__main__':
     try:
         main()
-    except KeyboardInterrupt as e:
-        print(f"\033[34m{traceback.format_exc()}\033[0m") # 蓝色中断异常
+        time.sleep(10)  # 延时，便于观察结果
+        globals().get("persistent_context").close()
     except Exception as e:
-        print(f"\033[35m{traceback.format_exc()}\033[0m") # 紫色全局异常
+        print(f"\033[35m{traceback.format_exc()}\033[0m")
         # main()  # 异常就重试一次
     finally:
-        print("finally.")
-        time.sleep(30) # 睡眠延时30s，便于观察结果
-        # pycharm强行关闭运行进程会触发回收资源关闭Windows浏览器
-        if os_name != "Windows11" and globals().get("tab"): globals().get("tab").close()  # 关闭浏览器
+        pass
