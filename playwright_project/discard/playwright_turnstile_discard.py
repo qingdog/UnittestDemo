@@ -2,7 +2,10 @@ import random
 import time
 from playwright.sync_api import sync_playwright, Page, ElementHandle
 
-from uiauto.find_chrome_util import find_chrome_util
+from playwright_project.find_chrome_util import find_chrome_util
+
+
+# from uiauto.find_chrome_util import find_chrome_util
 
 
 def cloudflare_turnstile(page: Page, selector="#cf-turnstile"):
@@ -113,7 +116,7 @@ import traceback
 
 from playwright.sync_api import sync_playwright, Page, BrowserContext
 
-from uiauto.find_chrome_util import find_chrome_util
+# from uiauto.find_chrome_util import find_chrome_util
 
 
 # https://playwright.dev/python/docs/intro#system-requirements
