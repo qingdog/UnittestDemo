@@ -35,7 +35,7 @@ if __name__ == '__main__':
         page = context.pages[0]
 
         # 打印 navigator.webdriver 的值
-        print("navigator.webdriver: " + page.evaluate('navigator.webdriver'))
+        print(f"navigator.webdriver: {page.evaluate('navigator.webdriver')}")
 
         page.goto("http://localhost:9527/json/version")
         time.sleep(3)
