@@ -2,12 +2,30 @@ import json
 import os
 import subprocess
 import shutil
+import re
 
+def get_version_directories(path=r"C:\Program Files\Google\Chrome\Application", pattern=r"^\d+\.\d+\.\d+\.\d+$"):  
+    # 使用正则表达式来匹配版本号格式  
+    version_pattern = re.compile(rf'{pattern}') 
+    version_dirs = []  
+
+    # 遍历指定路径下的所有目录  
+    for item in os.listdir(path):  
+        full_path = os.path.join(path, item)  
+        # 检查是否是目录，并且是否符合版本号格式  
+        if os.path.isdir(full_path) and version_pattern.match(item):  
+            version_dirs.append(item)  
+    
+    if not version_dirs:
+        return ""
+    return version_dirs[0]
 
 def playwright_install():
     """构建软连接，安装浏览器和依赖"""
+    # like chromium-1155
+    chromium_version = get_version_directories(path=r"C:\\Users\\Administrator\\AppData\\Local\\ms-playwright", pattern=r"^chromium-\d+$")
     # 目标和源路径
-    link_target = r"C:\Users\Administrator\AppData\Local\ms-playwright\chromium-1155\chrome-win"
+    link_target = rf"C:\Users\Administrator\AppData\Local\ms-playwright\{chromium_version}\chrome-win"
     link_source = r"C:\Program Files\Google\Chrome\Application"
     # 如果目标目录已存在，则删除
     if not os.path.exists(link_target):
@@ -17,9 +35,9 @@ def playwright_install():
         subprocess.run(f'cmd /c mklink /d "{link_target}" "{link_source}"', shell=True, check=True)
         print("符号链接创建成功！")
     # if not os.path.exists(r"C:\Program Files\Google\Chrome\Application\chrome_elf.dll"):
-    if not os.path.exists(r"C:\Users\Administrator\AppData\Local\ms-playwright\chromium-1155\chrome-win\chrome_elf.dll"):
+    if not os.path.exists(rf"C:\Users\Administrator\AppData\Local\ms-playwright\{chromium_version}\chrome-win\\chrome_elf.dll"):
         subprocess.run(
-            r'cmd /c mklink "C:\Program Files\Google\Chrome\Application\chrome_elf.dll" "C:\Program Files\Google\Chrome\Application\133.0.6943.99\chrome_elf.dll"',
+            rf'cmd /c mklink "C:\Program Files\Google\Chrome\Application\chrome_elf.dll" "C:\Program Files\Google\Chrome\Application\{get_version_directories()}\chrome_elf.dll"',
             shell=True, check=True)
         print("repair libraries: chrome_elf.dll")
     # 安装所有 chromium-1155,chromium_headless_shell-1155,ffmpeg-1011,firefox-1471,webkit-2123,winldd-1007
@@ -48,7 +66,7 @@ def playwright_codegen():
     """playwright 代码生成器。可录制测试，然后将其复制到编辑器中"""
     if not os.path.exists("auth.json"):
         with open("auth.json", "w", encoding="utf-8") as file: file.write("{}")  # 写入空 JSON 对象
-    os.system("playwright codegen --load-storage=auth.json --color-scheme=dark baidu.com --save-storage=auth.json")
+    os.system("playwright codegen --load-storage=auth.json --color-scheme=dark www.baidu.com --save-storage=auth.json")
 
 
 if __name__ == '__main__':
