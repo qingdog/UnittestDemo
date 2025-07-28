@@ -33,11 +33,11 @@ def playwright_install():
         os.makedirs(os.path.dirname(link_target), exist_ok=True)
         # 运行 mklink 命令
         subprocess.run(f'cmd /c mklink /d "{link_target}" "{link_source}"', shell=True, check=True)
-        print("符号链接创建成功！")
+        print("chrome-win符号链接创建成功！")
     # if not os.path.exists(r"C:\Program Files\Google\Chrome\Application\chrome_elf.dll"):
     if not os.path.exists(rf"C:\Users\Administrator\AppData\Local\ms-playwright\{chromium_version}\chrome-win\\chrome_elf.dll"):
         subprocess.run(
-            rf'cmd /c mklink "C:\Program Files\Google\Chrome\Application\chrome_elf.dll" "C:\Program Files\Google\Chrome\Application\{get_version_directories()}\chrome_elf.dll"',
+            rf'cmd /c copy "C:\Program Files\Google\Chrome\Application\{get_version_directories()}\chrome_elf.dll" "C:\Program Files\Google\Chrome\Application\chrome_elf.dll"',
             shell=True, check=True)
         print("repair libraries: chrome_elf.dll")
     # 安装所有 chromium-1155,chromium_headless_shell-1155,ffmpeg-1011,firefox-1471,webkit-2123,winldd-1007
@@ -72,4 +72,5 @@ def playwright_codegen():
 if __name__ == '__main__':
     playwright_install()
     # open_codegen_controls()
+    # `playwright codegen`
     playwright_codegen()
